@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飲食店データ分析｜i.o.prime</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:#f7f5f2;color:#1a1a1a;font-size:14px;line-height:1.6}
+.wrap{max-width:900px;margin:0 auto;padding:32px 24px 64px}
+
+.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid #1a1a1a;margin-bottom:40px}
+.header h1{font-size:18px;font-weight:700}
+.header .sub{font-size:11px;color:#999;letter-spacing:0.1em;margin-top:3px}
+.header-right{font-size:11px;color:#aaa;font-weight:700;letter-spacing:0.12em}
+
+/* UPLOAD */
+.upload-lead{font-size:24px;font-weight:700;margin-bottom:8px}
+.upload-desc{font-size:13px;color:#555;line-height:1.9;margin-bottom:28px}
+.format-box{border:1px solid #d4d0c8;background:#fff;padding:16px 20px;margin-bottom:24px}
+.format-title{font-size:10px;font-weight:700;letter-spacing:0.12em;color:#999;margin-bottom:10px}
+.format-cols{display:flex;gap:8px;flex-wrap:wrap}
+.format-col{border:1px solid #d4d0c8;padding:4px 12px;font-size:11px}
+.format-col.req{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+
+.drop-zone{border:2px dashed #c8c4bc;background:#fff;padding:52px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s}
+.drop-zone:hover,.drop-zone.over{border-color:#1a1a1a}
+.drop-zone input{display:none}
+.drop-main{font-size:16px;font-weight:700;margin-bottom:6px}
+.drop-sub{font-size:13px;color:#888;margin-bottom:16px}
+.drop-btn{display:inline-block;border:1.5px solid #1a1a1a;padding:9px 22px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.05em}
+.sample-link{display:block;text-align:center;font-size:12px;color:#666;text-decoration:underline;cursor:pointer;margin-top:10px}
+
+/* LOADING */
+#loadingSection{display:none;text-align:center;padding:80px 0}
+.loading-title{font-size:16px;font-weight:700;margin-bottom:36px}
+.steps{display:inline-flex;flex-direction:column;gap:14px;text-align:left}
+.step{display:flex;align-items:center;gap:12px;font-size:13px;color:#bbb;transition:color 0.3s}
+.step.active{color:#1a1a1a}
+.step.done{color:#38a169}
+.dot{width:9px;height:9px;border-radius:50%;background:#e0ddd8;flex-shrink:0;transition:background 0.3s}
+.step.active .dot{background:#1a1a1a;animation:pulse 0.9s infinite}
+.step.done .dot{background:#38a169}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+
+/* RESULTS */
+#resultsSection{display:none}
+.results-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.results-title{font-size:16px;font-weight:700}
+.reset-btn{border:1px solid #999;padding:7px 16px;font-size:11px;cursor:pointer;background:transparent;font-family:inherit;color:#555}
+.reset-btn:hover{border-color:#1a1a1a;color:#1a1a1a}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.kpi{background:#fff;padding:18px 20px}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:0.15em;color:#aaa;margin-bottom:8px}
+.kpi-value{font-size:24px;font-weight:600;letter-spacing:-0.02em}
+.kpi-value.green{color:#38a169}
+.kpi-value.orange{color:#ed8936}
+.kpi-value.red{color:#e53e3e}
+.kpi-sub{font-size:11px;color:#999;margin-top:4px}
+
+.sec-label{font-size:10px;font-weight:700;letter-spacing:0.2em;color:#aaa;margin-bottom:16px}
+
+.chart-full{background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.chart-panel{background:#fff;padding:20px}
+.chart-title{font-size:12px;font-weight:700;margin-bottom:3px}
+.chart-sub{font-size:11px;color:#999;margin-bottom:14px}
+
+/* REPORT */
+.report-box{background:#fff;border:1px solid #d4d0c8;padding:28px 32px;margin-bottom:32px}
+.report-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #e8e4de;margin-bottom:20px}
+.report-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:#1a1a1a;color:#fff;padding:3px 10px}
+.report-period{font-size:11px;color:#aaa}
+.report-sec{margin-bottom:18px}
+.report-sec-title{font-size:12px;font-weight:700;margin-bottom:8px}
+.report-text{font-size:13px;color:#333;line-height:2}
+.hl{background:#fff3cd;padding:0 2px}
+.al{background:#fde8e8;padding:0 2px}
+
+/* CTA */
+.cta{border:1.5px solid #1a1a1a;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.cta-body .cta-title{font-size:15px;font-weight:700}
+.cta-body .cta-sub{font-size:12px;color:#666;margin-top:4px}
+.cta-btn{border:1.5px solid #1a1a1a;padding:10px 24px;font-size:12px;font-weight:700;text-decoration:none;color:#1a1a1a;white-space:nowrap;flex-shrink:0}
+.cta-btn:hover{background:#1a1a1a;color:#f7f5f2}
+
+@media(max-width:640px){
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .kpi{padding:14px}
+  .kpi-value{font-size:18px}
+  .chart-grid{grid-template-columns:1fr}
+  .cta{flex-direction:column;align-items:flex-start}
+  .report-box{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div>
+    <h1>飲食店データ分析</h1>
+    <div class="sub">売上CSVをアップロードするだけで自動分析</div>
+  </div>
+  <div class="header-right">i.o.prime</div>
+</div>
+
+<!-- UPLOAD -->
+<div id="uploadSection">
+  <div class="upload-lead">CSVを入れると、分析結果が出ます。</div>
+  <div class="upload-desc">
+    POSシステムやExcelから書き出したデータをアップロードしてください。<br>
+    売上・FL比率・曜日別パターンを自動で集計し、AIが経営課題をレポートします。
+  </div>
+
+  <div class="format-box">
+    <div class="format-title">対応フォーマット（CSV）</div>
+    <div class="format-cols">
+      <div class="format-col req">日付（必須）</div>
+      <div class="format-col req">売上（必須）</div>
+      <div class="format-col req">食材費（必須）</div>
+      <div class="format-col req">人件費（必須）</div>
+      <div class="format-col">客数（任意）</div>
+    </div>
+  </div>
+
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="csvInput" accept=".csv">
+    <div class="drop-main">ファイルをここにドロップ</div>
+    <div class="drop-sub">または</div>
+    <label for="csvInput" class="drop-btn">ファイルを選択</label>
+  </div>
+  <span class="sample-link" id="sampleDl">▼ サンプルCSVをダウンロードして試す</span>
+</div>
+
+<!-- LOADING -->
+<div id="loadingSection">
+  <div class="loading-title">データを分析中...</div>
+  <div class="steps">
+    <div class="step" id="s1"><div class="dot"></div>CSVデータを読み込んでいます</div>
+    <div class="step" id="s2"><div class="dot"></div>売上・FL比率・曜日パターンを計算しています</div>
+    <div class="step" id="s3"><div class="dot"></div>AIが分析レポートを生成しています</div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsSection">
+  <div class="results-top">
+    <div class="results-title" id="resultsTitle">分析結果</div>
+    <button class="reset-btn" id="resetBtn">別のデータで試す</button>
+  </div>
+
+  <div class="sec-label">OVERVIEW</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">売上合計</div><div class="kpi-value" id="k1"></div><div class="kpi-sub" id="k1s"></div></div>
+    <div class="kpi"><div class="kpi-label">日平均売上</div><div class="kpi-value" id="k2"></div><div class="kpi-sub" id="k2s"></div></div>
+    <div class="kpi"><div class="kpi-label">FL比率</div><div class="kpi-value" id="k3"></div><div class="kpi-sub">目標 60%以内</div></div>
+    <div class="kpi"><div class="kpi-label">平均客単価</div><div class="kpi-value" id="k4"></div><div class="kpi-sub" id="k4s"></div></div>
+  </div>
+
+  <div class="sec-label">SALES TREND</div>
+  <div class="chart-full"><div class="chart-panel">
+    <div class="chart-title">日別売上推移</div>
+    <div class="chart-sub">売上の増減と週次パターンを確認</div>
+    <canvas id="cSales" height="75"></canvas>
+  </div></div>
+
+  <div class="sec-label">FL RATIO & DAY OF WEEK</div>
+  <div class="chart-grid">
+    <div class="chart-panel">
+      <div class="chart-title">FL比率の推移</div>
+      <div class="chart-sub">赤い破線が60%の目標ライン</div>
+      <canvas id="cFl" height="185"></canvas>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">曜日別 平均売上</div>
+      <div class="chart-sub">集客が強い曜日・弱い曜日を把握</div>
+      <canvas id="cDay" height="185"></canvas>
+    </div>
+  </div>
+
+  <div class="sec-label">AI ANALYSIS REPORT</div>
+  <div class="report-box">
+    <div class="report-head">
+      <div class="report-badge">AI 分析レポート</div>
+      <div class="report-period" id="reportPeriod"></div>
+    </div>
+    <div id="reportBody"></div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-body">
+      <div class="cta-title">このシステムをあなたの店舗に導入する</div>
+      <div class="cta-sub">実際のPOSデータと連携し、毎月自動でレポートを生成します</div>
+    </div>
+    <a class="cta-btn" href="./index.html">i.o.primeに相談する →</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
+Chart.defaults.color = '#999';
+
+// ---- Sample CSV ----
+const SAMPLE = `日付,売上,食材費,人件費,客数
+2026-07-01,108000,32400,38880,50
+2026-07-02,122000,36600,42700,57
+2026-07-03,195000,58500,54600,87
+2026-07-04,248000,74400,67000,112
+2026-07-05,172000,51600,55040,78
+2026-07-06,98000,29400,35280,44
+2026-07-07,88000,26400,32560,40
+2026-07-08,102000,30600,37740,47
+2026-07-09,118000,35400,41300,55
+2026-07-10,188000,56400,52640,84
+2026-07-11,235000,70500,63450,105
+2026-07-12,162000,48600,51840,74
+2026-07-13,95000,28500,35150,43
+2026-07-14,92000,27600,34040,42
+2026-07-15,115000,34500,40250,53
+2026-07-16,128000,38400,44800,59
+2026-07-17,205000,61500,57400,92
+2026-07-18,262000,78600,70740,118
+2026-07-19,178000,53400,56960,81
+2026-07-20,105000,31500,37800,48
+2026-07-21,97000,29100,35890,44
+2026-07-22,112000,33600,40320,51
+2026-07-23,135000,40500,47250,62
+2026-07-24,218000,65400,61040,98
+2026-07-25,278000,83400,75060,125
+2026-07-26,188000,56400,60160,85
+2026-07-27,102000,30600,36720,46
+2026-07-28,96000,28800,35520,43`;
+
+document.getElementById('sampleDl').addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([SAMPLE], {type:'text/csv'}));
+  a.download = 'sample_sales.csv';
+  a.click();
+});
+
+// ---- Drag & Drop ----
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); go(e.dataTransfer.files[0]); });
+document.getElementById('csvInput').addEventListener('change', function(){ if(this.files[0]) go(this.files[0]); });
+
+// ---- Reset ----
+document.getElementById('resetBtn').addEventListener('click', () => {
+  ['cSales','cFl','cDay'].forEach(id => { const c=Chart.getChart(id); if(c) c.destroy(); });
+  ['s1','s2','s3'].forEach(id => { const el=document.getElementById(id); el.classList.remove('active','done'); });
+  document.getElementById('csvInput').value = '';
+  show('uploadSection'); hide('resultsSection'); hide('loadingSection');
+});
+
+// ---- Main flow ----
+function go(file) {
+  hide('uploadSection'); show('loadingSection');
+  activate('s1');
+  Papa.parse(file, {
+    header: true, skipEmptyLines: true,
+    complete(res) {
+      done('s1'); activate('s2');
+      const m = crunch(res.data);
+      setTimeout(() => {
+        done('s2'); activate('s3');
+        setTimeout(() => {
+          done('s3');
+          setTimeout(() => {
+            hide('loadingSection');
+            render(m);
+            show('resultsSection');
+          }, 500);
+        }, 900);
+      }, 900);
+    }
+  });
+}
+
+// ---- Crunch numbers ----
+function crunch(rows) {
+  const n = rows.length;
+  const dates  = rows.map(r => r['日付']  || Object.values(r)[0]);
+  const sales  = rows.map(r => num(r['売上']));
+  const food   = rows.map(r => num(r['食材費']));
+  const labor  = rows.map(r => num(r['人件費']));
+  const custRaw= rows.map(r => num(r['客数']));
+  const hasCust = custRaw.some(v => v > 0);
+
+  const totSales = arr(sales), totFood = arr(food), totLabor = arr(labor);
+  const fl = (totFood + totLabor) / totSales * 100;
+  const flDay = sales.map((s,i) => (food[i]+labor[i])/s*100);
+
+  const avgDaily = Math.round(totSales / n);
+  const maxS = Math.max(...sales), minS = Math.min(...sales);
+  const maxD = dates[sales.indexOf(maxS)], minD = dates[sales.indexOf(minS)];
+
+  // Day-of-week
+  const DAY = ['日','月','火','水','木','金','土'];
+  const dTot = Array(7).fill(0), dCnt = Array(7).fill(0);
+  dates.forEach((d,i) => { const w=new Date(d).getDay(); if(!isNaN(w)){dTot[w]+=sales[i];dCnt[w]++;} });
+  const dAvg = dTot.map((t,i) => dCnt[i] ? Math.round(t/dCnt[i]) : 0);
+
+  const valid = dAvg.map((v,i) => ({n:DAY[i],v})).filter(d=>d.v>0);
+  const best = valid.reduce((a,b)=>a.v>b.v?a:b);
+  const worst = valid.reduce((a,b)=>a.v<b.v?a:b);
+
+  // Weekend ratio (Fri+Sat)
+  let wkndSum=0, wkndCnt=0;
+  dates.forEach((d,i) => { const w=new Date(d).getDay(); if(w===5||w===6){wkndSum+=sales[i];wkndCnt++;} });
+  const wkndRatio = Math.round(wkndSum/totSales*100);
+
+  // Weekday FL avg
+  let wdFl=0, wdCnt=0;
+  dates.forEach((d,i) => { const w=new Date(d).getDay(); if(w!==5&&w!==6){wdFl+=flDay[i];wdCnt++;} });
+  const wdFlAvg = wdCnt ? (wdFl/wdCnt) : 0;
+
+  // Trend (2nd half vs 1st half)
+  const half=Math.floor(n/2);
+  const trend = ((arr(sales.slice(half))/(n-half) - arr(sales.slice(0,half))/half) / (arr(sales.slice(0,half))/half) * 100);
+
+  // Avg spend
+  const avgSpend = hasCust ? Math.round(totSales / arr(custRaw)) : null;
+
+  // Potential saving
+  const potential = fl > 60 ? Math.round(totSales*(fl-60)/100) : 0;
+
+  return { dates, sales, food, labor, flDay, n,
+    totSales, totFood, totLabor, fl,
+    fRatio: totFood/totSales*100, lRatio: totLabor/totSales*100,
+    avgDaily, maxS, minS, maxD, minD,
+    DAY, dAvg, best, worst, wkndRatio, wdFlAvg, trend, avgSpend, potential };
+}
+
+// ---- Render ----
+function render(m) {
+  document.getElementById('resultsTitle').textContent = `分析結果（${m.n}日間）`;
+  document.getElementById('reportPeriod').textContent = `${m.dates[0]} 〜 ${m.dates[m.n-1]}`;
+
+  const flCls = m.fl < 60 ? 'green' : m.fl < 65 ? 'orange' : 'red';
+  set('k1', '¥'+m.totSales.toLocaleString()); set('k1s', `${m.n}日間合計`);
+  set('k2', '¥'+m.avgDaily.toLocaleString()); set('k2s', `最高 ¥${m.maxS.toLocaleString()}`);
+  setH('k3', `<span class="${flCls}">${m.fl.toFixed(1)}%</span>`);
+  set('k4', m.avgSpend ? '¥'+m.avgSpend.toLocaleString() : '—');
+  set('k4s', m.avgSpend ? '1客あたり' : '客数データなし');
+
+  // Charts
+  ['cSales','cFl','cDay'].forEach(id => { const c=Chart.getChart(id); if(c) c.destroy(); });
+
+  // Sales
+  new Chart('cSales', { type:'line', data:{
+    labels: m.dates,
+    datasets:[{ data:m.sales, borderColor:'#3182ce', backgroundColor:'rgba(49,130,206,0.07)',
+      fill:true, tension:0.3, borderWidth:2, pointRadius:m.n<=31?3:1, pointBackgroundColor:'#3182ce' }]
+  }, options:{ responsive:true, plugins:{legend:{display:false}},
+    scales:{ x:{grid:{display:false}, ticks:{maxTicksLimit:10,font:{size:10}}},
+             y:{grid:{color:'#f0eeea'}, ticks:{callback:v=>'¥'+(v/10000)+'万'}} } }});
+
+  // FL
+  new Chart('cFl', { type:'line', data:{
+    labels: m.dates,
+    datasets:[
+      { label:'FL比率', data:m.flDay.map(v=>+v.toFixed(1)), borderColor:'#ed8936',
+        fill:false, tension:0.3, borderWidth:2, pointRadius:m.n<=31?3:1, pointBackgroundColor:'#ed8936' },
+      { label:'目標(60%)', data:Array(m.n).fill(60), borderColor:'#e53e3e',
+        borderWidth:1.5, borderDash:[6,3], pointRadius:0, fill:false }
+    ]
+  }, options:{ responsive:true,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},
+    scales:{ x:{grid:{display:false}, ticks:{maxTicksLimit:8,font:{size:10}}},
+             y:{grid:{color:'#f0eeea'}, ticks:{callback:v=>v+'%'}, min:45, max:85 } } }});
+
+  // Day of week
+  const maxV = Math.max(...m.dAvg);
+  new Chart('cDay', { type:'bar', data:{
+    labels: m.DAY,
+    datasets:[{ data:m.dAvg,
+      backgroundColor:m.dAvg.map(v=>v===maxV?'#3182ce':'#d1d5db'),
+      borderWidth:0 }]
+  }, options:{ responsive:true, plugins:{legend:{display:false}},
+    scales:{ x:{grid:{display:false}},
+             y:{grid:{color:'#f0eeea'}, ticks:{callback:v=>'¥'+(v/10000)+'万'}} } }});
+
+  // Report
+  const trendTxt = m.trend >= 0 ? `+${m.trend.toFixed(1)}%の上昇傾向` : `${m.trend.toFixed(1)}%の下降傾向`;
+  const flStatus = m.fl < 60 ? `目標内（${(60-m.fl).toFixed(1)}pt の余裕あり）`
+                              : `目標を<span class="al">${(m.fl-60).toFixed(1)}pt 超過</span>`;
+  const potTxt = m.potential > 0
+    ? `FL比率を60%に改善できれば、今期間で約<span class="hl">¥${m.potential.toLocaleString()}のコスト削減</span>が見込めます。`
+    : 'FL比率は目標範囲内で管理されています。';
+  const weekdayImpact = Math.round(m.worst.v * 0.1 * 4);
+
+  document.getElementById('reportBody').innerHTML = `
+<div class="report-sec">
+  <div class="report-sec-title">■ サマリー</div>
+  <div class="report-text">
+    ${m.dates[0]}〜${m.dates[m.n-1]}（${m.n}日間）の売上合計は<span class="hl">¥${m.totSales.toLocaleString()}</span>、
+    日平均¥${m.avgDaily.toLocaleString()}でした。
+    後半${Math.floor(m.n/2)}日間は前半比で${trendTxt}が確認できます。
+    FL比率は${m.fl.toFixed(1)}%（${flStatus}）です。
+  </div>
+</div>
+<div class="report-sec">
+  <div class="report-sec-title">■ 売上パターン</div>
+  <div class="report-text">
+    <strong>${m.best.n}曜日</strong>の平均売上が¥${m.best.v.toLocaleString()}と最も高く、
+    <strong>${m.worst.n}曜日</strong>（¥${m.worst.v.toLocaleString()}）との差は¥${(m.best.v-m.worst.v).toLocaleString()}あります。
+    金・土の売上が全体の<span class="hl">${m.wkndRatio}%</span>を占めており、
+    平日の集客強化が安定収益のカギになります。
+  </div>
+</div>
+<div class="report-sec">
+  <div class="report-sec-title">■ FL比率の分析</div>
+  <div class="report-text">
+    食材費：${m.fRatio.toFixed(1)}%（業界目安 28〜33%）<br>
+    人件費：${m.lRatio.toFixed(1)}%（業界目安 28〜32%）<br>
+    FL合計：${m.fl.toFixed(1)}%<br><br>
+    平日の平均FL比率は${m.wdFlAvg.toFixed(1)}%で、客数が少ない日に固定の人件費が比率を押し上げています。${potTxt}
+  </div>
+</div>
+<div class="report-sec">
+  <div class="report-sec-title">■ 改善提案</div>
+  <div class="report-text">
+    ① <strong>平日集客の強化</strong>：${m.worst.n}曜日の売上を10%改善するだけで月間<span class="hl">¥${weekdayImpact.toLocaleString()}の増収</span>になります。曜日限定メニューや集客施策の効果を次月データで検証できます。<br><br>
+    ② <strong>シフト最適化</strong>：曜日別売上データから需要予測を立て、人員配置を見直すことで人件費比率の改善が見込めます。<br><br>
+    ③ <strong>継続モニタリング</strong>：月次でデータを蓄積することで、季節変動・施策効果の定量評価が可能になります。
+  </div>
+</div>`;
+}
+
+// ---- Helpers ----
+function num(v){ return v ? parseInt(String(v).replace(/[,，\s]/g,''))||0 : 0; }
+function arr(a){ return a.reduce((s,v)=>s+v,0); }
+function show(id){ document.getElementById(id).style.display=''; }
+function hide(id){ document.getElementById(id).style.display='none'; }
+function activate(id){ document.getElementById(id).classList.add('active'); }
+function done(id){ const el=document.getElementById(id); el.classList.remove('active'); el.classList.add('done'); }
+function set(id,t){ document.getElementById(id).textContent=t; }
+function setH(id,h){ document.getElementById(id).innerHTML=h; }
+</script>
+</body>
+</html>
