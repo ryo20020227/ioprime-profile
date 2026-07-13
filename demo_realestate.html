@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不動産管理ダッシュボード｜i.o.prime</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:#f7f5f2;color:#1a1a1a;font-size:14px;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
+
+.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid #1a1a1a;margin-bottom:32px}
+.header-left h1{font-size:20px;font-weight:700;letter-spacing:0.02em}
+.header-left .period{font-size:11px;color:#999;letter-spacing:0.15em;margin-top:3px}
+.header-right{font-size:11px;color:#aaa;letter-spacing:0.12em;font-weight:700}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.kpi{background:#fff;padding:20px 22px}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:0.18em;color:#aaa;margin-bottom:10px}
+.kpi-value{font-size:28px;font-weight:600;letter-spacing:-0.02em}
+.kpi-value.green{color:#38a169}
+.kpi-value.red{color:#e53e3e}
+.kpi-value.orange{color:#ed8936}
+.kpi-sub{font-size:11px;color:#999;margin-top:4px}
+
+.section-label{font-size:10px;font-weight:700;letter-spacing:0.2em;color:#aaa;margin-bottom:16px}
+
+.chart-row{display:grid;gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.chart-row.col2{grid-template-columns:1fr 1fr}
+.chart-row.col3-1{grid-template-columns:2fr 1fr}
+.chart-panel{background:#fff;padding:24px}
+.chart-title{font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.chart-sub{font-size:11px;color:#999;margin-bottom:18px}
+.chart-wrap{position:relative}
+
+.quad-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
+.quad-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#555}
+.quad-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+.footer{text-align:right;font-size:10px;color:#bbb;letter-spacing:0.12em;margin-top:8px}
+
+@media(max-width:700px){
+  .wrap{padding:20px 14px 48px}
+  .header{flex-direction:column;align-items:flex-start;gap:4px}
+  .header-left h1{font-size:16px}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .kpi{padding:14px 14px}
+  .kpi-value{font-size:20px}
+  .chart-row.col2,.chart-row.col3-1{grid-template-columns:1fr}
+  .chart-panel{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>不動産管理ダッシュボード</h1>
+      <div class="period">2026年7月 ／ サンプルデータ</div>
+    </div>
+    <div class="header-right">i.o.prime</div>
+  </div>
+
+  <div class="section-label">OVERVIEW</div>
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">管理物件</div>
+      <div class="kpi-value">6棟</div>
+      <div class="kpi-sub">全32戸</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">総稼働率</div>
+      <div class="kpi-value orange">87%</div>
+      <div class="kpi-sub">目標 90%以上</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">今月賃料収入</div>
+      <div class="kpi-value">¥3,240,000</div>
+      <div class="kpi-sub">前月比 −¥96,000</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">今月実質利益</div>
+      <div class="kpi-value green">¥1,886,000</div>
+      <div class="kpi-sub">利益率 58.2%</div>
+    </div>
+  </div>
+
+  <div class="section-label">OCCUPANCY</div>
+  <div class="chart-row">
+    <div class="chart-panel">
+      <div class="chart-title">物件別稼働率</div>
+      <div class="chart-sub">空室のある物件と稼働状況を一覧で確認</div>
+      <div class="chart-wrap"><canvas id="occupancyChart" height="110"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">REVENUE BREAKDOWN</div>
+  <div class="chart-row col3-1">
+    <div class="chart-panel">
+      <div class="chart-title">物件別 賃料・コスト・利益</div>
+      <div class="chart-sub">修繕費・管理費を差し引いた実質利益を物件ごとに比較</div>
+      <div class="chart-wrap"><canvas id="revenueChart" height="200"></canvas></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">今月のコスト内訳</div>
+      <div class="chart-sub">賃料収入100%の内訳</div>
+      <div class="chart-wrap"><canvas id="donutChart" height="200"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">COST & PROPERTY ANALYSIS</div>
+  <div class="chart-row col2">
+    <div class="chart-panel">
+      <div class="chart-title">修繕費の月別推移</div>
+      <div class="chart-sub">突発的なコスト発生のタイミングを把握</div>
+      <div class="chart-wrap"><canvas id="repairChart" height="220"></canvas></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">物件ポジション分析</div>
+      <div class="chart-sub">稼働率 × 修繕費率でリスクを可視化</div>
+      <div class="chart-wrap"><canvas id="scatterChart" height="220"></canvas></div>
+      <div class="quad-legend">
+        <div class="quad-item"><div class="quad-dot" style="background:#38a169"></div>優良物件</div>
+        <div class="quad-item"><div class="quad-dot" style="background:#ed8936"></div>修繕費に注意</div>
+        <div class="quad-item"><div class="quad-dot" style="background:#3182ce"></div>空室対策が必要</div>
+        <div class="quad-item"><div class="quad-dot" style="background:#e53e3e"></div>要検討</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">i.o.prime — DATA ANALYSIS / CONSULTING</div>
+</div>
+
+<script>
+Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
+Chart.defaults.color = '#999';
+
+const props = ['Aマンション','Bアパート','Cマンション','Dアパート','Eマンション','Fアパート'];
+
+// --- 稼働率 (horizontal bar) ---
+const occData = [100, 100, 90, 75, 83, 50];
+new Chart(document.getElementById('occupancyChart'), {
+  type: 'bar',
+  data: {
+    labels: props,
+    datasets: [{
+      data: occData,
+      backgroundColor: occData.map(v => v >= 90 ? '#38a169' : v >= 75 ? '#ed8936' : '#e53e3e'),
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        min: 0, max: 100,
+        ticks: { callback: v => v + '%' },
+        grid: { color: '#f0eeea' },
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// --- 物件別収益 stacked bar ---
+new Chart(document.getElementById('revenueChart'), {
+  type: 'bar',
+  data: {
+    labels: props,
+    datasets: [
+      {
+        label: '利益',
+        data: [610000, 340000, 400000, 220000, 260000, 56000],
+        backgroundColor: '#38a169',
+        stack: 'a'
+      },
+      {
+        label: '管理費',
+        data: [110000, 60000, 100000, 40000, 140000, 24000],
+        backgroundColor: '#d1d5db',
+        stack: 'a'
+      },
+      {
+        label: '修繕費',
+        data: [30000, 20000, 180000, 20000, 550000, 80000],
+        backgroundColor: '#e53e3e',
+        stack: 'a'
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.dataset.label + '：¥' + ctx.parsed.y.toLocaleString()
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: {
+        stacked: true,
+        grid: { color: '#f0eeea' },
+        ticks: { callback: v => '¥' + (v / 10000) + '万' }
+      }
+    }
+  }
+});
+
+// --- donut ---
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['修繕費', '管理費', '利益'],
+    datasets: [{
+      data: [880000, 474000, 1886000],
+      backgroundColor: ['#e53e3e', '#d1d5db', '#38a169'],
+      borderColor: ['#e53e3e', '#d1d5db', '#d4af37'],
+      borderWidth: [1, 1, 4],
+      offset: [0, 0, 14],
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.label + '：¥' + ctx.parsed.toLocaleString()
+        }
+      }
+    }
+  }
+});
+
+// --- 修繕費月別推移 ---
+new Chart(document.getElementById('repairChart'), {
+  type: 'line',
+  data: {
+    labels: ['2月', '3月', '4月', '5月', '6月', '7月'],
+    datasets: [{
+      label: '修繕費合計',
+      data: [142000, 98000, 310000, 876000, 215000, 880000],
+      borderColor: '#e53e3e',
+      backgroundColor: 'rgba(229,62,62,0.07)',
+      fill: true,
+      tension: 0.3,
+      borderWidth: 2,
+      pointBackgroundColor: '#e53e3e',
+      pointRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: {
+        grid: { color: '#f0eeea' },
+        ticks: { callback: v => '¥' + (v / 10000) + '万' }
+      }
+    }
+  }
+});
+
+// --- scatter quadrant plugin ---
+const quadPlugin = {
+  id: 'quadrant',
+  beforeDraw(chart) {
+    const {ctx, chartArea: {left,top,right,bottom}, scales: {x,y}} = chart;
+    const xM = x.getPixelForValue(85);
+    const yM = y.getPixelForValue(20);
+    ctx.save();
+
+    // 右上（高稼働・高修繕）: 修繕費に注意
+    ctx.fillStyle = 'rgba(237,137,54,0.07)';
+    ctx.fillRect(xM, top, right-xM, yM-top);
+    // 左上（低稼働・高修繕）: 要検討
+    ctx.fillStyle = 'rgba(229,62,62,0.07)';
+    ctx.fillRect(left, top, xM-left, yM-top);
+    // 右下（高稼働・低修繕）: 優良物件
+    ctx.fillStyle = 'rgba(56,161,105,0.07)';
+    ctx.fillRect(xM, yM, right-xM, bottom-yM);
+    // 左下（低稼働・低修繕）: 空室対策が必要
+    ctx.fillStyle = 'rgba(49,130,206,0.07)';
+    ctx.fillRect(left, yM, xM-left, bottom-yM);
+
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(xM,top); ctx.lineTo(xM,bottom); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(left,yM); ctx.lineTo(right,yM); ctx.stroke();
+
+    ctx.font = 'bold 11px Hiragino Sans, sans-serif';
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.textAlign = 'right';
+    ctx.fillText('修繕費に注意', right - 8, top + 18);
+    ctx.textAlign = 'left';
+    ctx.fillText('要検討', left + 8, top + 18);
+    ctx.textAlign = 'right';
+    ctx.fillText('優良物件', right - 8, bottom - 8);
+    ctx.textAlign = 'left';
+    ctx.fillText('空室対策が必要', left + 8, bottom - 8);
+
+    ctx.restore();
+  }
+};
+
+// plugin: draw property name labels on scatter points
+const pointLabelPlugin = {
+  id: 'pointLabels',
+  afterDraw(chart) {
+    const {ctx, scales: {x, y}} = chart;
+    chart.data.datasets.forEach(ds => {
+      ds.data.forEach(pt => {
+        const px = x.getPixelForValue(pt.x);
+        const py = y.getPixelForValue(pt.y);
+        ctx.save();
+        ctx.font = '10px Hiragino Sans, sans-serif';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'left';
+        ctx.fillText(pt.label, px + 7, py + 4);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+const scatterData = [
+  { x: 100, y: 4,  label: 'Aマンション' },
+  { x: 98,  y: 7,  label: 'Bアパート' },
+  { x: 90,  y: 26, label: 'Cマンション' },
+  { x: 75,  y: 7,  label: 'Dアパート' },
+  { x: 83,  y: 58, label: 'Eマンション' },
+  { x: 50,  y: 50, label: 'Fアパート' },
+];
+
+function quadColor(px, py) {
+  if (px >= 85 && py < 20) return '#38a169';
+  if (px >= 85 && py >= 20) return '#ed8936';
+  if (px < 85 && py < 20) return '#3182ce';
+  return '#e53e3e';
+}
+
+new Chart(document.getElementById('scatterChart'), {
+  type: 'scatter',
+  plugins: [quadPlugin, pointLabelPlugin],
+  data: {
+    datasets: [{
+      data: scatterData,
+      backgroundColor: scatterData.map(p => quadColor(p.x, p.y)),
+      pointRadius: 7,
+      pointHoverRadius: 9,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const p = ctx.raw;
+            return p.label + '：稼働率 ' + p.x + '% ／ 修繕費率 ' + p.y + '%';
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 40, max: 110,
+        title: { display: true, text: '稼働率（%）', font: { size: 10 } },
+        grid: { color: '#f0eeea' },
+        ticks: { callback: v => v + '%' }
+      },
+      y: {
+        min: 0, max: 70,
+        title: { display: true, text: '修繕費率（%）', font: { size: 10 } },
+        grid: { color: '#f0eeea' },
+        ticks: { callback: v => v + '%' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
