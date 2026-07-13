@@ -261,26 +261,61 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   show('uploadSection'); hide('resultsSection'); hide('loadingSection');
 });
 
+// ---- Error display ----
+function showError(msg) {
+  hide('loadingSection');
+  show('uploadSection');
+  let el = document.getElementById('errMsg');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'errMsg';
+    el.style.cssText = 'color:#e53e3e;font-size:13px;margin-top:14px;padding:12px 16px;border:1px solid #e53e3e;background:#fff';
+    document.getElementById('uploadSection').appendChild(el);
+  }
+  el.textContent = msg;
+}
+
 // ---- Main flow ----
 function go(file) {
+  const errEl = document.getElementById('errMsg');
+  if (errEl) errEl.textContent = '';
   hide('uploadSection'); show('loadingSection');
   activate('s1');
+
+  if (typeof Papa === 'undefined') {
+    showError('ライブラリの読み込みに失敗しました。ページを再読み込みしてください。');
+    return;
+  }
+
   Papa.parse(file, {
     header: true, skipEmptyLines: true,
     complete(res) {
-      done('s1'); activate('s2');
-      const m = crunch(res.data);
-      setTimeout(() => {
-        done('s2'); activate('s3');
+      try {
+        if (!res.data || res.data.length === 0) {
+          showError('データが読み込めませんでした。CSVの列名（日付・売上・食材費・人件費）を確認してください。');
+          return;
+        }
+        done('s1'); activate('s2');
+        const m = crunch(res.data);
         setTimeout(() => {
-          done('s3');
+          done('s2'); activate('s3');
           setTimeout(() => {
-            hide('loadingSection');
-            render(m);
-            show('resultsSection');
-          }, 500);
+            try {
+              done('s3');
+              setTimeout(() => {
+                hide('loadingSection');
+                render(m);
+                show('resultsSection');
+              }, 500);
+            } catch(e) { showError('表示エラー: ' + e.message); }
+          }, 900);
         }, 900);
-      }, 900);
+      } catch(e) {
+        showError('分析エラー: ' + e.message);
+      }
+    },
+    error(err) {
+      showError('CSVの読み込みに失敗しました: ' + (err.message || err));
     }
   });
 }
