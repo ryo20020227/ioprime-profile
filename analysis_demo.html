@@ -453,10 +453,26 @@ function render(m) {
   const trendTxt = m.trend >= 0 ? `+${m.trend.toFixed(1)}%の上昇` : `${m.trend.toFixed(1)}%の下落`;
   const flStatus = m.fl < 60 ? `目標範囲内（${(60-m.fl).toFixed(1)}pt の余裕あり）`
                               : `目標を<span class="al">${(m.fl-60).toFixed(1)}pt 超過</span>している状態`;
-  const potTxt = m.potential > 0
-    ? `FL比率を60%ラインに収束させるだけで、この期間だけで<span class="hl">¥${m.potential.toLocaleString()}相当のコスト改善</span>が試算できます。`
-    : 'FL比率は60%以内で管理できており、コスト面は現状安定しています。';
-  const weekdayImpact = Math.round(m.worst.v * 0.1 * 4);
+
+  // Annual figures
+  const dailyAvg = m.totSales / m.n;
+  const monthlyEst = dailyAvg * 30.5;
+  const flSaveMonthly = m.fl > 60 ? Math.round(monthlyEst * (m.fl - 60) / 100) : 0;
+  const flSaveAnnual  = flSaveMonthly * 12;
+
+  // Weekday (Mon-Thu) improvement
+  const wdAvg = m.dAvg.slice(1,5).filter(v=>v>0);
+  const wdMeanPerDay = wdAvg.reduce((a,b)=>a+b,0) / (wdAvg.length||1);
+  const wdDaysPerMonth = 30.5 / 7 * 4;
+  const wdImprovMonthly = Math.round(wdMeanPerDay * 0.10 * wdDaysPerMonth);
+  const wdImprovAnnual  = wdImprovMonthly * 12;
+
+  const totalMonthly = flSaveMonthly + wdImprovMonthly;
+  const totalAnnual  = flSaveAnnual  + wdImprovAnnual;
+
+  const flRow = flSaveMonthly > 0
+    ? `<tr><td>FL比率改善（${m.fl.toFixed(1)}%→60%）</td><td>¥${flSaveMonthly.toLocaleString()}</td><td>¥${flSaveAnnual.toLocaleString()}</td></tr>`
+    : `<tr><td>FL比率（目標範囲内）</td><td>—</td><td>—</td></tr>`;
 
   document.getElementById('reportBody').innerHTML = `
 <div class="report-sec">
@@ -471,24 +487,48 @@ function render(m) {
 <div class="report-sec">
   <div class="report-sec-title">■ 売上構造について</div>
   <div class="report-text">
-    <strong>${m.best.n}曜日</strong>と<strong>${m.worst.n}曜日</strong>の平均売上差は
-    ¥${(m.best.v-m.worst.v).toLocaleString()}あります。
     曜日ダミー変数の回帰係数を見ると、金・土の押し上げ効果が週間売上の中で突出しており、
-    現状は週末需要への依存度が高い収益構造といえます。
-    この偏りを放置すると、連休・天候・近隣競合の影響を受けやすい体質が続きます。<br><br>
-    金・土の売上が全体の<span class="hl">${m.wkndRatio}%</span>を占めている点は、
-    平日の底上げ施策が利益改善に直結することを意味しています。
-    ${m.worst.n}曜日の売上を10%引き上げるだけで、月間換算で<span class="hl">¥${weekdayImpact.toLocaleString()}の増収</span>になります。
+    現状は週末需要への依存度が高い収益構造です。金・土の売上が全体の<span class="hl">${m.wkndRatio}%</span>を占めており、
+    平日（月〜木）の平均売上は¥${Math.round(wdMeanPerDay).toLocaleString()}にとどまっています。<br><br>
+    平日集客を10%改善できれば、月間<span class="hl">¥${wdImprovMonthly.toLocaleString()}の増収</span>が見込めます。
+    この偏りを放置すると連休・天候・近隣競合の影響を受けやすい体質が続くため、
+    施策の優先度は高いと判断しています。
   </div>
 </div>
 <div class="report-sec">
   <div class="report-sec-title">■ FL比率・コスト構造について</div>
   <div class="report-text">
     食材費率${m.fRatio.toFixed(1)}%・人件費率${m.lRatio.toFixed(1)}%（FL合計 ${m.fl.toFixed(1)}%）。<br>
-    Pearson相関で確認したとおり、FL比率と客数の間には有意な負の相関があります（客が少ない日ほど比率が上がる）。
-    これは固定的な人件費がFL比率の乱れを引き起こしている典型で、
-    シフト設計を見直す余地があると判断しています。<br><br>
-    ${potTxt}
+    Pearson相関でFL比率と客数の間に有意な負の相関が確認されており、客数が少ない日に固定人件費が比率を押し上げる構造です。
+    シフト設計の見直しで改善余地があると判断しています。
+  </div>
+</div>
+<div class="report-sec">
+  <div class="report-sec-title">■ 改善余地の試算</div>
+  <div class="report-text">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:8px">
+      <thead>
+        <tr style="border-bottom:2px solid #1a1a2e;text-align:left">
+          <th style="padding:8px 12px;font-weight:600">改善項目</th>
+          <th style="padding:8px 12px;font-weight:600">月間効果（試算）</th>
+          <th style="padding:8px 12px;font-weight:600">年間効果（試算）</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${flRow}
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">平日集客10%改善</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">¥${wdImprovMonthly.toLocaleString()}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #eee">¥${wdImprovAnnual.toLocaleString()}</td>
+        </tr>
+        <tr style="font-weight:700;background:#f8f8f5">
+          <td style="padding:10px 12px">合計</td>
+          <td style="padding:10px 12px"><span class="hl">¥${totalMonthly.toLocaleString()}</span></td>
+          <td style="padding:10px 12px"><span class="hl">¥${totalAnnual.toLocaleString()}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:11px;color:#999;margin-top:8px">※ 試算は当期データの月次換算をベースとした推計値です。</div>
   </div>
 </div>
 <div class="report-sec">
