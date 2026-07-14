@@ -239,6 +239,73 @@
       margin-top: 20px;
     }
 
+    /* FOR WHO */
+    .forwho-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .forwho-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .forwho-check {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      background: #1a1a1a;
+      color: #f7f5f2;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    /* FAQ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 4px;
+    }
+
+    .faq-item {
+      border-top: 1px solid #d4d0c8;
+      padding: 18px 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: 1px solid #d4d0c8;
+    }
+
+    .faq-q {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .faq-q::before {
+      content: 'Q. ';
+      color: #888;
+      font-weight: 400;
+    }
+
+    .faq-a {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.75;
+      padding-left: 20px;
+    }
+
     .demo-link {
       display: inline-block;
       border: 1.5px solid #1a1a1a;
@@ -502,6 +569,58 @@
           <strong>納品・継続サポート</strong>
           <span>結果の読み方・活用方法もセットでお伝えします。月次サポートも対応</span>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">FOR WHO</div>
+    <div class="forwho-list">
+      <div class="forwho-item">
+        <div class="forwho-check">✓</div>
+        <div>ExcelやPOSで数字は管理しているが、見方がわからない・活かせていない</div>
+      </div>
+      <div class="forwho-item">
+        <div class="forwho-check">✓</div>
+        <div>売上や利益に問題があると感じているが、どこが原因かはっきりしない</div>
+      </div>
+      <div class="forwho-item">
+        <div class="forwho-check">✓</div>
+        <div>感覚や経験で経営判断をしているが、数字で裏付けを取りたい</div>
+      </div>
+      <div class="forwho-item">
+        <div class="forwho-check">✓</div>
+        <div>施策を打っても効果があったかどうか測れていない</div>
+      </div>
+      <div class="forwho-item">
+        <div class="forwho-check">✓</div>
+        <div>毎月レポートを自分で作る時間が取れない、または作り方がわからない</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">FAQ</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">データがほとんどない状態でも依頼できますか？</div>
+        <div class="faq-a">はい、対応できます。何をどう記録すべきかの設計（サービス01）から始めることが可能です。まず現状を確認した上でご提案します。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">ExcelやPOSのデータをそのまま使えますか？</div>
+        <div class="faq-a">はい。既存のフォーマットに合わせて対応します。新しいツールへの移行は不要です。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">初回の分析まで、どのくらいかかりますか？</div>
+        <div class="faq-a">データが整っている場合、診断から初回レポート納品まで2〜4週間が目安です。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">社内データの共有に不安があります。</div>
+        <div class="faq-a">秘密保持契約（NDA）の締結に対応しています。データの取り扱いについては事前にご説明します。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">月次サポートは途中で終了できますか？</div>
+        <div class="faq-a">はい、1ヶ月単位での契約です。長期縛りはありません。</div>
       </div>
     </div>
   </div>
