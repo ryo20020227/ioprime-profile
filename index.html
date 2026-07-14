@@ -294,6 +294,33 @@
     /* Demo link */
     .demo-link-wrap {
       margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Output section */
+    .output-intro {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .output-preview-link {
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .output-preview-link img {
+      width: 100%;
+      height: auto;
+      border: 1px solid #d4d0c8;
+      display: block;
+    }
+
+    .section-note {
+      margin-top: 16px;
     }
 
     /* FOR WHO */
@@ -582,20 +609,20 @@
         <div class="service-price">5〜15万円 / 月</div>
       </div>
     </div>
-    <div class="note-box" style="margin-top:16px;">
+    <div class="note-box section-note">
       ご予算や必要な範囲に応じて、上記以外の形でのデータ活用もご提案できます。まずはお気軽にご相談ください。
     </div>
   </div>
 
   <div class="section">
     <div class="section-label">OUTPUT</div>
-    <p style="font-size:14px; color:#444; line-height:1.8; margin-bottom:16px;">
+    <p class="output-intro">
       実際の納品物に近いサンプルです。統計分析レポート・ダッシュボード・物件管理ツールなど、業種に合わせてゼロから構築します。既存のExcelや管理フォーマットに合わせた形での対応も可能です。
     </p>
-    <a href="./demo.html" target="_blank" style="display:block;margin-bottom:20px;">
-      <img src="./output_preview.png" alt="ダッシュボードサンプルのプレビュー" style="width:100%;height:auto;border:1px solid #d4d0c8;display:block;">
+    <a href="./demo.html" target="_blank" class="output-preview-link">
+      <img src="./output_preview.png" alt="ダッシュボードサンプルのプレビュー">
     </a>
-    <div class="demo-link-wrap" style="display:flex;gap:12px;flex-wrap:wrap;">
+    <div class="demo-link-wrap">
       <a class="demo-link" href="./analysis_demo.html" target="_blank">CSV分析デモ（飲食）→</a>
       <a class="demo-link" href="./demo.html" target="_blank">ダッシュボードサンプル →</a>
       <a class="demo-link" href="./demo_realestate.html" target="_blank">不動産管理サンプル →</a>
