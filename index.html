@@ -212,6 +212,55 @@
       flex: 1;
     }
 
+    .service-toggle {
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: 0.03em;
+      list-style: none;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .service-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .service-toggle::after {
+      content: "→";
+      transition: transform 0.2s;
+    }
+
+    details[open] .service-toggle::after {
+      transform: rotate(90deg);
+    }
+
+    .service-flow {
+      font-size: 11.5px;
+      color: #666;
+      line-height: 1.8;
+      margin: -4px 0 14px;
+      padding: 12px 14px;
+      background: #efece6;
+      border-left: 2px solid #1a1a1a;
+    }
+
+    .service-flow ol {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    .service-flow li {
+      margin-bottom: 4px;
+    }
+
+    .service-flow li:last-child {
+      margin-bottom: 0;
+    }
+
     .service-price {
       font-size: 12px;
       font-weight: 700;
@@ -621,6 +670,17 @@
         <div class="service-persona"><span class="service-persona-label">こんな方に</span>何を記録すべきか分からない / データが散らかっていて使えない</div>
         <div class="service-desc">記録の仕方・項目を設計し、すぐに使えるテンプレートを作成します。データがない状態からでも対応できます。</div>
         <div class="service-result">集計・分析に使えるデータが手に入ります。自動でダッシュボード化したい場合は02へ進めます。</div>
+        <details class="service-details">
+          <summary class="service-toggle">詳しく見る</summary>
+          <div class="service-flow">
+            <ol>
+              <li>ヒアリングで現状のデータ・記録の仕方を確認</li>
+              <li>何を・どの粒度で記録すべきか設計</li>
+              <li>すぐ使えるテンプレートを納品</li>
+              <li>運用開始後、必要に応じて調整。自動化したくなったら02へ</li>
+            </ol>
+          </div>
+        </details>
         <div class="service-price">10〜30万円</div>
       </div>
       <div class="service">
@@ -629,14 +689,36 @@
         <div class="service-persona"><span class="service-persona-label">こんな方に</span>データはあるが、毎回手作業で集計・グラフ化している</div>
         <div class="service-desc">データの整備からダッシュボード構築まで一括で行います。あとは簡単なデータのアップロードだけで、自動的に数字を確認できる仕組みをゼロから作ります。</div>
         <div class="service-result">毎回の手作業での集計・グラフ化が不要になります。</div>
+        <details class="service-details">
+          <summary class="service-toggle">詳しく見る</summary>
+          <div class="service-flow">
+            <ol>
+              <li>01で整えたデータ(または既存データ)を確認</li>
+              <li>見るべき指標とダッシュボードの構成を設計</li>
+              <li>アップロードするだけで自動更新される仕組みを構築</li>
+              <li>納品後は、毎回のデータアップロードだけで数字を確認可能に</li>
+            </ol>
+          </div>
+        </details>
         <div class="service-price">30〜50万円</div>
       </div>
       <div class="service">
         <div class="service-num">03</div>
         <div class="service-name">データ運用サポート</div>
-        <div class="service-persona"><span class="service-persona-label">こんな方に</span>基盤はできたが読み解く時間がない / 継続的にプロの目で見てほしい</div>
+        <div class="service-persona"><span class="service-persona-label">こんな方に</span>単発の分析では気づけない、感覚とのズレや変化を継続的に把握したい</div>
         <div class="service-desc">毎月のデータをもとに統計分析を行い、売上構造の変化・コストの異常・改善余地を定量化してレポートで納品します。</div>
         <div class="service-result">月1回のミーティングで、数字の読み方と次の打ち手が分かります。</div>
+        <details class="service-details">
+          <summary class="service-toggle">詳しく見る</summary>
+          <div class="service-flow">
+            <ol>
+              <li>毎月データを共有いただく</li>
+              <li>統計的に分析し、変化や異常を数値で確認</li>
+              <li>レポートを作成</li>
+              <li>月1回のミーティングで、内容と次の打ち手を一緒に検討</li>
+            </ol>
+          </div>
+        </details>
         <div class="service-price">5〜15万円 / 月</div>
       </div>
     </div>
