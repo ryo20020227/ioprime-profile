@@ -242,7 +242,10 @@
       border-bottom: 1px dashed #3a3a3a;
     }
     .service:nth-child(3) .service-desc,
-    .service:nth-child(3) .service-result { margin-bottom: 0; }
+    .service:nth-child(3) .service-result {
+      grid-column: 2 / -1;
+      margin-bottom: 0;
+    }
 
     .service-name {
       font-family: var(--serif);
@@ -1046,8 +1049,7 @@
       </div>
     </div>
     <div class="note-box section-note">
-      <!-- TODO: 01・02の下限価格（「◯万円〜」）が決まり次第、ここに追記する。現状はFAQの保守プラン月9,000円が唯一の具体額。 -->
-      料金は範囲と内容によって変わるため、無料診断のときに金額をお伝えします。02（分析基盤の構築）は01（データ収集設計）の内容を含みます。納品後のホスティングと保守は月9,000円から。<br>
+      料金は範囲と内容によって変わるため、無料診断のときに金額をお伝えします。02（分析基盤の構築）は01（データ収集設計）の内容を含みます。<br>
       ご予算に合わせて、上記以外の形でのデータ活用もご提案できます。
     </div>
   </div>
