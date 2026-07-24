@@ -406,6 +406,13 @@
       background: var(--accent);
     }
 
+    .ind-other {
+      font-size: 12px;
+      color: #8a857c;
+      margin-top: 12px;
+      max-width: var(--measure);
+    }
+
     .ind-flow-arrow {
       color: #bbb;
       font-size: 11px;
@@ -1114,38 +1121,39 @@
     <h2 class="section-lead">ご自身の業種を選んでください</h2>
     <div class="ind-tabs" role="tablist" aria-label="業種を選ぶ">
       <button type="button" class="ind-tab is-active" role="tab" id="ind-tab-0" aria-controls="ind-panel-0" aria-selected="true" data-ind="0">飲食</button>
-      <button type="button" class="ind-tab" role="tab" id="ind-tab-1" aria-controls="ind-panel-1" aria-selected="false" tabindex="-1" data-ind="1">小売・EC</button>
-      <button type="button" class="ind-tab" role="tab" id="ind-tab-2" aria-controls="ind-panel-2" aria-selected="false" tabindex="-1" data-ind="2">建設・工務店</button>
-      <button type="button" class="ind-tab" role="tab" id="ind-tab-3" aria-controls="ind-panel-3" aria-selected="false" tabindex="-1" data-ind="3">士業</button>
-      <button type="button" class="ind-tab" role="tab" id="ind-tab-4" aria-controls="ind-panel-4" aria-selected="false" tabindex="-1" data-ind="4">不動産</button>
+      <button type="button" class="ind-tab" role="tab" id="ind-tab-1" aria-controls="ind-panel-1" aria-selected="false" tabindex="-1" data-ind="1">宿泊</button>
+      <button type="button" class="ind-tab" role="tab" id="ind-tab-2" aria-controls="ind-panel-2" aria-selected="false" tabindex="-1" data-ind="2">不動産</button>
+      <button type="button" class="ind-tab" role="tab" id="ind-tab-3" aria-controls="ind-panel-3" aria-selected="false" tabindex="-1" data-ind="3">小売・EC</button>
+      <button type="button" class="ind-tab" role="tab" id="ind-tab-4" aria-controls="ind-panel-4" aria-selected="false" tabindex="-1" data-ind="4">建設・工務店</button>
       <button type="button" class="ind-tab" role="tab" id="ind-tab-5" aria-controls="ind-panel-5" aria-selected="false" tabindex="-1" data-ind="5">製造</button>
     </div>
     <div class="ind-panel">
       <div class="ind-panel-desc" role="tabpanel" id="ind-panel-0" aria-labelledby="ind-tab-0" data-ind="0">
-        人気メニューほど、実は儲かっていないことがあります。原価と客数のズレを見える形にして、シフトと仕入れの無駄をなくします。
-        <div class="ind-flow"><span class="ind-flow-step">見えない原価</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">原価×客数を可視化</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">利益率が上がる</span></div>
+        よく出るメニューほど、粗利では下位ということがあります。売れた数ではなく（単価−原価）×注文数で並べると、推すべき一品が変わります。
+        <div class="ind-flow"><span class="ind-flow-step">売れた数で判断</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">粗利×注文数で並べ替え</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">同じ客数で粗利が増える</span></div>
       </div>
       <div class="ind-panel-desc" role="tabpanel" id="ind-panel-1" aria-labelledby="ind-tab-1" data-ind="1">
-        売れている商品が、利益を圧迫しているケースもあります。勘だけに頼らず、欠品と過剰在庫の両方を減らします。
-        <div class="ind-flow"><span class="ind-flow-step">感覚での発注</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">需要をデータで予測</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">在庫が減ってキャッシュが回る</span></div>
+        値下げして稼働率を上げても、売上が落ちる日があります。稼働率×客室単価（RevPAR）で見れば、その値下げが正解だったか分かります。
+        <div class="ind-flow"><span class="ind-flow-step">稼働率だけ見る</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">RevPARで日別に見る</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">安売りせずに埋まる</span></div>
       </div>
       <div class="ind-panel-desc" role="tabpanel" id="ind-panel-2" aria-labelledby="ind-tab-2" data-ind="2">
-        見積もりの時点であったはずの利益が、完成時にはゼロになっている。珍しい話ではありません。原価のズレを早い段階でつかみ、次の見積もりの精度を上げます。
-        <div class="ind-flow"><span class="ind-flow-step">どんぶり勘定の見積もり</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">案件ごとの原価を可視化</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">赤字工事を未然に防げる</span></div>
+        空室の理由のうち、転勤や結婚は防げません。設備や近隣トラブルが原因の退去だけを切り分ければ、打つべき手がはっきりします。
+        <div class="ind-flow"><span class="ind-flow-step">退去理由を一括り</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">防げる/防げない退去を分類</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">手残りが安定する</span></div>
       </div>
       <div class="ind-panel-desc" role="tabpanel" id="ind-panel-3" aria-labelledby="ind-tab-3" data-ind="3">
-        どの集客チャネルが実際の受任につながっているか、数字で追えていない事務所は少なくありません。データで絞り込み、採算の悪い案件を早めに見極めます。
-        <div class="ind-flow"><span class="ind-flow-step">チャネル効果が見えない</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">受任率をチャネル別に分析</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">集客コストが下がる</span></div>
+        店舗と通販で在庫を別々に持つと、片方で欠品しながら片方で余ります。チャネルをまたいで在庫と粗利を合算すると、動かすべき商品が見えます。
+        <div class="ind-flow"><span class="ind-flow-step">店舗と通販が別管理</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">在庫を横断で集計</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">余剰在庫が現金に戻る</span></div>
       </div>
       <div class="ind-panel-desc" role="tabpanel" id="ind-panel-4" aria-labelledby="ind-tab-4" data-ind="4">
-        空室の理由のうち、転勤や結婚は防げません。でも設備や近隣トラブルが原因なら、対応次第で防げます。この切り分けが、次の対策を決めます。
-        <div class="ind-flow"><span class="ind-flow-step">退去理由を一括り</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">防げる/防げない退去を分類</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">空室期間が縮まる</span></div>
+        見積もりでは出ていた利益が、完成時には消えている。珍しくありません。原価のズレを早い段階でつかみ、次の見積もりに返します。
+        <div class="ind-flow"><span class="ind-flow-step">実行予算と実績が別々</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">案件ごとに原価を追う</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">赤字工事を防げる</span></div>
       </div>
       <div class="ind-panel-desc" role="tabpanel" id="ind-panel-5" aria-labelledby="ind-tab-5" data-ind="5">
-        どの工程が原因かの判断が、特定の人の感覚に頼っているケースは少なくありません。データで工程を特定し、原価を圧迫する要因を潰します。
-        <div class="ind-flow"><span class="ind-flow-step">属人化した原因判断</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">工程データで原因を特定</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">不良コストが減る</span></div>
+        どの受注が儲かっているかは、段取り替えや手直しの時間まで拾わないと出ません。工程の実績を受注ごとに集計し、赤字の仕事を特定します。
+        <div class="ind-flow"><span class="ind-flow-step">原価は完成後に感覚で</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step">受注ごとに工数を集計</span><span class="ind-flow-arrow">→</span><span class="ind-flow-step is-goal">赤字の仕事が減る</span></div>
       </div>
     </div>
+    <p class="ind-other">上記以外の業種でも、数字が残っていればご相談いただけます。</p>
   </div>
 
   <div class="section full section-output">
@@ -1372,13 +1380,15 @@
   }
 
   /* ---- 業種選択：選んだ業種をページ全体に反映する ---- */
+  // 業種ごとの派生表示。パネル本文は HTML 側の .ind-panel-desc にあるので、
+  // 業種を足す・並べ替える・主題を変えるときは必ず両方そろえて直すこと。
   var IND = [
-    { name: '飲食',        dash: 'メニュー別の利益、見えていますか（サンプル）',   flag: '客数減を検知',       cta: '飲食店の数字について、30分話しませんか。',   sticky: '飲食店の数字、30分で棚卸しします。' },
-    { name: '小売・EC',    dash: '在庫と利益、両方見えていますか（サンプル）',     flag: '欠品の兆候を検知',   cta: '小売・ECの数字について、30分話しませんか。', sticky: '在庫と利益、30分で棚卸しします。' },
-    { name: '建設・工務店', dash: '案件ごとの利益、追えていますか（サンプル）',     flag: '原価超過の兆候',     cta: '工事案件の数字について、30分話しませんか。', sticky: '案件ごとの利益、30分で棚卸しします。' },
-    { name: '士業',        dash: 'チャネル別の受任、見えていますか（サンプル）',   flag: '受任率の低下を検知', cta: '事務所の数字について、30分話しませんか。',   sticky: 'チャネル別の受任、30分で棚卸しします。' },
-    { name: '不動産',      dash: '空室の理由、分けて見ていますか（サンプル）',     flag: '退去の集中を検知',   cta: '物件の数字について、30分話しませんか。',     sticky: '空室と退去理由、30分で棚卸しします。' },
-    { name: '製造',        dash: '工程別の不良コスト、見えていますか（サンプル）', flag: '特定工程の不良増',   cta: '製造現場の数字について、30分話しませんか。', sticky: '工程別の原価、30分で棚卸しします。' }
+    { name: '飲食',        dash: 'メニュー別の粗利、見えていますか（サンプル）',   flag: '低粗利の売れ筋を検知', cta: '飲食店の数字について、30分話しませんか。', sticky: 'メニュー別の粗利、30分で棚卸しします。' },
+    { name: '宿泊',        dash: '値下げの損得、見えていますか（サンプル）',       flag: 'RevPARの低下を検知',   cta: '宿の数字について、30分話しませんか。',     sticky: '稼働率と客室単価、30分で棚卸しします。' },
+    { name: '不動産',      dash: '空室の理由、分けて見ていますか（サンプル）',     flag: '退去の集中を検知',     cta: '物件の数字について、30分話しませんか。',   sticky: '空室と手残り、30分で棚卸しします。' },
+    { name: '小売・EC',    dash: 'チャネル別の在庫と粗利、見えていますか（サンプル）', flag: '欠品と余剰を検知',  cta: '小売・ECの数字について、30分話しませんか。', sticky: '在庫と粗利、30分で棚卸しします。' },
+    { name: '建設・工務店', dash: '案件ごとの利益、追えていますか（サンプル）',     flag: '原価超過の兆候',       cta: '工事案件の数字について、30分話しませんか。', sticky: '案件ごとの利益、30分で棚卸しします。' },
+    { name: '製造',        dash: '受注ごとの採算、見えていますか（サンプル）',     flag: '赤字受注の兆候',       cta: '製造現場の数字について、30分話しませんか。', sticky: '受注ごとの採算、30分で棚卸しします。' }
   ];
 
   var tabs   = Array.prototype.slice.call(document.querySelectorAll('.ind-tab'));
@@ -1408,7 +1418,7 @@
 
   if (tabs.length) {
     var saved = null;
-    try { saved = localStorage.getItem('ioprime.ind'); } catch (e) {}
+    try { saved = localStorage.getItem('ioprime.ind.v2'); } catch (e) {}
     var initial = (saved !== null && IND[+saved]) ? +saved : 0;
     applyInd(initial, saved !== null);
 
@@ -1416,7 +1426,7 @@
       tab.addEventListener('click', function () {
         var i = +tab.dataset.ind;
         applyInd(i, true);
-        try { localStorage.setItem('ioprime.ind', String(i)); } catch (e) {}
+        try { localStorage.setItem('ioprime.ind.v2', String(i)); } catch (e) {}
       });
       tab.addEventListener('keydown', function (e) {
         var i = tabs.indexOf(tab), n = null;
