@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宿泊・民泊 運営ダッシュボード｜i.o.prime</title>
+<meta name="description" content="民泊・簡易宿所オーナー向け運営ダッシュボードのサンプル。稼働率・ADR・RevPAR、販売チャネル別の手数料後実収、連泊率と清掃費の関係を可視化します。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ryo20020227.github.io/ioprime-profile/demo_lodging.html">
+<meta property="og:title" content="宿泊・民泊 運営ダッシュボード（サンプル）｜i.o.prime">
+<meta property="og:description" content="稼働率を上げても手元に残らない理由を、RevPARとチャネル別手数料、連泊率から切り分けます。数字の読み方はこちらが解説します。">
+<meta property="og:image" content="https://ryo20020227.github.io/ioprime-profile/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
+:root{
+  --ink:#1a1a1a;
+  --bg:#f7f5f2;
+  --line:#d4d0c8;
+  --accent:#33415c;
+  --accent-tint:#5f77a6;
+  --good:#38a169;
+  --warn:#ed8936;
+  --bad:#e53e3e;
+  --mute:#d1d5db;
+  --grid:#f0eeea;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
+
+.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid var(--ink);margin-bottom:32px}
+.header-left h1{font-size:20px;font-weight:700;letter-spacing:0.02em}
+.header-left .period{font-size:11.5px;color:#8a857c;margin-top:5px}
+.header-right{font-size:11px;color:#a8a29a;letter-spacing:0.12em;font-weight:700}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
+.kpi{background:#fff;padding:20px 22px}
+.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a857c;margin-bottom:10px}
+.kpi-value{font-size:28px;font-weight:600;letter-spacing:-0.02em}
+.kpi-value.green{color:var(--good)}
+.kpi-value.orange{color:var(--warn)}
+.kpi-value.red{color:var(--bad)}
+.kpi-sub{font-size:11px;color:#999;margin-top:4px}
+
+.section-label{font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:#8a857c;margin-bottom:16px}
+
+/* 所見 — 他のデモと同じ形にそろえてある */
+.note{background:#fff;border:1px solid var(--line);padding:22px 26px;margin-bottom:32px}
+.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #e8e4de;margin-bottom:14px}
+.note-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
+.note-by{font-size:11px;color:#aaa}
+.note p{font-size:13.5px;line-height:1.95;color:#333;max-width:62em}
+.note p+p{margin-top:12px}
+.note strong{font-weight:700;color:var(--ink)}
+
+.chart-row{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
+.chart-row.col2{grid-template-columns:1fr 1fr}
+.chart-row.col3-1{grid-template-columns:2fr 1fr}
+.chart-panel{background:#fff;padding:24px}
+.chart-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.chart-sub{font-size:11px;color:#999;margin-bottom:18px;line-height:1.7}
+.chart-wrap{position:relative}
+.chart-wrap-fix{position:relative;height:190px}
+/* グラフ描画ライブラリに接続できなかったときの表示 */
+.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#8a857c;line-height:1.9;text-align:center}
+
+.legend-note{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#555}
+.legend-dot{width:10px;height:10px;flex-shrink:0}
+
+/* 提供の仕方 */
+.spec{background:#fff;border:1px solid var(--line);padding:24px 28px;margin-bottom:32px}
+.spec dl{display:grid;grid-template-columns:118px 1fr;gap:16px 24px;margin:0}
+.spec dt{font-size:12px;font-weight:700;color:var(--accent);padding-top:2px}
+.spec dd{font-size:13px;line-height:1.9;color:#333;margin:0;max-width:60em}
+
+.cta{border:1.5px solid var(--accent);background:#fff;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.cta-title{font-size:15px;font-weight:700;color:var(--accent)}
+.cta-sub{font-size:12px;color:#666;margin-top:4px}
+.cta-btn{border:1.5px solid var(--accent);padding:10px 24px;font-size:12px;font-weight:700;text-decoration:none;color:var(--accent);white-space:nowrap;flex-shrink:0}
+.cta-btn:hover{background:var(--accent);color:var(--bg)}
+
+.footer{text-align:right;font-size:10px;letter-spacing:0.12em;margin-top:20px}
+.footer a{color:#b5afa4;text-decoration:none}
+.footer a:hover{color:var(--accent)}
+
+@media(max-width:700px){
+  .wrap{padding:20px 14px 48px}
+  .header{flex-direction:column;align-items:flex-start;gap:4px}
+  .header-left h1{font-size:16px}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .kpi{padding:14px 14px}
+  .kpi-value{font-size:20px}
+  .chart-row.col2,.chart-row.col3-1{grid-template-columns:1fr}
+  .chart-panel{padding:16px}
+  .note{padding:18px 16px}
+  .spec{padding:18px 16px}
+  .spec dl{grid-template-columns:1fr;gap:0}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #e8e4de}
+  .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
+  .spec dd{padding-top:4px}
+  .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>宿泊・民泊 運営ダッシュボード</h1>
+      <div class="period" id="period"></div>
+    </div>
+    <div class="header-right">i.o.prime</div>
+  </div>
+
+  <noscript>
+    <div class="chart-na" style="margin-bottom:32px">
+      このページは数値とグラフをJavaScriptで組み立てています。
+      ブラウザの設定でJavaScriptを有効にしてご覧ください。
+    </div>
+  </noscript>
+
+  <div class="section-label">今月の概況</div>
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">稼働率</div>
+      <div class="kpi-value" id="k1"></div>
+      <div class="kpi-sub" id="k1s"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ADR（1泊単価）</div>
+      <div class="kpi-value" id="k2"></div>
+      <div class="kpi-sub" id="k2s"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">RevPAR</div>
+      <div class="kpi-value" id="k3"></div>
+      <div class="kpi-sub" id="k3s"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">手残り</div>
+      <div class="kpi-value green" id="k4"></div>
+      <div class="kpi-sub" id="k4s"></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <div class="note-head">
+      <div class="note-badge">所見</div>
+      <div class="note-by" id="noteBy"></div>
+    </div>
+    <div id="noteBody"></div>
+  </div>
+
+  <div class="section-label">稼働状況</div>
+  <div class="chart-row col3-1">
+    <div class="chart-panel">
+      <div class="chart-title">物件別 稼働率</div>
+      <div class="chart-sub" id="occSub"></div>
+      <div class="chart-wrap-fix"><canvas id="occChart"></canvas></div>
+      <div class="legend-note">
+        <div class="legend-item"><div class="legend-dot" style="background:#33415c"></div>簡易宿所（通年営業）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#5f77a6"></div>住宅宿泊事業（年180日）</div>
+      </div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">年180日枠の消化</div>
+      <div class="chart-sub">住宅宿泊事業の届出物件のみ。年初からの累計</div>
+      <div class="chart-wrap-fix"><canvas id="capChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">収支の内訳</div>
+  <div class="chart-row col3-1">
+    <div class="chart-panel">
+      <div class="chart-title">物件別 収支内訳</div>
+      <div class="chart-sub">売上から手数料・清掃費・運営代行費・光熱費・賃料を差し引いた手残りを物件ごとに比較</div>
+      <div class="chart-wrap"><canvas id="plChart" height="200"></canvas></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">チャネル別の実収</div>
+      <div class="chart-sub" id="chSub"></div>
+      <div class="chart-wrap-fix"><canvas id="chChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">単価と予約の中身</div>
+  <div class="chart-row col2">
+    <div class="chart-panel">
+      <div class="chart-title">日別 稼働棟数・ADR・RevPAR</div>
+      <div class="chart-sub" id="dailySub"></div>
+      <div class="chart-wrap"><canvas id="dailyChart" height="230"></canvas></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">宿泊日数別の予約件数と、1泊あたり手残り</div>
+      <div class="chart-sub">清掃費は1予約につき1回かかるため、短い予約ほど1泊あたりの手残りが薄くなります</div>
+      <div class="chart-wrap"><canvas id="stayChart" height="230"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">提供の仕方</div>
+  <div class="spec">
+    <dl>
+      <dt>元データ</dt>
+      <dd>Airbnbや各OTAの予約一覧（CSV書き出し）と、清掃・運営代行の請求書。1か月分から作成できます。形式が揃っていなくても、こちらで整えます。</dd>
+
+      <dt>何を見せるか</dt>
+      <dd>打ち合わせでご要望をうかがってから決めます。「どの数字を毎月見たいか」が固まっていない段階で構いません。何を可視化すると判断に効くのかを整理するところから、一緒に進めます。</dd>
+
+      <dt>数字の読み方</dt>
+      <dd>統計やデータ分析の知識は必要ありません。次にどの物件から手を入れるべきかは、上の「所見」の形で毎回こちらが言葉にしてお渡しします。</dd>
+
+      <dt>納品形式</dt>
+      <dd>このページと同じWeb版のほか、PDFでの納品にも対応します。金融機関や顧問税理士に見せる資料としてもお使いいただけます。</dd>
+    </dl>
+  </div>
+
+  <div class="cta">
+    <div class="cta-body">
+      <div class="cta-title">この分析をあなたの物件で</div>
+      <div class="cta-sub">Airbnbやサイトコントローラーの予約データから、同じダッシュボードを作成します。まずは30分の無料診断から。</div>
+    </div>
+    <a class="cta-btn" href="https://line.me/ti/p/RztAof3Bqm" target="_blank" rel="noopener">LINEで相談する →</a>
+  </div>
+
+  <div class="footer"><a href="./index.html">i.o.prime — DATA ANALYSIS / CONSULTING</a></div>
+</div>
+
+<script>
+const ACCENT = '#33415c', TINT = '#5f77a6';
+const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#d1d5db', YEL = '#ecc94b', PUR = '#805ad5';
+
+/* =========================================================================
+   1. 元データ
+   画面に出る数値・文章はすべてここから算出する。
+   本文に数字をベタ書きすると、データを触ったときに静かに食い違うため。
+   ========================================================================= */
+const CFG = {
+  area: '京都市内',
+  month: '2026年7月',
+  monthNo: 7,
+  days: 31,
+  airFee:  0.03,   // Airbnb ホスト手数料
+  bkgFee:  0.15,   // Booking.com 手数料
+  mgmtFee: 0.15,   // 運営代行手数料（売上に対して）
+  capDays: 180,    // 住宅宿泊事業の年間営業日数の上限
+  monthsLeft: 5,   // 7月末時点で年内に残っている月数
+};
+
+// 簡易宿所（通年営業）と住宅宿泊事業（年180日上限）の混在ポートフォリオ。
+// used180 は住宅宿泊事業の物件のみ、年初からの累計営業日数。
+const PROPS = [
+  { name:'A棟 町家',      type:'簡易宿所',     nights:26, bookings:10, cleanPer:12000, rent:180000, util:38000, air:400000, bkg:218000, direct:110000, used180:null },
+  { name:'B棟 マンション', type:'住宅宿泊事業', nights:22, bookings:14, cleanPer: 7000, rent: 95000, util:22000, air:240000, bkg:108900, direct: 14100, used180:118 },
+  { name:'C棟 町家',      type:'簡易宿所',     nights:28, bookings: 9, cleanPer:12000, rent:220000, util:45000, air:500000, bkg:285000, direct:167000, used180:null },
+  { name:'D棟 マンション', type:'住宅宿泊事業', nights:19, bookings:12, cleanPer: 7000, rent: 88000, util:20000, air:180000, bkg: 86500, direct: 18500, used180: 96 },
+];
+
+// 日別の稼働棟数と売上。合計は PROPS の泊数・売上と一致する
+const DAILY_N   = [3,4,4,3,3,2,2,3,4,4,3,3,2,3,3,4,4,4,2,2,2,3,4,4,3,2,2,2,3,4,4];
+const DAILY_REV = [67900,103300,123900,92700,67800,47200,45400,67500,98900,116400,85100,65900,47300,68000,67000,61300,123200,117000,42600,42500,43800,66200,68700,124100,89400,46700,46600,47100,64500,62300,117700];
+
+// 予約を宿泊日数で分けたもの。件数計・泊数計は PROPS と一致する
+const STAY = [
+  { label:'1泊',    bookings:18, nights:18 },
+  { label:'2泊',    bookings:14, nights:28 },
+  { label:'3泊',    bookings: 8, nights:24 },
+  { label:'4泊以上', bookings: 5, nights:25 },
+];
+
+/* =========================================================================
+   2. 派生値
+   ========================================================================= */
+const sum = a => a.reduce((x, y) => x + y, 0);
+const yen = v => (v < 0 ? '−¥' : '¥') + Math.abs(Math.round(v)).toLocaleString();
+const man  = v => (v / 10000).toFixed(0) + '万';
+// 目盛りの刻みが1万円未満のグラフ用。man() だと同じラベルが並ぶ
+const man1 = v => (v / 10000).toFixed(1) + '万';
+
+PROPS.forEach(p => {
+  p.rev      = p.air + p.bkg + p.direct;
+  p.fee      = Math.round(p.air * CFG.airFee + p.bkg * CFG.bkgFee);
+  p.clean    = p.cleanPer * p.bookings;
+  p.mgmt     = Math.round(p.rev * CFG.mgmtFee);
+  p.net      = p.rev - p.fee - p.clean - p.mgmt - p.util - p.rent;
+  p.occ      = +(p.nights / CFG.days * 100).toFixed(1);
+  p.adr      = Math.round(p.rev / p.nights);
+  p.revpar   = Math.round(p.rev / CFG.days);
+  p.alos     = +(p.nights / p.bookings).toFixed(2);
+  p.cleanPct = +(p.clean / p.rev * 100).toFixed(1);
+});
+
+const names      = PROPS.map(p => p.name);
+const totNights  = sum(PROPS.map(p => p.nights));
+const totBooking = sum(PROPS.map(p => p.bookings));
+const totRev     = sum(PROPS.map(p => p.rev));
+const totFee     = sum(PROPS.map(p => p.fee));
+const totClean   = sum(PROPS.map(p => p.clean));
+const totMgmt    = sum(PROPS.map(p => p.mgmt));
+const totUtil    = sum(PROPS.map(p => p.util));
+const totRent    = sum(PROPS.map(p => p.rent));
+const totNet     = sum(PROPS.map(p => p.net));
+
+const availNights = CFG.days * PROPS.length;
+const occAll    = totNights / availNights * 100;
+const adrAll    = totRev / totNights;
+const revparAll = totRev / availNights;
+const alosAll   = totNights / totBooking;
+const netRate   = totNet / totRev * 100;
+
+// チャネル別。手数料率が違うので、売上構成と手数料構成がずれる
+const CH = [
+  { label:'Airbnb',      rev: sum(PROPS.map(p => p.air)),    rate: CFG.airFee },
+  { label:'Booking.com', rev: sum(PROPS.map(p => p.bkg)),    rate: CFG.bkgFee },
+  { label:'直販',        rev: sum(PROPS.map(p => p.direct)), rate: 0 },
+].map(c => ({ ...c, fee: Math.round(c.rev * c.rate) }));
+CH.forEach(c => { c.net = c.rev - c.fee; c.revShare = c.rev / totRev * 100; });
+const chFeeTot = sum(CH.map(c => c.fee));
+CH.forEach(c => { c.feeShare = chFeeTot ? c.fee / chFeeTot * 100 : 0; });
+// 手数料の重さが売上構成と最もかけ離れているチャネル
+const chHeavy = [...CH].sort((a, b) => (b.feeShare - b.revShare) - (a.feeShare - a.revShare))[0];
+
+// 手残りが最も薄い物件
+const weakest = [...PROPS].sort((a, b) => a.net - b.net)[0];
+const best    = [...PROPS].sort((a, b) => b.revpar - a.revpar)[0];
+
+// 180日枠。ペースが最も切迫している物件
+const capped  = PROPS.filter(p => p.used180 !== null);
+const tight   = capped.length
+  ? [...capped].sort((a, b) => b.used180 - a.used180)[0] : null;
+
+// 日別。稼働を増やしたのに RevPAR が落ちた日＝値下げで無理に埋めた日
+const dailyAdr = DAILY_REV.map((v, i) => Math.round(v / DAILY_N[i]));
+const dailyRp  = DAILY_REV.map(v => Math.round(v / PROPS.length));
+const dumpDays = [];
+for (let i = 1; i < CFG.days; i++) {
+  if (DAILY_N[i] > DAILY_N[i - 1] && dailyRp[i] < dailyRp[i - 1]) {
+    dumpDays.push({ day: i + 1, from: DAILY_N[i - 1], to: DAILY_N[i],
+                    rpFrom: dailyRp[i - 1], rpTo: dailyRp[i] });
+  }
+}
+
+// 宿泊日数別の1泊あたり手残り。
+// 清掃費は1予約に1回なので、泊数で割ると短い予約ほど重くなる
+const cleanPerBooking = totClean / totBooking;
+const otherPerNight   = (totFee + totMgmt + totUtil + totRent) / totNights;
+STAY.forEach(s => {
+  s.alos    = s.nights / s.bookings;
+  s.netPerN = Math.round(adrAll - cleanPerBooking / s.alos - otherPerNight);
+});
+const stayShort = STAY[0], stayLong = STAY[STAY.length - 1];
+
+/* =========================================================================
+   3. テキストの描画（グラフ描画ライブラリに依存しない）
+   ========================================================================= */
+function txt(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+txt('period', `${CFG.month} ／ ${CFG.area}・${PROPS.length}棟（簡易宿所と住宅宿泊事業の混在） ／ サンプルデータ`);
+txt('k1',  occAll.toFixed(1) + '%');
+txt('k1s', `${totNights} / ${availNights}泊`);
+txt('k2',  yen(adrAll));
+txt('k2s', `${totBooking}件・平均${alosAll.toFixed(2)}泊`);
+txt('k3',  yen(revparAll));
+txt('k3s', `稼働率 × ADR`);
+txt('k4',  yen(totNet));
+txt('k4s', `売上比 ${netRate.toFixed(1)}%`);
+txt('noteBy', `${CFG.month}分 ／ i.o.prime`);
+txt('occSub', `分母は${CFG.days}日で統一。営業区分で色を分けています`);
+txt('chSub', `${chHeavy.label}は売上の${chHeavy.revShare.toFixed(0)}%に対し、手数料では${chHeavy.feeShare.toFixed(0)}%を占めます`);
+txt('dailySub', dumpDays.length
+  ? `棒が稼働棟数。${dumpDays.map(d => CFG.monthNo + '/' + d.day).join('と')}は棟数が増えたのにRevPARが下がっています`
+  : `棒が稼働棟数、線がADRとRevPAR`);
+
+document.getElementById('noteBody').innerHTML = `
+<p>${PROPS.length}棟の稼働率は${occAll.toFixed(1)}%、ADRは${yen(adrAll)}、RevPARは${yen(revparAll)}。
+手残りは${yen(totNet)}で売上の${netRate.toFixed(1)}%です。
+<strong>全体としては回っていますが、棟ごとの差が大きく出ています。</strong></p>
+
+<p>手を入れる優先度が最も高いのは<strong>${weakest.name}</strong>です。
+稼働率${weakest.occ}%に対して手残りは${yen(weakest.net)}、
+最も残っている${best.name}の手残り${yen(best.net)}に対して${(weakest.net / best.net * 100).toFixed(0)}%にとどまります。
+原因は稼働率だけではありません。平均宿泊日数が<strong>${weakest.alos}泊</strong>と短く、
+清掃費が売上の<strong>${weakest.cleanPct}%</strong>を食っています。
+1泊予約を2泊に伸ばすほうが、空いている日を埋めるより効きます。</p>
+
+<p>${dumpDays.length ? `日別で見ると、<strong>${dumpDays.map(d => CFG.monthNo + '/' + d.day).join('と')}は稼働棟数を${dumpDays[0].from}棟から${dumpDays[0].to}棟に増やしたのに、RevPARが${yen(dumpDays[0].rpFrom)}から${yen(dumpDays[0].rpTo)}へ下がっています</strong>。値下げして埋めた分が単価の低下で相殺され、かえって目減りしました。埋めること自体が目的になっていないか、この2日は振り返る価値があります。` : ''}</p>
+
+<p>チャネルでは<strong>${chHeavy.label}が売上の${chHeavy.revShare.toFixed(0)}%に対して、支払った手数料の${chHeavy.feeShare.toFixed(0)}%</strong>を占めています。
+手数料率が${(chHeavy.rate * 100).toFixed(0)}%と他より高いためです。
+この分を直販に振り替えられれば、稼働率を1ポイントも動かさずに手残りが増えます。</p>
+
+${tight ? `<p>${tight.name}は住宅宿泊事業の届出物件で、<strong>年間${CFG.capDays}日のうち${tight.used180}日（${(tight.used180 / CFG.capDays * 100).toFixed(0)}%）を7月末までに使い切っています</strong>。
+残り${CFG.capDays - tight.used180}日を${CFG.monthsLeft}か月で配分すると月${((CFG.capDays - tight.used180) / CFG.monthsLeft).toFixed(1)}日ペースです。
+単価が上がる紅葉期に営業日を残せるか、いまの時点で逆算しておく必要があります。
+<strong>この物件では、稼働率を追うより「限られた日数をいくらで売るか」が勝負です。</strong></p>` : ''}`;
+
+/* =========================================================================
+   4. グラフ
+   CDNが遮断された環境ではライブラリが読めないので、白紙にせず理由を出す
+   ========================================================================= */
+if (typeof Chart === 'undefined') {
+  document.querySelectorAll('.chart-wrap, .chart-wrap-fix').forEach(el => {
+    el.innerHTML = '<div class="chart-na">グラフを読み込めませんでした。'
+      + 'ネットワークの制限で描画ライブラリに接続できていない可能性があります。<br>'
+      + '主要な数値と分析結果は、上の指標と所見をご覧ください。</div>';
+  });
+} else {
+  drawCharts();
+}
+
+function drawCharts() {
+Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
+Chart.defaults.color = '#999';
+
+// --- 物件別 稼働率 ---
+new Chart(document.getElementById('occChart'), {
+  type: 'bar',
+  data: {
+    labels: names,
+    datasets: [{
+      data: PROPS.map(p => p.occ),
+      backgroundColor: PROPS.map(p => p.type === '簡易宿所' ? ACCENT : TINT),
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: {
+        label: ctx => {
+          const p = PROPS[ctx.dataIndex];
+          return [' ' + p.type, ' 稼働率 ' + p.occ + '%（' + p.nights + ' / ' + CFG.days + '泊）',
+                  ' ADR ' + yen(p.adr) + ' ／ RevPAR ' + yen(p.revpar),
+                  ' 平均 ' + p.alos + '泊'];
+        }
+      }}
+    },
+    scales: {
+      x: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#f0eeea' } },
+      y: { grid: { display: false }, ticks: { autoSkip: false, font: { size: 11 } } }
+    }
+  }
+});
+
+// --- 180日枠の消化 ---
+new Chart(document.getElementById('capChart'), {
+  type: 'bar',
+  data: {
+    labels: capped.map(p => p.name),
+    datasets: [
+      { label: '消化済み', data: capped.map(p => p.used180), backgroundColor: TINT, stack: 'a' },
+      { label: '残り',     data: capped.map(p => CFG.capDays - p.used180), backgroundColor: '#e8e5df', stack: 'a' },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: { callbacks: {
+        label: ctx => ' ' + ctx.dataset.label + ' ' + ctx.raw + '日'
+                    + (ctx.datasetIndex === 0 ? '（' + (ctx.raw / CFG.capDays * 100).toFixed(0) + '%）' : '')
+      }}
+    },
+    scales: {
+      x: { stacked: true, max: CFG.capDays, ticks: { callback: v => v + '日' }, grid: { color: '#f0eeea' } },
+      y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+// --- 物件別 収支内訳 ---
+new Chart(document.getElementById('plChart'), {
+  type: 'bar',
+  data: {
+    labels: names,
+    datasets: [
+      { label: '手残り',     data: PROPS.map(p => p.net),   backgroundColor: GOOD, stack: 'a' },
+      { label: '光熱・消耗品', data: PROPS.map(p => p.util),  backgroundColor: YEL,  stack: 'a' },
+      { label: '運営代行費',  data: PROPS.map(p => p.mgmt),  backgroundColor: MUTE, stack: 'a' },
+      { label: '清掃・リネン', data: PROPS.map(p => p.clean), backgroundColor: BAD,  stack: 'a' },
+      { label: 'OTA手数料',   data: PROPS.map(p => p.fee),   backgroundColor: WARN, stack: 'a' },
+      { label: '賃料',       data: PROPS.map(p => p.rent),  backgroundColor: TINT, stack: 'a' },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + '：' + yen(ctx.parsed.y) } }
+    },
+    scales: {
+      x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+      y: { stacked: true, grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + man(v) } }
+    }
+  }
+});
+
+// --- チャネル別の実収 ---
+new Chart(document.getElementById('chChart'), {
+  type: 'bar',
+  data: {
+    labels: CH.map(c => c.label),
+    datasets: [
+      { label: '実収',   data: CH.map(c => c.net), backgroundColor: ACCENT, stack: 'a' },
+      { label: '手数料', data: CH.map(c => c.fee), backgroundColor: WARN,   stack: 'a' },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: { callbacks: {
+        label: ctx => {
+          const c = CH[ctx.dataIndex];
+          return ctx.datasetIndex === 0
+            ? ' 実収 ' + yen(c.net)
+            : ' 手数料 ' + yen(c.fee) + '（料率 ' + (c.rate * 100).toFixed(0) + '%）';
+        }
+      }}
+    },
+    scales: {
+      x: { stacked: true, grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + man(v), font: { size: 10 } } },
+      y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+// --- 日別 稼働棟数・ADR・RevPAR ---
+new Chart(document.getElementById('dailyChart'), {
+  data: {
+    labels: DAILY_N.map((_, i) => (i + 1) + '日'),
+    datasets: [
+      { type: 'bar',  label: '稼働棟数', data: DAILY_N, yAxisID: 'y1',
+        backgroundColor: '#e8e5df', borderWidth: 0, order: 3 },
+      { type: 'line', label: 'ADR',    data: dailyAdr, yAxisID: 'y',
+        borderColor: TINT, backgroundColor: 'transparent', borderWidth: 1.5,
+        pointRadius: 2, pointBackgroundColor: TINT, borderDash: [4,3], tension: 0.25, order: 1 },
+      { type: 'line', label: 'RevPAR', data: dailyRp, yAxisID: 'y',
+        borderColor: ACCENT, backgroundColor: 'transparent', borderWidth: 2,
+        pointRadius: 2.5, pointBackgroundColor: ACCENT, tension: 0.25, order: 0 },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: { callbacks: {
+        label: ctx => ctx.dataset.label === '稼働棟数'
+          ? ' 稼働 ' + ctx.raw + ' / ' + PROPS.length + '棟'
+          : ' ' + ctx.dataset.label + ' ' + yen(ctx.raw)
+      }}
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
+      y:  { position: 'left',  grid: { color: '#f0eeea' },
+            ticks: { callback: v => '¥' + man1(v), font: { size: 10 } } },
+      y1: { position: 'right', min: 0, max: PROPS.length, grid: { display: false },
+            ticks: { stepSize: 1, callback: v => v + '棟', font: { size: 10 } } }
+    }
+  }
+});
+
+// --- 宿泊日数別 ---
+new Chart(document.getElementById('stayChart'), {
+  data: {
+    labels: STAY.map(s => s.label),
+    datasets: [
+      { type: 'bar',  label: '予約件数', data: STAY.map(s => s.bookings), yAxisID: 'y1',
+        backgroundColor: '#e8e5df', borderWidth: 0, order: 2 },
+      { type: 'line', label: '1泊あたり手残り', data: STAY.map(s => s.netPerN), yAxisID: 'y',
+        borderColor: GOOD, backgroundColor: 'transparent', borderWidth: 2,
+        pointRadius: 4, pointBackgroundColor: GOOD, tension: 0.2, order: 0 },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: { callbacks: {
+        label: ctx => ctx.dataset.label === '予約件数'
+          ? ' ' + ctx.raw + '件'
+          : ' 1泊あたり手残り ' + yen(ctx.raw)
+      }}
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+      y:  { position: 'left', beginAtZero: true, grid: { color: '#f0eeea' },
+            ticks: { callback: v => '¥' + (v / 1000).toFixed(0) + 'k', font: { size: 10 } } },
+      y1: { position: 'right', beginAtZero: true, grid: { display: false },
+            ticks: { callback: v => v + '件', font: { size: 10 } } }
+    }
+  }
+});
+}
+</script>
+</body>
+</html>
