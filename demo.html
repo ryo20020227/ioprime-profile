@@ -6,44 +6,68 @@
 <title>飲食店経営ダッシュボード｜i.o.prime</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
+/* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
+:root{
+  --ink:#1a1a1a;
+  --bg:#f7f5f2;
+  --line:#d4d0c8;
+  --accent:#33415c;
+  --accent-tint:#5f77a6;
+  --good:#38a169;
+  --warn:#ed8936;
+  --bad:#e53e3e;
+  --mute:#d1d5db;
+  --grid:#f0eeea;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:#f7f5f2;color:#1a1a1a;font-size:14px;line-height:1.6}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
 .wrap{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
 
-/* header */
-.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid #1a1a1a;margin-bottom:32px}
+.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid var(--ink);margin-bottom:32px}
 .header-left h1{font-size:20px;font-weight:700;letter-spacing:0.02em}
-.header-left .period{font-size:11px;color:#999;letter-spacing:0.15em;margin-top:3px}
-.header-right{font-size:11px;color:#aaa;letter-spacing:0.12em;font-weight:700}
+.header-left .period{font-size:11.5px;color:#8a857c;margin-top:5px}
+.header-right{font-size:11px;color:#a8a29a;letter-spacing:0.12em;font-weight:700}
 
-/* kpi cards */
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
 .kpi{background:#fff;padding:20px 22px}
-.kpi-label{font-size:10px;font-weight:700;letter-spacing:0.18em;color:#aaa;margin-bottom:10px}
+.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a857c;margin-bottom:10px}
 .kpi-value{font-size:28px;font-weight:600;letter-spacing:-0.02em}
-.kpi-value.green{color:#38a169}
-.kpi-value.red{color:#e53e3e}
+.kpi-value.green{color:var(--good)}
+.kpi-value.red{color:var(--bad)}
 .kpi-sub{font-size:11px;color:#999;margin-top:4px}
 
-/* section */
-.section-label{font-size:10px;font-weight:700;letter-spacing:0.2em;color:#aaa;margin-bottom:16px}
+.section-label{font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:#8a857c;margin-bottom:16px}
 
-/* chart grid */
-.chart-row{display:grid;gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+/* 所見 — 2ページのダッシュボードと analysis_demo でこの形を共通にしている */
+.note{background:#fff;border:1px solid var(--line);padding:22px 26px;margin-bottom:32px}
+.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #e8e4de;margin-bottom:14px}
+.note-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
+.note-by{font-size:11px;color:#aaa}
+.note p{font-size:13.5px;line-height:1.95;color:#333;max-width:62em}
+.note p+p{margin-top:12px}
+.note strong{font-weight:700;color:var(--ink)}
+
+.chart-row{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
 .chart-row.col2{grid-template-columns:1fr 1fr}
 .chart-row.col3-1{grid-template-columns:2fr 1fr}
 .chart-panel{background:#fff;padding:24px}
-.chart-title{font-size:12px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.chart-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .chart-sub{font-size:11px;color:#999;margin-bottom:18px}
 .chart-wrap{position:relative}
 
-/* footer */
-.footer{text-align:right;font-size:10px;color:#bbb;letter-spacing:0.12em;margin-top:8px}
-
-/* quadrant legend */
 .quad-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
 .quad-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#555}
 .quad-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+.cta{border:1.5px solid var(--accent);background:#fff;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.cta-title{font-size:15px;font-weight:700;color:var(--accent)}
+.cta-sub{font-size:12px;color:#666;margin-top:4px}
+.cta-btn{border:1.5px solid var(--accent);padding:10px 24px;font-size:12px;font-weight:700;text-decoration:none;color:var(--accent);white-space:nowrap;flex-shrink:0}
+.cta-btn:hover{background:var(--accent);color:var(--bg)}
+
+.footer{text-align:right;font-size:10px;letter-spacing:0.12em;margin-top:20px}
+.footer a{color:#b5afa4;text-decoration:none}
+.footer a:hover{color:var(--accent)}
 
 @media(max-width:700px){
   .wrap{padding:20px 14px 48px}
@@ -54,6 +78,8 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   .kpi-value{font-size:20px}
   .chart-row.col2,.chart-row.col3-1{grid-template-columns:1fr}
   .chart-panel{padding:16px}
+  .note{padding:18px 16px}
+  .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
 }
 </style>
 </head>
@@ -62,23 +88,23 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
   <div class="header">
     <div class="header-left">
-      <h1>居酒屋「サンプル」 経営ダッシュボード</h1>
-      <div class="period">2026年7月 ／ サンプルデータ</div>
+      <h1>居酒屋A店 経営ダッシュボード</h1>
+      <div class="period">2026年7月 ／ 京都市内・カウンター8席＋テーブル4卓（24席） ／ サンプルデータ</div>
     </div>
     <div class="header-right">i.o.prime</div>
   </div>
 
-  <div class="section-label">TODAY'S OVERVIEW</div>
+  <div class="section-label">今月の概況</div>
   <div class="kpi-row">
     <div class="kpi">
       <div class="kpi-label">今月売上</div>
-      <div class="kpi-value">¥3,240,000</div>
+      <div class="kpi-value">¥2,914,000</div>
       <div class="kpi-sub">前月比 +4.2%</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">平均客単価</div>
       <div class="kpi-value">¥2,850</div>
-      <div class="kpi-sub">前月比 +120円</div>
+      <div class="kpi-sub">前月比 +120円／月間1,022客</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">FL比率</div>
@@ -88,11 +114,22 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     <div class="kpi">
       <div class="kpi-label">利益率</div>
       <div class="kpi-value">14%</div>
-      <div class="kpi-sub">¥453,600</div>
+      <div class="kpi-sub">¥407,960</div>
     </div>
   </div>
 
-  <div class="section-label">WEEKLY COMPARISON</div>
+  <div class="note">
+    <div class="note-head">
+      <div class="note-badge">所見</div>
+      <div class="note-by">2026年7月分 ／ i.o.prime</div>
+    </div>
+    <p>FL比率58%は目標の60%以内に収まっており、<strong>コスト構造は健全</strong>です。手を入れるべきは売上の曜日偏在とメニューの粗利設計の2点です。</p>
+    <p>金・土・日の3日間で<strong>週売上の62%</strong>を占める一方、月・火の2日は合わせて17%にとどまります。週末をさらに伸ばすより、月・火を底上げするほうが伸びしろが大きい状態です。24席という規模を考えると、週末はすでに席の回転が上限に近づいています。</p>
+    <p>メニューで見直し余地が最も大きいのは<strong>刺身盛り合わせ</strong>です。売上18万円は主要15品で5位の主力商品ですが、利益率60.0%は最も低い水準にあります。利益率を5pt改善するだけで月9,000円、10ptなら月18,000円の粗利増です。原価か価格のどちらかに手を入れる価値があります。</p>
+    <p>逆に生ビールとハイボールは売上・利益率とも上位（右上のスター象限）です。この2品を軸にしたセット設計が、平日の客単価を上げる最短経路になります。</p>
+  </div>
+
+  <div class="section-label">週次比較</div>
   <div class="chart-row">
     <div class="chart-panel">
       <div class="chart-title">今週 vs 先週 曜日別売上</div>
@@ -101,7 +138,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     </div>
   </div>
 
-  <div class="section-label">FL RATIO ANALYSIS</div>
+  <div class="section-label">FL比率とコスト構造</div>
   <div class="chart-row col3-1">
     <div class="chart-panel">
       <div class="chart-title">FL比率の推移</div>
@@ -115,7 +152,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     </div>
   </div>
 
-  <div class="section-label">MENU ANALYSIS</div>
+  <div class="section-label">メニュー分析</div>
   <div class="chart-row col2">
     <div class="chart-panel">
       <div class="chart-title">メニュー別 月間粗利ランキング</div>
@@ -124,43 +161,48 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     </div>
     <div class="chart-panel">
       <div class="chart-title">売上 × 利益率 マトリクス</div>
-      <div class="chart-sub">推すべきメニュー・見直すべきメニューを可視化</div>
+      <div class="chart-sub">主要15品。点の色が属する象限を表します</div>
       <div class="chart-wrap"><canvas id="scatterChart" height="300"></canvas></div>
       <div class="quad-legend">
         <div class="quad-item"><div class="quad-dot" style="background:#38a169"></div>スター（推すべき）</div>
-        <div class="quad-item"><div class="quad-dot" style="background:#3182ce"></div>育てるべき</div>
+        <div class="quad-item"><div class="quad-dot" style="background:#5f77a6"></div>育てるべき</div>
         <div class="quad-item"><div class="quad-dot" style="background:#ed8936"></div>原価・価格を見直す</div>
         <div class="quad-item"><div class="quad-dot" style="background:#e53e3e"></div>要検討</div>
       </div>
     </div>
   </div>
 
-  <div class="footer">i.o.prime — DATA ANALYSIS / CONSULTING</div>
+  <div class="cta">
+    <div class="cta-body">
+      <div class="cta-title">この分析をあなたの店舗で</div>
+      <div class="cta-sub">お使いのPOSやExcelの売上データから、同じダッシュボードを作成します。まずは30分の無料診断から。</div>
+    </div>
+    <a class="cta-btn" href="https://line.me/ti/p/RztAof3Bqm" target="_blank" rel="noopener">LINEで相談する →</a>
+  </div>
+
+  <div class="footer"><a href="./index.html">i.o.prime — DATA ANALYSIS / CONSULTING</a></div>
 </div>
 
 <script>
 Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
 Chart.defaults.color = '#999';
 
+const ACCENT = '#33415c', TINT = '#5f77a6';
+const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#d1d5db', YEL = '#ecc94b', PUR = '#805ad5';
+
+// 曜日別売上。7日で¥658,000 → 31日換算で今月売上¥2,914,000（KPIと一致）
+// 客単価¥2,850 なので日あたり33客・月間1,022客（KPIと一致）
+const thisWeek = [58000, 54000, 63000, 76000, 122000, 151000, 134000];
+const lastWeek = [55000, 61000, 60000, 71000, 118000, 163000, 128000];
+
 // --- 今週vs先週 ---
-const weekCtx = document.getElementById('weekChart').getContext('2d');
-new Chart(weekCtx, {
+new Chart(document.getElementById('weekChart'), {
   type: 'bar',
   data: {
     labels: ['月', '火', '水', '木', '金', '土', '日'],
     datasets: [
-      {
-        label: '先週',
-        data: [32000, 28000, 35000, 42000, 68000, 95000, 78000],
-        backgroundColor: '#d1d5db',
-        borderWidth: 0
-      },
-      {
-        label: '今週',
-        data: [34000, 31000, 37000, 45000, 72000, 88000, 82000],
-        backgroundColor: '#3182ce',
-        borderWidth: 0
-      }
+      { label: '先週', data: lastWeek, backgroundColor: MUTE,   borderWidth: 0 },
+      { label: '今週', data: thisWeek, backgroundColor: ACCENT, borderWidth: 0 }
     ]
   },
   options: {
@@ -176,81 +218,47 @@ new Chart(weekCtx, {
   }
 });
 
-// --- FL推移 ---
-const flCtx = document.getElementById('flChart').getContext('2d');
-new Chart(flCtx, {
+// --- FL推移（7月の F32 + L26 = 58% は KPI およびドーナツと一致） ---
+new Chart(document.getElementById('flChart'), {
   type: 'line',
   data: {
-    labels: ["2\u6708", "3\u6708", "4\u6708", "5\u6708", "6\u6708", "7\u6708"],
+    labels: ['2月', '3月', '4月', '5月', '6月', '7月'],
     datasets: [
-      {
-        label: 'FL比率',
-        data: [61, 59, 63, 59, 59, 58],
-        borderColor: '#1a1a1a',
-        backgroundColor: 'transparent',
-        borderWidth: 2,
-        pointRadius: 4,
-        pointBackgroundColor: '#1a1a1a',
-        tension: 0.3
-      },
-      {
-        label: '食材費（F）',
-        data: [33, 32, 34, 31, 33, 32],
-        borderColor: '#e53e3e',
-        backgroundColor: 'transparent',
-        borderWidth: 1.5,
-        pointRadius: 3,
-        pointBackgroundColor: '#e53e3e',
-        borderDash: [4,3],
-        tension: 0.3
-      },
-      {
-        label: '人件費（L）',
-        data: [28, 27, 29, 28, 26, 26],
-        borderColor: '#3182ce',
-        backgroundColor: 'transparent',
-        borderWidth: 1.5,
-        pointRadius: 3,
-        pointBackgroundColor: '#3182ce',
-        borderDash: [4,3],
-        tension: 0.3
-      },
-      {
-        label: '目標ライン',
-        data: [60,60,60,60,60,60],
-        borderColor: '#d4d0c8',
-        backgroundColor: 'transparent',
-        borderWidth: 1,
-        pointRadius: 0,
-        borderDash: [6,4]
-      }
+      { label: 'FL比率', data: [61, 59, 63, 59, 59, 58],
+        borderColor: '#1a1a1a', backgroundColor: 'transparent',
+        borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#1a1a1a', tension: 0.3 },
+      { label: '食材費（F）', data: [33, 32, 34, 31, 33, 32],
+        borderColor: BAD, backgroundColor: 'transparent',
+        borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: BAD, borderDash: [4,3], tension: 0.3 },
+      { label: '人件費（L）', data: [28, 27, 29, 28, 26, 26],
+        borderColor: TINT, backgroundColor: 'transparent',
+        borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: TINT, borderDash: [4,3], tension: 0.3 },
+      { label: '目標ライン', data: [60,60,60,60,60,60],
+        borderColor: '#d4d0c8', backgroundColor: 'transparent',
+        borderWidth: 1, pointRadius: 0, borderDash: [6,4] }
     ]
   },
   options: {
     responsive: true,
     plugins: {
-      legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16, font: { size: 11 } } }
+      legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16, font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + '：' + ctx.raw + '%' } }
     },
     scales: {
-      y: {
-        min: 20, max: 75,
-        grid: { color: '#f0eee9' },
-        ticks: { callback: v => v + '%', font: { size: 11 } }
-      },
+      y: { min: 20, max: 75, grid: { color: '#f0eee9' }, ticks: { callback: v => v + '%', font: { size: 11 } } },
       x: { grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
 });
 
-// --- ドーナツ ---
-const donutCtx = document.getElementById('donutChart').getContext('2d');
-new Chart(donutCtx, {
+// --- ドーナツ（合計100%。利益14%はKPIと一致） ---
+new Chart(document.getElementById('donutChart'), {
   type: 'doughnut',
   data: {
     labels: ['食材費', '人件費', '家賃', '光熱費', 'その他', '利益'],
     datasets: [{
-      data: [32, 26, 15, 5, 8, 14],
-      backgroundColor: ['#e53e3e','#3182ce','#805ad5','#ed8936','#ecc94b','#38a169'],
+      data: [32, 26, 12, 5, 11, 14],
+      backgroundColor: [BAD, TINT, PUR, WARN, YEL, GOOD],
       borderColor: ['#f7f5f2','#f7f5f2','#f7f5f2','#f7f5f2','#f7f5f2','#d4af37'],
       borderWidth: [2,2,2,2,2,4],
       offset: [0,0,0,0,0,14]
@@ -261,24 +269,41 @@ new Chart(donutCtx, {
     cutout: '62%',
     plugins: {
       legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: { size: 11 } } },
-      tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.raw + '%' } }
+      tooltip: { callbacks: {
+        label: ctx => ' ' + ctx.label + '：' + ctx.raw + '%（¥' + Math.round(2914000 * ctx.raw / 100).toLocaleString() + '）'
+      }}
     }
   }
 });
 
-// --- ランキング ---
-const rankCtx = document.getElementById('rankChart').getContext('2d');
-const rankData = [{"name": "\u751f\u30d3\u30fc\u30eb", "gp": 207000, "margin": 79.3}, {"name": "\u30cf\u30a4\u30dc\u30fc\u30eb", "gp": 159600, "margin": 87.5}, {"name": "\u5510\u63da\u3052", "gp": 134400, "margin": 70.6}, {"name": "\u713c\u304d\u9ce5\uff085\u672c\uff09", "gp": 126000, "margin": 70.0}, {"name": "\u523a\u8eab\u76db\u308a\u5408\u308f\u305b", "gp": 108000, "margin": 60.0}, {"name": "\u679d\u8c46", "gp": 96000, "margin": 78.9}, {"name": "\u9903\u5b50", "gp": 85800, "margin": 75.0}, {"name": "\u65e5\u672c\u9152\uff081\u5408\uff09", "gp": 72800, "margin": 70.0}, {"name": "\u8089\u3058\u3083\u304c", "gp": 64960, "margin": 80.0}, {"name": "\u9d8f\u76ae\u30dd\u30f3\u9162", "gp": 60800, "margin": 80.0}];
-new Chart(rankCtx, {
+// --- メニュー ---
+// 売上 × 利益率 = 粗利。ランキングとマトリクスは同じ配列から描いているので必ず一致する
+// 主要15品の売上合計 ¥1,841,200 は今月売上¥2,914,000 の63%
+const MENU = [
+  { name:'生ビール',         short:'生ビール',   sales:261000, margin:79.3 },
+  { name:'ハイボール',       short:'ハイボール', sales:182400, margin:87.5 },
+  { name:'唐揚げ',           short:'唐揚げ',     sales:190400, margin:70.6 },
+  { name:'焼き鳥（5本）',     short:'焼き鳥',     sales:180000, margin:70.0 },
+  { name:'刺身盛り合わせ',    short:'刺身盛り',   sales:180000, margin:60.0 },
+  { name:'枝豆',             short:'枝豆',       sales:121600, margin:78.9 },
+  { name:'餃子',             short:'餃子',       sales:114400, margin:75.0 },
+  { name:'日本酒（1合）',     short:'日本酒',     sales:104000, margin:70.0 },
+  { name:'肉じゃが',         short:'肉じゃが',   sales: 81200, margin:80.0 },
+  { name:'鶏皮ポン酢',       short:'鶏皮ポン酢', sales: 76000, margin:80.0 },
+  { name:'焼きそば',         short:'焼きそば',   sales: 81600, margin:70.6 },
+  { name:'サラダ',           short:'サラダ',     sales: 81000, margin:70.0 },
+  { name:'天ぷら盛り合わせ',  short:'天ぷら盛り', sales: 98000, margin:60.2 },
+  { name:'デザートセット',    short:'デザート',   sales: 46400, margin:60.0 },
+  { name:'締めラーメン',      short:'締めラーメン',sales: 43200, margin:70.0 },
+].map(m => ({ ...m, gp: Math.round(m.sales * m.margin / 100) }));
+
+const rankData = [...MENU].sort((a,b) => b.gp - a.gp).slice(0, 10);
+
+new Chart(document.getElementById('rankChart'), {
   type: 'bar',
   data: {
     labels: rankData.map(d => d.name),
-    datasets: [{
-      label: '月間粗利（円）',
-      data: rankData.map(d => d.gp),
-      backgroundColor: '#3182ce',
-      borderWidth: 0
-    }]
+    datasets: [{ label: '月間粗利（円）', data: rankData.map(d => d.gp), backgroundColor: ACCENT, borderWidth: 0 }]
   },
   options: {
     indexAxis: 'y',
@@ -287,77 +312,113 @@ new Chart(rankCtx, {
       legend: { display: false },
       tooltip: { callbacks: {
         label: ctx => ' 粗利 ¥' + ctx.raw.toLocaleString(),
-        afterLabel: ctx => ' 利益率 ' + rankData[ctx.dataIndex].margin + '%'
+        afterLabel: ctx => ' 売上 ¥' + rankData[ctx.dataIndex].sales.toLocaleString()
+                         + ' ／ 利益率 ' + rankData[ctx.dataIndex].margin + '%'
       }}
     },
     scales: {
-      x: {
-        grid: { color: '#f0eee9' },
-        ticks: { callback: v => '¥' + (v/10000).toFixed(0) + '万', font: { size: 11 } }
-      },
+      x: { grid: { color: '#f0eee9' }, ticks: { callback: v => '¥' + (v/10000).toFixed(0) + '万', font: { size: 11 } } },
       y: { grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
 });
 
-// --- スキャッタ ---
-const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+// --- 売上 × 利益率 マトリクス（閾値 売上¥100,000 / 利益率70%） ---
+const X_TH = 100000, Y_TH = 70;
+
+function quadColor(s, m) {
+  if (s >= X_TH && m >= Y_TH) return GOOD;   // スター
+  if (s <  X_TH && m >= Y_TH) return TINT;   // 育てるべき
+  if (s >= X_TH && m <  Y_TH) return WARN;   // 原価・価格を見直す
+  return BAD;                                // 要検討
+}
 
 const quadPlugin = {
   id: 'quadrant',
   beforeDraw(chart) {
     const {ctx, chartArea: {left,top,right,bottom}, scales: {x,y}} = chart;
-    const xM = x.getPixelForValue(100000);
-    const yM = y.getPixelForValue(70);
+    const xM = x.getPixelForValue(X_TH);
+    const yM = y.getPixelForValue(Y_TH);
     ctx.save();
 
-    // 象限背景
-    ctx.fillStyle = 'rgba(56,161,105,0.07)';
-    ctx.fillRect(xM, top, right-xM, yM-top);       // 右上：スター
-    ctx.fillStyle = 'rgba(49,130,206,0.07)';
-    ctx.fillRect(left, top, xM-left, yM-top);       // 左上：育てるべき
-    ctx.fillStyle = 'rgba(237,137,54,0.07)';
-    ctx.fillRect(xM, yM, right-xM, bottom-yM);     // 右下：要見直し
-    ctx.fillStyle = 'rgba(229,62,62,0.07)';
-    ctx.fillRect(left, yM, xM-left, bottom-yM);    // 左下：要検討
+    ctx.fillStyle = 'rgba(56,161,105,0.07)'; ctx.fillRect(xM, top, right-xM, yM-top);    // 右上：スター
+    ctx.fillStyle = 'rgba(95,119,166,0.07)'; ctx.fillRect(left, top, xM-left, yM-top);   // 左上：育てるべき
+    ctx.fillStyle = 'rgba(237,137,54,0.07)'; ctx.fillRect(xM, yM, right-xM, bottom-yM);  // 右下：要見直し
+    ctx.fillStyle = 'rgba(229,62,62,0.07)';  ctx.fillRect(left, yM, xM-left, bottom-yM); // 左下：要検討
 
-    // 区切り線
-    ctx.strokeStyle = '#999';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#999'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(xM,top); ctx.lineTo(xM,bottom); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(left,yM); ctx.lineTo(right,yM); ctx.stroke();
 
-    // 象限ラベル
     ctx.font = 'bold 11px Hiragino Sans, sans-serif';
     ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.textAlign = 'right';
-    ctx.fillText('スター（推すべき）', right - 8, top + 18);
-    ctx.textAlign = 'left';
-    ctx.fillText('育てるべき', left + 8, top + 18);
-    ctx.textAlign = 'right';
-    ctx.fillText('原価・価格を見直す', right - 8, bottom - 8);
-    ctx.textAlign = 'left';
-    ctx.fillText('要検討', left + 8, bottom - 8);
-
+    ctx.textAlign = 'right'; ctx.fillText('スター（推すべき）', right - 8, top + 18);
+    ctx.textAlign = 'left';  ctx.fillText('育てるべき', left + 8, top + 18);
+    ctx.textAlign = 'right'; ctx.fillText('原価・価格を見直す', right - 8, bottom - 8);
+    ctx.textAlign = 'left';  ctx.fillText('要検討', left + 8, bottom - 8);
     ctx.restore();
   }
 };
 
-const starData = [{"x": 261000, "y": 79.3, "label": "\u751f\u30d3\u30fc\u30eb"}, {"x": 182400, "y": 87.5, "label": "\u30cf\u30a4\u30dc\u30fc\u30eb"}, {"x": 121600, "y": 78.9, "label": "\u679d\u8c46"}, {"x": 190400, "y": 70.6, "label": "\u5510\u63da\u3052"}, {"x": 180000, "y": 70.0, "label": "\u713c\u304d\u9ce5\uff085\u672c\uff09"}, {"x": 114400, "y": 75.0, "label": "\u9903\u5b50"}, {"x": 104000, "y": 70.0, "label": "\u65e5\u672c\u9152\uff081\u5408\uff09"}];
-const growData = [{"x": 76000, "y": 80.0, "label": "\u9d8f\u76ae\u30dd\u30f3\u9162"}, {"x": 81200, "y": 80.0, "label": "\u8089\u3058\u3083\u304c"}, {"x": 81000, "y": 70.0, "label": "\u30b5\u30e9\u30c0"}, {"x": 81600, "y": 70.6, "label": "\u713c\u304d\u305d\u3070"}, {"x": 43200, "y": 70.0, "label": "\u7de0\u3081\u30e9\u30fc\u30e1\u30f3"}];
-const reviewData = [{"x": 180000, "y": 60.0, "label": "\u523a\u8eab\u76db\u308a\u5408\u308f\u305b"}];
-const considerData = [{"x": 98000, "y": 60.2, "label": "\u5929\u3077\u3089\u76db\u308a\u5408\u308f\u305b"}, {"x": 46400, "y": 60.0, "label": "\u30c7\u30b6\u30fc\u30c8\u30bb\u30c3\u30c8"}];
+// 点ラベル。他のラベルだけでなく「他の点」も障害物として扱い、
+// 右→左→上下の順に空いている場所を探して置く
+const pointLabelPlugin = {
+  id: 'pointLabels',
+  afterDraw(chart) {
+    const {ctx, chartArea, scales:{x,y}} = chart;
+    ctx.save();
+    ctx.font = '10px Hiragino Sans, sans-serif';
+    ctx.fillStyle = '#333';
+    ctx.textBaseline = 'middle';
 
-new Chart(scatterCtx, {
+    const pts = [];
+    chart.data.datasets.forEach(ds => ds.data.forEach(pt => {
+      pts.push({ px: x.getPixelForValue(pt.x), py: y.getPixelForValue(pt.y), label: pt.label });
+    }));
+
+    // 幅が狭いときは文字も小さくする（スマホでの詰まりを減らす）
+    if (chartArea.width < 400) ctx.font = '9px Hiragino Sans, sans-serif';
+
+    const R = 9, H = 12;
+    const blocks = pts.map(p => ({ x: p.px - R, y: p.py - R, w: 2 * R, h: 2 * R }));
+    const hit = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+
+    pts.forEach(p => {
+      const w = ctx.measureText(p.label).width;
+      let box = null;
+      search:
+      for (const dy of [0, -13, 13, -25, 25]) {
+        for (const side of [1, -1]) {
+          const bx = side > 0 ? p.px + 11 : p.px - 11 - w;
+          const by = p.py + dy - H / 2;
+          if (bx < chartArea.left || bx + w > chartArea.right) continue;
+          if (by < chartArea.top || by + H > chartArea.bottom) continue;
+          const cand = { x: bx, y: by, w: w, h: H };
+          if (!blocks.some(b => hit(cand, b))) { box = cand; break search; }
+        }
+      }
+      // 空きが見つからなければ描かない。重ねて描くより、タップで出る
+      // ツールチップに任せたほうが読める
+      if (!box) return;
+      ctx.fillText(p.label, box.x, box.y + H / 2);
+      blocks.push(box);
+    });
+    ctx.restore();
+  }
+};
+
+const scatterPoints = MENU.map(m => ({ x: m.sales, y: m.margin, label: m.short, full: m.name, gp: m.gp }));
+
+new Chart(document.getElementById('scatterChart'), {
   type: 'scatter',
-  plugins: [quadPlugin],
+  plugins: [quadPlugin, pointLabelPlugin],
   data: {
-    datasets: [
-      { label: 'スター', data: starData, backgroundColor: '#38a169', pointRadius: 7, pointHoverRadius: 9 },
-      { label: '育てるべき', data: growData, backgroundColor: '#3182ce', pointRadius: 7, pointHoverRadius: 9 },
-      { label: '要見直し', data: reviewData, backgroundColor: '#ed8936', pointRadius: 7, pointHoverRadius: 9 },
-      { label: '要検討', data: considerData, backgroundColor: '#e53e3e', pointRadius: 7, pointHoverRadius: 9 },
-    ]
+    datasets: [{
+      data: scatterPoints,
+      backgroundColor: scatterPoints.map(p => quadColor(p.x, p.y)),
+      pointRadius: 7,
+      pointHoverRadius: 9,
+    }]
   },
   options: {
     responsive: true,
@@ -366,12 +427,13 @@ new Chart(scatterCtx, {
       tooltip: { callbacks: {
         label: ctx => {
           const d = ctx.raw;
-          return ' ' + d.label + '  売上¥' + d.x.toLocaleString() + '  利益率' + d.y + '%';
+          return ' ' + d.full + '  売上¥' + d.x.toLocaleString() + '  利益率' + d.y + '%  粗利¥' + d.gp.toLocaleString();
         }
       }}
     },
     scales: {
       x: {
+        min: 0, max: 300000,
         title: { display: true, text: '月間売上（円）', font: { size: 11 } },
         grid: { color: '#f0eee9' },
         ticks: { callback: v => '¥' + (v/10000).toFixed(0) + '万', font: { size: 11 } }

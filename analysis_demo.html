@@ -7,30 +7,42 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
+/* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
+:root{
+  --ink:#1a1a1a;
+  --bg:#f7f5f2;
+  --line:#d4d0c8;
+  --accent:#33415c;
+  --accent-tint:#5f77a6;
+  --good:#38a169;
+  --warn:#ed8936;
+  --bad:#e53e3e;
+  --mute:#d1d5db;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:#f7f5f2;color:#1a1a1a;font-size:14px;line-height:1.6}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
 .wrap{max-width:900px;margin:0 auto;padding:32px 24px 64px}
 
-.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid #1a1a1a;margin-bottom:40px}
+.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid var(--ink);margin-bottom:40px}
 .header h1{font-size:18px;font-weight:700}
-.header .sub{font-size:11px;color:#999;letter-spacing:0.1em;margin-top:3px}
-.header-right{font-size:11px;color:#aaa;font-weight:700;letter-spacing:0.12em}
+.header .sub{font-size:11.5px;color:#8a857c;margin-top:5px}
+.header-right{font-size:11px;color:#a8a29a;font-weight:700;letter-spacing:0.12em}
 
 /* UPLOAD */
 .upload-lead{font-size:24px;font-weight:700;margin-bottom:8px}
 .upload-desc{font-size:13px;color:#555;line-height:1.9;margin-bottom:28px}
-.format-box{border:1px solid #d4d0c8;background:#fff;padding:16px 20px;margin-bottom:24px}
-.format-title{font-size:10px;font-weight:700;letter-spacing:0.12em;color:#999;margin-bottom:10px}
+.format-box{border:1px solid var(--line);background:#fff;padding:16px 20px;margin-bottom:24px}
+.format-title{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a857c;margin-bottom:10px}
 .format-cols{display:flex;gap:8px;flex-wrap:wrap}
-.format-col{border:1px solid #d4d0c8;padding:4px 12px;font-size:11px}
-.format-col.req{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.format-col{border:1px solid var(--line);padding:4px 12px;font-size:11px}
+.format-col.req{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 .drop-zone{border:2px dashed #c8c4bc;background:#fff;padding:52px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s}
-.drop-zone:hover,.drop-zone.over{border-color:#1a1a1a}
+.drop-zone:hover,.drop-zone.over{border-color:var(--accent)}
 .drop-zone input{display:none}
 .drop-main{font-size:16px;font-weight:700;margin-bottom:6px}
 .drop-sub{font-size:13px;color:#888;margin-bottom:16px}
-.drop-btn{display:inline-block;border:1.5px solid #1a1a1a;padding:9px 22px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.05em}
+.drop-btn{display:inline-block;border:1.5px solid var(--accent);color:var(--accent);padding:9px 22px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.05em}
 .sample-link{display:block;text-align:center;font-size:12px;color:#666;text-decoration:underline;cursor:pointer;margin-top:10px}
 
 /* LOADING */
@@ -39,62 +51,79 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .loading-title{font-size:16px;font-weight:700;margin-bottom:36px}
 .steps{display:inline-flex;flex-direction:column;gap:14px;text-align:left}
 .step{display:flex;align-items:center;gap:12px;font-size:13px;color:#bbb;transition:color 0.3s}
-.step.active{color:#1a1a1a}
-.step.done{color:#38a169}
+.step.active{color:var(--ink)}
+.step.done{color:var(--good)}
 .dot{width:9px;height:9px;border-radius:50%;background:#e0ddd8;flex-shrink:0;transition:background 0.3s}
-.step.active .dot{background:#1a1a1a;animation:pulse 0.9s infinite}
-.step.done .dot{background:#38a169}
+.step.active .dot{background:var(--ink);animation:pulse 0.9s infinite}
+.step.done .dot{background:var(--good)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+@media(prefers-reduced-motion:reduce){.step.active .dot{animation:none}}
 
 /* RESULTS */
-#resultsSection{display:none}
 .results-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
 .results-title{font-size:16px;font-weight:700}
 .reset-btn{border:1px solid #999;padding:7px 16px;font-size:11px;cursor:pointer;background:transparent;font-family:inherit;color:#555}
-.reset-btn:hover{border-color:#1a1a1a;color:#1a1a1a}
+.reset-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
 .kpi{background:#fff;padding:18px 20px}
-.kpi-label{font-size:10px;font-weight:700;letter-spacing:0.15em;color:#aaa;margin-bottom:8px}
+.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a857c;margin-bottom:8px}
 .kpi-value{font-size:24px;font-weight:600;letter-spacing:-0.02em}
-.kpi-value.green{color:#38a169}
-.kpi-value.orange{color:#ed8936}
-.kpi-value.red{color:#e53e3e}
+.kpi-value.green{color:var(--good)}
+.kpi-value.orange{color:var(--warn)}
+.kpi-value.red{color:var(--bad)}
 .kpi-sub{font-size:11px;color:#999;margin-top:4px}
 
-.sec-label{font-size:10px;font-weight:700;letter-spacing:0.2em;color:#aaa;margin-bottom:16px}
+.sec-label{font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:#8a857c;margin-bottom:16px}
 
-.chart-full{background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
-.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#d4d0c8;border:1px solid #d4d0c8;margin-bottom:32px}
+.chart-full{background:var(--line);border:1px solid var(--line);margin-bottom:32px}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
 .chart-panel{background:#fff;padding:20px}
 .chart-title{font-size:12px;font-weight:700;margin-bottom:3px}
 .chart-sub{font-size:11px;color:#999;margin-bottom:14px}
 
-/* REPORT */
-.report-box{background:#fff;border:1px solid #d4d0c8;padding:28px 32px;margin-bottom:32px}
+/* REPORT — ダッシュボード2枚の .note と同じ見た目にそろえてある */
+.report-box{background:#fff;border:1px solid var(--line);padding:28px 32px;margin-bottom:32px}
 .report-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #e8e4de;margin-bottom:20px}
-.report-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:#1a1a1a;color:#fff;padding:3px 10px}
+.report-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
 .report-period{font-size:11px;color:#aaa}
 .report-sec{margin-bottom:18px}
 .report-sec-title{font-size:12px;font-weight:700;margin-bottom:8px}
-.report-text{font-size:13px;color:#333;line-height:2}
+.report-text{font-size:13.5px;color:#333;line-height:1.95}
+.report-text strong{font-weight:700;color:var(--ink)}
 .hl{background:#fff3cd;padding:0 2px}
 .al{background:#fde8e8;padding:0 2px}
+.stat-box{font-family:'Courier New',Courier,monospace;font-size:12px;line-height:1.9}
+.foot-note{font-size:11px;color:#999;margin-top:10px;line-height:1.7}
+
+table.calc{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.calc th{padding:8px 12px;font-weight:600;text-align:left;border-bottom:2px solid var(--ink)}
+table.calc td{padding:8px 12px;border-bottom:1px solid #eee}
+table.calc tr.total{font-weight:700;background:#f8f8f5}
+table.calc tr.total td{border-bottom:none;padding:10px 12px}
+table.calc td.num{text-align:right;font-variant-numeric:tabular-nums}
+table.calc th.num{text-align:right}
 
 /* CTA */
-.cta{border:1.5px solid #1a1a1a;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
-.cta-body .cta-title{font-size:15px;font-weight:700}
-.cta-body .cta-sub{font-size:12px;color:#666;margin-top:4px}
-.cta-btn{border:1.5px solid #1a1a1a;padding:10px 24px;font-size:12px;font-weight:700;text-decoration:none;color:#1a1a1a;white-space:nowrap;flex-shrink:0}
-.cta-btn:hover{background:#1a1a1a;color:#f7f5f2}
+.cta{border:1.5px solid var(--accent);background:#fff;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.cta-title{font-size:15px;font-weight:700;color:var(--accent)}
+.cta-sub{font-size:12px;color:#666;margin-top:4px}
+.cta-btn{border:1.5px solid var(--accent);padding:10px 24px;font-size:12px;font-weight:700;text-decoration:none;color:var(--accent);white-space:nowrap;flex-shrink:0}
+.cta-btn:hover{background:var(--accent);color:var(--bg)}
+
+.footer{text-align:right;font-size:10px;letter-spacing:0.12em;margin-top:20px}
+.footer a{color:#b5afa4;text-decoration:none}
+.footer a:hover{color:var(--accent)}
 
 @media(max-width:640px){
   .kpi-row{grid-template-columns:1fr 1fr}
   .kpi{padding:14px}
   .kpi-value{font-size:18px}
   .chart-grid{grid-template-columns:1fr}
-  .cta{flex-direction:column;align-items:flex-start}
+  .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
   .report-box{padding:20px 16px}
+  table.calc{font-size:12px}
+  table.calc th,table.calc td{padding:7px 8px}
 }
 </style>
 </head>
@@ -114,7 +143,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   <div class="upload-lead">CSVを入れると、分析結果が出ます。</div>
   <div class="upload-desc">
     POSシステムやExcelから書き出したデータをアップロードしてください。<br>
-    売上・FL比率・曜日別パターンを自動で集計し、統計モデルで経営課題を分析します。
+    売上・FL比率・曜日別パターンを集計し、回帰分析で経営課題を洗い出します。
   </div>
 
   <div class="format-box">
@@ -143,7 +172,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   <div class="steps">
     <div class="step" id="s1"><div class="dot"></div>CSVデータを読み込んでいます</div>
     <div class="step" id="s2"><div class="dot"></div>売上・FL比率・曜日パターンを計算しています</div>
-    <div class="step" id="s3"><div class="dot"></div>統計モデルを適用しレポートを生成しています</div>
+    <div class="step" id="s3"><div class="dot"></div>回帰分析を実行しレポートを生成しています</div>
   </div>
 </div>
 
@@ -154,7 +183,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     <button class="reset-btn" id="resetBtn">別のデータで試す</button>
   </div>
 
-  <div class="sec-label">OVERVIEW</div>
+  <div class="sec-label">概況</div>
   <div class="kpi-row">
     <div class="kpi"><div class="kpi-label">売上合計</div><div class="kpi-value" id="k1"></div><div class="kpi-sub" id="k1s"></div></div>
     <div class="kpi"><div class="kpi-label">日平均売上</div><div class="kpi-value" id="k2"></div><div class="kpi-sub" id="k2s"></div></div>
@@ -162,14 +191,14 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     <div class="kpi"><div class="kpi-label">平均客単価</div><div class="kpi-value" id="k4"></div><div class="kpi-sub" id="k4s"></div></div>
   </div>
 
-  <div class="sec-label">SALES TREND</div>
+  <div class="sec-label">売上の推移</div>
   <div class="chart-full"><div class="chart-panel">
     <div class="chart-title">日別売上推移</div>
     <div class="chart-sub">売上の増減と週次パターンを確認</div>
     <canvas id="cSales" height="75"></canvas>
   </div></div>
 
-  <div class="sec-label">FL RATIO & DAY OF WEEK</div>
+  <div class="sec-label">FL比率と曜日別売上</div>
   <div class="chart-grid">
     <div class="chart-panel">
       <div class="chart-title">FL比率の推移</div>
@@ -183,16 +212,16 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     </div>
   </div>
 
-  <div class="sec-label">STATISTICAL ANALYSIS</div>
-  <div class="report-box" style="font-family:'Courier New',Courier,monospace;font-size:12px;line-height:1.9;color:#1a1a2e">
+  <div class="sec-label">統計分析</div>
+  <div class="report-box stat-box">
     <div class="report-head">
-      <div class="report-badge" style="background:#1a1a2e;font-size:10px;letter-spacing:.1em">統計分析レポート</div>
+      <div class="report-badge">統計分析レポート</div>
       <div class="report-period" id="reportPeriod"></div>
     </div>
     <div id="statBody"></div>
   </div>
 
-  <div class="sec-label" style="margin-top:28px">ANALYSIS REPORT</div>
+  <div class="sec-label" style="margin-top:28px">所見</div>
   <div class="report-box">
     <div class="report-head">
       <div class="report-badge">所見</div>
@@ -203,11 +232,13 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
   <div class="cta">
     <div class="cta-body">
-      <div class="cta-title">このシステムをあなたの店舗に導入する</div>
-      <div class="cta-sub">実際のPOSデータと連携し、毎月自動でレポートを生成します</div>
+      <div class="cta-title">この分析をあなたの店舗で</div>
+      <div class="cta-sub">実際のPOSデータと連携し、毎月自動でレポートを生成します。まずは30分の無料診断から。</div>
     </div>
-    <a class="cta-btn" href="./index.html">i.o.primeに相談する →</a>
+    <a class="cta-btn" href="https://line.me/ti/p/RztAof3Bqm" target="_blank" rel="noopener">LINEで相談する →</a>
   </div>
+
+  <div class="footer"><a href="./index.html">i.o.prime — DATA ANALYSIS / CONSULTING</a></div>
 </div>
 
 </div>
@@ -216,36 +247,44 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
 Chart.defaults.color = '#999';
 
+const ACCENT = '#33415c', TINT = '#5f77a6';
+const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#d1d5db';
+
 // ---- Sample CSV ----
+// 実在の店舗データではないが、以下の構造を持たせてある（レポートの主張はすべてこの構造から導かれる）
+//   ・週末（金土）に客数が集中する
+//   ・人件費 = 1日あたりの固定分 + 客数に比例する変動分
+//   ・食材費は仕入ロットの都合で日次では売上に完全比例しない
+//   ・7/25 は近隣イベント想定の特異日
 const SAMPLE = `日付,売上,食材費,人件費,客数
-2026-07-01,108000,32400,38880,50
-2026-07-02,122000,36600,42700,57
-2026-07-03,195000,58500,54600,87
-2026-07-04,248000,74400,67000,112
-2026-07-05,172000,51600,55040,78
-2026-07-06,98000,29400,35280,44
-2026-07-07,88000,26400,32560,40
-2026-07-08,102000,30600,37740,47
-2026-07-09,118000,35400,41300,55
-2026-07-10,188000,56400,52640,84
-2026-07-11,235000,70500,63450,105
-2026-07-12,162000,48600,51840,74
-2026-07-13,95000,28500,35150,43
-2026-07-14,92000,27600,34040,42
-2026-07-15,115000,34500,40250,53
-2026-07-16,128000,38400,44800,59
-2026-07-17,205000,61500,57400,92
-2026-07-18,262000,78600,70740,118
-2026-07-19,178000,53400,56960,81
-2026-07-20,105000,31500,37800,48
-2026-07-21,97000,29100,35890,44
-2026-07-22,112000,33600,40320,51
-2026-07-23,135000,40500,47250,62
-2026-07-24,218000,65400,61040,98
-2026-07-25,278000,83400,75060,125
-2026-07-26,188000,56400,60160,85
-2026-07-27,102000,30600,36720,46
-2026-07-28,96000,28800,35520,43`;
+2026-07-01,111900,36000,45400,47
+2026-07-02,128800,40700,46820,53
+2026-07-03,232200,62500,61260,86
+2026-07-04,291600,85800,74470,108
+2026-07-05,150700,50200,49820,55
+2026-07-06,104800,34300,41970,40
+2026-07-07,99200,34000,41200,38
+2026-07-08,113300,34200,46770,48
+2026-07-09,136500,44400,45310,50
+2026-07-10,204100,68900,57360,81
+2026-07-11,247400,84400,63660,93
+2026-07-12,121000,41600,44340,49
+2026-07-13,81600,26600,37220,35
+2026-07-14,94400,31700,42860,40
+2026-07-15,122200,42000,45750,52
+2026-07-16,161200,45200,53020,62
+2026-07-17,250700,84700,59050,83
+2026-07-18,287000,85800,65130,96
+2026-07-19,117500,30900,43890,50
+2026-07-20,85500,24400,38940,37
+2026-07-21,119500,35000,43280,48
+2026-07-22,134200,36700,48990,55
+2026-07-23,119300,35300,47020,53
+2026-07-24,219300,57900,59870,86
+2026-07-25,393400,119700,87520,140
+2026-07-26,144700,39000,46100,53
+2026-07-27,82400,25300,39610,36
+2026-07-28,102100,34600,42960,46`;
 
 document.getElementById('sampleDl').addEventListener('click', () => {
   const a = document.createElement('a');
@@ -255,22 +294,148 @@ document.getElementById('sampleDl').addEventListener('click', () => {
   a.click();
 });
 
+/* =========================================================================
+   統計の下請け
+   p値は t分布・F分布の累積分布から実際に計算する（正則化不完全ベータ関数）
+   ========================================================================= */
+function logGamma(x) {
+  const c = [76.18009172947146, -86.50532032941677, 24.01409824083091,
+             -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+  let y = x, tmp = x + 5.5;
+  tmp -= (x + 0.5) * Math.log(tmp);
+  let ser = 1.000000000190015;
+  for (let j = 0; j < 6; j++) ser += c[j] / ++y;
+  return -tmp + Math.log(2.5066282746310005 * ser / x);
+}
+function betacf(a, b, x) {
+  const MAXIT = 300, EPS = 3e-14, FPMIN = 1e-300;
+  const qab = a + b, qap = a + 1, qam = a - 1;
+  let c = 1, d = 1 - qab * x / qap;
+  if (Math.abs(d) < FPMIN) d = FPMIN;
+  d = 1 / d;
+  let h = d;
+  for (let m = 1; m <= MAXIT; m++) {
+    const m2 = 2 * m;
+    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+    c = 1 + aa / c;  if (Math.abs(c) < FPMIN) c = FPMIN;
+    d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+    c = 1 + aa / c;  if (Math.abs(c) < FPMIN) c = FPMIN;
+    d = 1 / d;
+    const del = d * c; h *= del;
+    if (Math.abs(del - 1) < EPS) break;
+  }
+  return h;
+}
+function betai(a, b, x) {
+  if (!(x > 0)) return 0;
+  if (x >= 1) return 1;
+  const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b)
+                      + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2)
+    ? bt * betacf(a, b, x) / a
+    : 1 - bt * betacf(b, a, 1 - x) / b;
+}
+// t分布の両側p値
+function tP(t, df) {
+  if (!isFinite(t)) return 0;
+  if (df <= 0) return 1;
+  return betai(df / 2, 0.5, df / (df + t * t));
+}
+// F分布の上側p値
+function fP(f, d1, d2) {
+  if (!isFinite(f) || f <= 0 || d1 <= 0 || d2 <= 0) return 1;
+  return betai(d2 / 2, d1 / 2, d2 / (d2 + d1 * f));
+}
+function pStr(p) { return p < 0.001 ? 'p<0.001' : 'p=' + p.toFixed(3); }
+function sigStr(p) { return p < 0.01 ? '**' : p < 0.05 ? '*' : ''; }
+
+// ガウス・ジョルダン法による逆行列
+function invert(M) {
+  const n = M.length;
+  const A = M.map((r, i) => [...r, ...Array.from({length: n}, (_, j) => i === j ? 1 : 0)]);
+  for (let i = 0; i < n; i++) {
+    let piv = i;
+    for (let r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[piv][i])) piv = r;
+    [A[i], A[piv]] = [A[piv], A[i]];
+    const d = A[i][i];
+    if (!isFinite(d) || Math.abs(d) < 1e-12) return null;   // 多重共線性など
+    for (let j = 0; j < 2 * n; j++) A[i][j] /= d;
+    for (let r = 0; r < n; r++) {
+      if (r === i) continue;
+      const f = A[r][i];
+      if (!f) continue;
+      for (let j = 0; j < 2 * n; j++) A[r][j] -= f * A[i][j];
+    }
+  }
+  return A.map(r => r.slice(n));
+}
+
+// 最小二乗法による重回帰。切片は内部で追加する
+function mlr(X, y) {
+  const n = y.length, p = X[0].length + 1;
+  if (n <= p) return null;
+  const A = X.map(r => [1, ...r]);
+  const XtX = Array.from({length: p}, (_, i) =>
+              Array.from({length: p}, (_, j) => A.reduce((s, r) => s + r[i] * r[j], 0)));
+  const Xty = Array.from({length: p}, (_, i) => A.reduce((s, r, k) => s + r[i] * y[k], 0));
+  const inv = invert(XtX);
+  if (!inv) return null;
+  const b  = inv.map(row => row.reduce((s, v, j) => s + v * Xty[j], 0));
+  const yh = A.map(r => r.reduce((s, v, j) => s + v * b[j], 0));
+  const my = y.reduce((a, c) => a + c, 0) / n;
+  const SSres = y.reduce((s, v, i) => s + (v - yh[i]) ** 2, 0);
+  const SStot = y.reduce((s, v) => s + (v - my) ** 2, 0);
+  const k = p - 1, df = n - p, s2 = SSres / df;
+  const se = inv.map((row, i) => Math.sqrt(Math.max(s2 * row[i], 0)));
+  const t  = b.map((v, i) => se[i] > 0 ? v / se[i] : NaN);
+  const r2 = SStot > 0 ? 1 - SSres / SStot : 0;
+  const adj = 1 - (1 - r2) * (n - 1) / df;
+  const F = (1 - r2) > 0 ? (r2 / k) / ((1 - r2) / df) : Infinity;
+  return { b, se, t, p: t.map(v => tP(v, df)), r2, adj, F, pF: fP(F, k, df), k, df, n };
+}
+
+function mean(a) { return a.reduce((s, v) => s + v, 0) / a.length; }
+function sd(a) {  // 不偏標準偏差
+  const m = mean(a);
+  return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1));
+}
+function pearson(x, y) {
+  const n = x.length, mx = mean(x), my = mean(y);
+  const nu = x.reduce((a, v, i) => a + (v - mx) * (y[i] - my), 0);
+  const de = Math.sqrt(x.reduce((a, v) => a + (v - mx) ** 2, 0)
+                     * y.reduce((a, v) => a + (v - my) ** 2, 0));
+  const r = de === 0 ? 0 : nu / de;
+  const t = Math.abs(r) >= 1 ? Infinity * Math.sign(r) : r * Math.sqrt(n - 2) / Math.sqrt(1 - r * r);
+  const p = tP(t, n - 2);
+  return { r, t, p, sig: sigStr(p) };
+}
+// t値の表示。完全相関などで発散した場合に Infinity と出さない
+function tStr(t) {
+  if (isFinite(t)) return t.toFixed(2);
+  if (Number.isNaN(t)) return 'n/a';
+  return t > 0 ? '>999' : '<-999';
+}
+
+/* ========================================================================= */
+
 // ---- Drag & Drop ----
 const dz = document.getElementById('dropZone');
 dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
 dz.addEventListener('dragleave', () => dz.classList.remove('over'));
 dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); go(e.dataTransfer.files[0]); });
-document.getElementById('csvInput').addEventListener('change', function(){ if(this.files[0]) go(this.files[0]); });
+document.getElementById('csvInput').addEventListener('change', function () { if (this.files[0]) go(this.files[0]); });
 
 // ---- Reset ----
 document.getElementById('resetBtn').addEventListener('click', () => {
-  ['cSales','cFl','cDay'].forEach(id => { const c=Chart.getChart(id); if(c) c.destroy(); });
-  ['s1','s2','s3'].forEach(id => { const el=document.getElementById(id); el.classList.remove('active','done'); });
+  ['cSales','cFl','cDay'].forEach(id => { const c = Chart.getChart(id); if (c) c.destroy(); });
+  ['s1','s2','s3'].forEach(id => document.getElementById(id).classList.remove('active','done'));
   document.getElementById('csvInput').value = '';
   show('uploadSection'); hide('resultsSection'); hide('loadingSection');
 });
 
-// ---- Error display ----
 function showError(msg) {
   hide('loadingSection');
   show('uploadSection');
@@ -300,8 +465,8 @@ function go(file) {
     header: true, skipEmptyLines: true,
     complete(res) {
       try {
-        if (!res.data || res.data.length === 0) {
-          showError('データが読み込めませんでした。CSVの列名（日付・売上・食材費・人件費）を確認してください。');
+        if (!res.data || res.data.length < 8) {
+          showError('データが読み込めませんでした。日付・売上・食材費・人件費の列を含むCSVを、8行以上のデータでご用意ください。');
           return;
         }
         done('s1'); activate('s2');
@@ -311,386 +476,375 @@ function go(file) {
           setTimeout(() => {
             try {
               done('s3');
-              setTimeout(() => {
-                hide('loadingSection');
-                render(m);
-                show('resultsSection');
-              }, 500);
-            } catch(e) { showError('表示エラー: ' + e.message); }
+              setTimeout(() => { hide('loadingSection'); render(m); show('resultsSection'); }, 500);
+            } catch (e) { showError('表示エラー: ' + e.message); }
           }, 900);
         }, 900);
-      } catch(e) {
+      } catch (e) {
         showError('分析エラー: ' + e.message);
       }
     },
-    error(err) {
-      showError('CSVの読み込みに失敗しました: ' + (err.message || err));
-    }
+    error(err) { showError('CSVの読み込みに失敗しました: ' + (err.message || err)); }
   });
 }
 
 // ---- Crunch numbers ----
 function crunch(rows) {
   const n = rows.length;
-  // カラム名が文字化けしていた場合は位置（インデックス）で取得するフォールバック付き
   const keys = Object.keys(rows[0]);
-  const col = (names, idx) => {
-    const found = keys.find(k => names.some(n => k.includes(n)));
-    return found || keys[idx] || keys[0];
-  };
+  const col = (names, idx) => keys.find(k => names.some(nm => k.includes(nm))) || keys[idx] || keys[0];
   const kDate  = col(['日付','date','Date'], 0);
   const kSales = col(['売上','sales','Sales'], 1);
   const kFood  = col(['食材','food','Food'], 2);
   const kLabor = col(['人件','labor','Labor'], 3);
   const kCust  = col(['客数','客','cust','Cust'], 4);
 
-  const dates  = rows.map(r => r[kDate]);
-  const sales  = rows.map(r => num(r[kSales]));
-  const food   = rows.map(r => num(r[kFood]));
-  const labor  = rows.map(r => num(r[kLabor]));
-  const custRaw= rows.map(r => num(r[kCust]));
-  const hasCust = custRaw.some(v => v > 0);
+  const dates   = rows.map(r => r[kDate]);
+  const sales   = rows.map(r => num(r[kSales]));
+  const food    = rows.map(r => num(r[kFood]));
+  const labor   = rows.map(r => num(r[kLabor]));
+  const custRaw = rows.map(r => num(r[kCust]));
+  // 客数列があればそのまま使う。売上から逆算はしない（逆算すると売上との相関が必ず1になる）
+  const hasCust = custRaw.filter(v => v > 0).length === n;
+  const cust    = hasCust ? custRaw : null;
 
-  const totSales = arr(sales), totFood = arr(food), totLabor = arr(labor);
-  const fl = (totFood + totLabor) / totSales * 100;
-  const flDay = sales.map((s,i) => (food[i]+labor[i])/s*100);
+  const totSales = sum(sales), totFood = sum(food), totLabor = sum(labor);
+  const fl    = (totFood + totLabor) / totSales * 100;
+  const flDay = sales.map((s, i) => (food[i] + labor[i]) / s * 100);
 
   const avgDaily = Math.round(totSales / n);
   const maxS = Math.max(...sales), minS = Math.min(...sales);
-  const maxD = dates[sales.indexOf(maxS)], minD = dates[sales.indexOf(minS)];
 
-  // Day-of-week
+  // 曜日別
   const DAY = ['日','月','火','水','木','金','土'];
+  const dow = dates.map(d => new Date(d).getDay());
   const dTot = Array(7).fill(0), dCnt = Array(7).fill(0);
-  dates.forEach((d,i) => { const w=new Date(d).getDay(); if(!isNaN(w)){dTot[w]+=sales[i];dCnt[w]++;} });
-  const dAvg = dTot.map((t,i) => dCnt[i] ? Math.round(t/dCnt[i]) : 0);
+  dow.forEach((w, i) => { if (!isNaN(w)) { dTot[w] += sales[i]; dCnt[w]++; } });
+  const dAvg = dTot.map((t, i) => dCnt[i] ? Math.round(t / dCnt[i]) : 0);
 
-  const valid = dAvg.map((v,i) => ({n:DAY[i],v})).filter(d=>d.v>0);
-  const best = valid.reduce((a,b)=>a.v>b.v?a:b);
-  const worst = valid.reduce((a,b)=>a.v<b.v?a:b);
+  const valid = dAvg.map((v, i) => ({ n: DAY[i], v })).filter(d => d.v > 0);
+  if (!valid.length) throw new Error('日付列を認識できませんでした。YYYY-MM-DD 形式でご用意ください。');
+  const best  = valid.reduce((a, b) => a.v > b.v ? a : b);
+  const worst = valid.reduce((a, b) => a.v < b.v ? a : b);
 
-  // Weekend ratio (Fri+Sat)
-  let wkndSum=0, wkndCnt=0;
-  dates.forEach((d,i) => { const w=new Date(d).getDay(); if(w===5||w===6){wkndSum+=sales[i];wkndCnt++;} });
-  const wkndRatio = Math.round(wkndSum/totSales*100);
+  // 金土の構成比
+  const wknd = sales.filter((_, i) => dow[i] === 5 || dow[i] === 6);
+  const wkndRatio = Math.round(sum(wknd) / totSales * 100);
 
-  // Weekday FL avg
-  let wdFl=0, wdCnt=0;
-  dates.forEach((d,i) => { const w=new Date(d).getDay(); if(w!==5&&w!==6){wdFl+=flDay[i];wdCnt++;} });
-  const wdFlAvg = wdCnt ? (wdFl/wdCnt) : 0;
+  // 前半 vs 後半
+  const half = Math.floor(n / 2);
+  const trend = (mean(sales.slice(half)) - mean(sales.slice(0, half))) / mean(sales.slice(0, half)) * 100;
 
-  // Trend (2nd half vs 1st half)
-  const half=Math.floor(n/2);
-  const trend = ((arr(sales.slice(half))/(n-half) - arr(sales.slice(0,half))/half) / (arr(sales.slice(0,half))/half) * 100);
+  const avgSpend = hasCust ? Math.round(totSales / sum(cust)) : null;
 
-  // Avg spend
-  const avgSpend = hasCust ? Math.round(totSales / arr(custRaw)) : null;
-
-  // Potential saving
-  const potential = fl > 60 ? Math.round(totSales*(fl-60)/100) : 0;
-
-  return { dates, sales, food, labor, flDay, n,
-    totSales, totFood, totLabor, fl,
-    fRatio: totFood/totSales*100, lRatio: totLabor/totSales*100,
-    avgDaily, maxS, minS, maxD, minD,
-    DAY, dAvg, best, worst, wkndRatio, wdFlAvg, trend, avgSpend, potential };
+  return { dates, sales, food, labor, cust, hasCust, flDay, n, dow, DAY,
+           totSales, totFood, totLabor, fl,
+           fRatio: totFood / totSales * 100, lRatio: totLabor / totSales * 100,
+           avgDaily, maxS, minS, dAvg, dCnt, best, worst, wkndRatio, trend, avgSpend };
 }
 
 // ---- Render ----
 function render(m) {
   document.getElementById('resultsTitle').textContent = `分析結果（${m.n}日間）`;
-  document.getElementById('reportPeriod').textContent = `${m.dates[0]} 〜 ${m.dates[m.n-1]}`;
+  document.getElementById('reportPeriod').textContent  = `${m.dates[0]} 〜 ${m.dates[m.n-1]}`;
   document.getElementById('reportPeriod2').textContent = `${m.dates[0]} 〜 ${m.dates[m.n-1]}`;
 
   const flCls = m.fl < 60 ? 'green' : m.fl < 65 ? 'orange' : 'red';
-  set('k1', '¥'+m.totSales.toLocaleString()); set('k1s', `${m.n}日間合計`);
-  set('k2', '¥'+m.avgDaily.toLocaleString()); set('k2s', `最高 ¥${m.maxS.toLocaleString()}`);
+  set('k1', '¥' + m.totSales.toLocaleString()); set('k1s', `${m.n}日間合計`);
+  set('k2', '¥' + m.avgDaily.toLocaleString()); set('k2s', `最高 ¥${m.maxS.toLocaleString()}`);
   setH('k3', `<span class="${flCls}">${m.fl.toFixed(1)}%</span>`);
-  set('k4', m.avgSpend ? '¥'+m.avgSpend.toLocaleString() : '—');
+  set('k4', m.avgSpend ? '¥' + m.avgSpend.toLocaleString() : '—');
   set('k4s', m.avgSpend ? '1客あたり' : '客数データなし');
 
-  // Charts
-  ['cSales','cFl','cDay'].forEach(id => { const c=Chart.getChart(id); if(c) c.destroy(); });
+  ['cSales','cFl','cDay'].forEach(id => { const c = Chart.getChart(id); if (c) c.destroy(); });
 
-  // Sales
-  new Chart('cSales', { type:'line', data:{
+  new Chart('cSales', { type: 'line', data: {
     labels: m.dates,
-    datasets:[{ data:m.sales, borderColor:'#3182ce', backgroundColor:'rgba(49,130,206,0.07)',
-      fill:true, tension:0.3, borderWidth:2, pointRadius:m.n<=31?3:1, pointBackgroundColor:'#3182ce' }]
-  }, options:{ responsive:true, plugins:{legend:{display:false}},
-    scales:{ x:{grid:{display:false}, ticks:{maxTicksLimit:10,font:{size:10}}},
-             y:{grid:{color:'#f0eeea'}, ticks:{callback:v=>'¥'+(v/10000)+'万'}} } }});
+    datasets: [{ data: m.sales, borderColor: ACCENT, backgroundColor: 'rgba(51,65,92,0.08)',
+      fill: true, tension: 0.3, borderWidth: 2, pointRadius: m.n <= 31 ? 3 : 1, pointBackgroundColor: ACCENT }]
+  }, options: { responsive: true,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ' ¥' + ctx.raw.toLocaleString() } } },
+    scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
+              y: { grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
 
-  // FL
-  new Chart('cFl', { type:'line', data:{
+  new Chart('cFl', { type: 'line', data: {
     labels: m.dates,
-    datasets:[
-      { label:'FL比率', data:m.flDay.map(v=>+v.toFixed(1)), borderColor:'#ed8936',
-        fill:false, tension:0.3, borderWidth:2, pointRadius:m.n<=31?3:1, pointBackgroundColor:'#ed8936' },
-      { label:'目標(60%)', data:Array(m.n).fill(60), borderColor:'#e53e3e',
-        borderWidth:1.5, borderDash:[6,3], pointRadius:0, fill:false }
+    datasets: [
+      { label: 'FL比率', data: m.flDay.map(v => +v.toFixed(1)), borderColor: WARN,
+        fill: false, tension: 0.3, borderWidth: 2, pointRadius: m.n <= 31 ? 3 : 1, pointBackgroundColor: WARN },
+      { label: '目標(60%)', data: Array(m.n).fill(60), borderColor: BAD,
+        borderWidth: 1.5, borderDash: [6,3], pointRadius: 0, fill: false }
     ]
-  }, options:{ responsive:true,
-    plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},
-    scales:{ x:{grid:{display:false}, ticks:{maxTicksLimit:8,font:{size:10}}},
-             y:{grid:{color:'#f0eeea'}, ticks:{callback:v=>v+'%'}, min:45, max:85 } } }});
+  }, options: { responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + '：' + ctx.raw + '%' } } },
+    scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 8, font: { size: 10 } } },
+              y: { grid: { color: '#f0eeea' }, ticks: { callback: v => v + '%' } } } }});
 
-  // Day of week
   const maxV = Math.max(...m.dAvg);
-  new Chart('cDay', { type:'bar', data:{
+  new Chart('cDay', { type: 'bar', data: {
     labels: m.DAY,
-    datasets:[{ data:m.dAvg,
-      backgroundColor:m.dAvg.map(v=>v===maxV?'#3182ce':'#d1d5db'),
-      borderWidth:0 }]
-  }, options:{ responsive:true, plugins:{legend:{display:false}},
-    scales:{ x:{grid:{display:false}},
-             y:{grid:{color:'#f0eeea'}, ticks:{callback:v=>'¥'+(v/10000)+'万'}} } }});
+    datasets: [{ data: m.dAvg, backgroundColor: m.dAvg.map(v => v === maxV ? ACCENT : MUTE), borderWidth: 0 }]
+  }, options: { responsive: true,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ' 平均 ¥' + ctx.raw.toLocaleString() } } },
+    scales: { x: { grid: { display: false } },
+              y: { grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
 
-  // Statistical section
-  generateStats(m);
+  const A = analyse(m);
+  renderStats(m, A);
+  renderReport(m, A);
+}
 
-  // Shoiken (所見)
-  const trendTxt = m.trend >= 0 ? `+${m.trend.toFixed(1)}%の上昇` : `${m.trend.toFixed(1)}%の下落`;
-  const flStatus = m.fl < 60 ? `目標範囲内（${(60-m.fl).toFixed(1)}pt の余裕あり）`
-                              : `目標を<span class="al">${(m.fl-60).toFixed(1)}pt 超過</span>している状態`;
+/* ---- 統計モデルの当てはめ ----
+   すべてこの関数の中で実際に計算し、表示側は結果を出すだけにしている  */
+function analyse(m) {
+  const { sales, food, labor, cust, hasCust, flDay, n, dow, dAvg, dCnt } = m;
 
-  // Annual figures
-  const dailyAvg = m.totSales / m.n;
-  const monthlyEst = dailyAvg * 30.5;
-  const flSaveMonthly = m.fl > 60 ? Math.round(monthlyEst * (m.fl - 60) / 100) : 0;
-  const flSaveAnnual  = flSaveMonthly * 12;
+  // 相関
+  const corr = {
+    salesFood: pearson(food, sales),
+    salesCust: hasCust ? pearson(cust, sales) : null,
+    flCust:    hasCust ? pearson(cust, flDay) : null,
+  };
 
-  // Weekday (Mon-Thu) improvement
-  const wdAvg = m.dAvg.slice(1,5).filter(v=>v>0);
-  const wdMeanPerDay = wdAvg.reduce((a,b)=>a+b,0) / (wdAvg.length||1);
-  const wdDaysPerMonth = 30.5 / 7 * 4;
-  const wdImprovMonthly = Math.round(wdMeanPerDay * 0.10 * wdDaysPerMonth);
-  const wdImprovAnnual  = wdImprovMonthly * 12;
+  // 重回帰：日次売上 ～ 客数 + 金ダミー + 土ダミー
+  const fri = dow.map(w => w === 5 ? 1 : 0);
+  const sat = dow.map(w => w === 6 ? 1 : 0);
+  const terms = hasCust ? ['客数','金曜ダミー','土曜ダミー'] : ['金曜ダミー','土曜ダミー'];
+  const X = sales.map((_, i) => hasCust ? [cust[i], fri[i], sat[i]] : [fri[i], sat[i]]);
+  const reg = mlr(X, sales);
 
-  const totalMonthly = flSaveMonthly + wdImprovMonthly;
-  const totalAnnual  = flSaveAnnual  + wdImprovAnnual;
+  // 人件費 ～ 客数（固定費と変動費の分解。限界利益率の推定に使う）
+  const laborReg = hasCust ? mlr(cust.map(c => [c]), labor) : null;
+  const varLabor = laborReg ? laborReg.b[1] : null;          // 客1名あたりの変動人件費
+  const fixLabor = laborReg ? laborReg.b[0] : null;          // 1日あたりの固定人件費
+  const fRatio   = m.fRatio / 100;
+  // 限界利益率 = 1 − 食材費率 − （客あたり変動人件費 ÷ 客単価）
+  const contrib = (m.avgSpend && varLabor !== null)
+    ? Math.max(0, Math.min(1, 1 - fRatio - varLabor / m.avgSpend)) : null;
 
-  const flRow = flSaveMonthly > 0
-    ? `<tr><td>FL比率改善（${m.fl.toFixed(1)}%→60%）</td><td>¥${flSaveMonthly.toLocaleString()}</td><td>¥${flSaveAnnual.toLocaleString()}</td></tr>`
-    : `<tr><td>FL比率（目標範囲内）</td><td>—</td><td>—</td></tr>`;
+  // FL比率 ～ 客数
+  const flReg = hasCust ? mlr(cust.map(c => [c]), flDay) : null;
+
+  // 曜日別平均モデルによる翌月予測
+  const gm = mean(sales);
+  const dMean = dAvg.map((v, i) => dCnt[i] ? v : gm);
+  const resid = sales.map((s, i) => s - dMean[dow[i]]);
+  const dfR = Math.max(1, n - dCnt.filter(c => c > 0).length);
+  const sResid = Math.sqrt(resid.reduce((s, v) => s + v * v, 0) / dfR);
+  const nm = nextMonth(m.dates[m.n - 1]);
+  const fc = nm ? nm.cnt.reduce((s, c, w) => s + c * dMean[w], 0) : null;
+  const fcSE = nm ? sResid * Math.sqrt(nm.days) : null;
+
+  // 異常値検定（Grubbs）
+  const mu = mean(sales), s1 = sd(sales);
+  const grubbs = sales.map((v, i) => {
+    const G = s1 > 0 ? Math.abs(v - mu) / s1 : 0;
+    const denom = (n - 1) * (n - 1) - n * G * G;
+    const t2 = denom > 0 ? n * (n - 2) * G * G / denom : Infinity;
+    return { i, v, G, p: Math.min(1, n * tP(Math.sqrt(t2), n - 2)) };
+  }).sort((a, b) => b.G - a.G).slice(0, 2);
+
+  return { corr, reg, terms, laborReg, fixLabor, varLabor, contrib, flReg,
+           sResid, nm, fc, fcSE, grubbs, mu, sdSales: s1 };
+}
+
+function nextMonth(lastDate) {
+  const d = new Date(lastDate);
+  if (isNaN(d)) return null;
+  const y = d.getFullYear(), mo = d.getMonth() + 1;          // 0始まりなので +1 が翌月
+  const days = new Date(y, mo + 1, 0).getDate();
+  const cnt = Array(7).fill(0);
+  for (let i = 1; i <= days; i++) cnt[new Date(y, mo, i).getDay()]++;
+  const label = mo === 12 ? (y + 1) + '年1月' : y + '年' + (mo + 1) + '月';
+  return { cnt, days, label };
+}
+
+// ---- 統計パネル ----
+function renderStats(m, A) {
+  const { n, dates } = m;
+  const L = [];
+  const yen = v => '¥' + Math.round(v).toLocaleString();
+
+  L.push('【統計分析結果】');
+  L.push(`対象期間：${dates[0]} 〜 ${dates[n-1]}（n=${n}）`, '');
+
+  L.push('■ 記述統計');
+  L.push(`売上         μ=${Math.round(A.mu).toLocaleString()}円  σ=${Math.round(A.sdSales).toLocaleString()}円  CV=${(A.sdSales/A.mu*100).toFixed(1)}%`);
+  L.push(`食材費比率   μ=${m.fRatio.toFixed(1)}%`);
+  L.push(`人件費比率   μ=${m.lRatio.toFixed(1)}%`);
+  L.push(`FL比率       μ=${m.fl.toFixed(1)}%（業界目安 56〜62%）`);
+  if (m.hasCust) L.push(`客数         μ=${mean(m.cust).toFixed(1)}名  σ=${sd(m.cust).toFixed(1)}名  客単価 μ=${yen(m.avgSpend)}`);
+  L.push('');
+
+  L.push(`■ 相関分析（Pearson, df=${n-2}）`);
+  if (A.corr.salesCust) L.push(`売上 × 客数      r=${A.corr.salesCust.r.toFixed(3)}（t=${tStr(A.corr.salesCust.t)}, ${pStr(A.corr.salesCust.p)}）${A.corr.salesCust.sig}`);
+  L.push(`売上 × 食材費    r=${A.corr.salesFood.r.toFixed(3)}（t=${tStr(A.corr.salesFood.t)}, ${pStr(A.corr.salesFood.p)}）${A.corr.salesFood.sig}`);
+  if (A.corr.flCust)    L.push(`FL比率 × 客数    r=${A.corr.flCust.r.toFixed(3)}（t=${tStr(A.corr.flCust.t)}, ${pStr(A.corr.flCust.p)}）${A.corr.flCust.sig}`);
+  L.push('** p<0.01  * p<0.05', '');
+
+  if (A.reg) {
+    const R = A.reg;
+    L.push(`■ 重回帰分析（最小二乗法）`);
+    L.push(`目的変数：日次売上　説明変数：${A.terms.join('、')}`);
+    L.push(`R²=${R.r2.toFixed(3)}  調整済みR²=${R.adj.toFixed(3)}  F(${R.k},${R.df})=${isFinite(R.F) ? R.F.toFixed(1) : ">9999"}（${pStr(R.pF)}）`);
+    L.push(`切片         β=${Math.round(R.b[0]).toLocaleString()}（SE=${Math.round(R.se[0]).toLocaleString()}, t=${tStr(R.t[0])}, ${pStr(R.p[0])}）${sigStr(R.p[0])}`);
+    A.terms.forEach((name, j) => {
+      L.push(`${(name + '　　　　').slice(0,6)}   β=${Math.round(R.b[j+1]).toLocaleString()}（SE=${Math.round(R.se[j+1]).toLocaleString()}, t=${tStr(R.t[j+1])}, ${pStr(R.p[j+1])}）${sigStr(R.p[j+1])}`);
+    });
+    L.push('');
+  }
+
+  if (A.laborReg) {
+    const R = A.laborReg;
+    L.push('■ 人件費の固定費・変動費分解（人件費 ～ 客数）');
+    L.push(`固定人件費   ${yen(A.fixLabor)}／日（切片, SE=${Math.round(R.se[0]).toLocaleString()}）`);
+    L.push(`変動人件費   ${yen(A.varLabor)}／客（傾き, t=${tStr(R.t[1])}, ${pStr(R.p[1])}）${sigStr(R.p[1])}`);
+    if (A.contrib !== null) L.push(`限界利益率   ${(A.contrib*100).toFixed(1)}%（= 1 − 食材費率 − 変動人件費÷客単価）`);
+    L.push('');
+  }
+
+  if (A.nm && A.fc) {
+    L.push('■ 曜日別平均モデルによる翌月予測');
+    L.push(`${A.nm.label}（${A.nm.days}日）の予測売上：${yen(A.fc)}`);
+    L.push(`95%予測区間：${yen(A.fc - 1.96*A.fcSE)} 〜 ${yen(A.fc + 1.96*A.fcSE)}`);
+    L.push(`残差の標準偏差 σ=${Math.round(A.sResid).toLocaleString()}円／日`);
+    L.push('※ 曜日ごとの平均を翌月の曜日日数に当てはめたものです。季節要因・イベントは含みません。');
+    L.push('');
+  }
+
+  const sig = A.grubbs.filter(g => g.p < 0.05);
+  L.push(`■ 異常値検定（Grubbs検定, α=0.05）`);
+  if (sig.length) {
+    sig.forEach(g => L.push(`${dates[g.i]}（¥${g.v.toLocaleString()}）  G=${g.G.toFixed(2)}（p=${g.p.toFixed(3)}）*`));
+    L.push('* 当該日の外部要因（天候・イベント等）の照合を推奨');
+  } else {
+    const g = A.grubbs[0];
+    L.push(`有意な外れ値は検出されませんでした（最大 ${dates[g.i]} G=${g.G.toFixed(2)}, p=${g.p.toFixed(3)}）`);
+  }
+
+  document.getElementById('statBody').innerHTML =
+    '<pre style="white-space:pre-wrap;word-break:break-word;margin:0;font-family:inherit">'
+    + L.map(esc).join('\n') + '</pre>';
+}
+
+// ---- 所見 ----
+function renderReport(m, A) {
+  const yen = v => '¥' + Math.round(v).toLocaleString();
+  const trendTxt = m.trend >= 0 ? `<strong>+${m.trend.toFixed(1)}%の上昇</strong>` : `<strong>${m.trend.toFixed(1)}%の下落</strong>`;
+  const flStatus = m.fl < 60
+    ? `目標範囲内。${(60 - m.fl).toFixed(1)}pt の余裕があります`
+    : `目標を<span class="al">${(m.fl - 60).toFixed(1)}pt 超過</span>しています`;
+
+  // 総評
+  const regTxt = A.reg
+    ? `${A.terms.join('と')}を説明変数にした重回帰モデルの決定係数（R²）は<strong>${A.reg.r2.toFixed(3)}</strong>（調整済み ${A.reg.adj.toFixed(3)}、F検定 ${pStr(A.reg.pF)}）で、日次売上の変動はこれらの要素でおおむね説明できます。`
+    : `データ件数が少なく、回帰モデルの当てはめは行っていません。`;
+
+  // 売上構造
+  const wdIdx = [1,2,3,4];                                   // 月〜木
+  const wdVals = wdIdx.map(i => m.dAvg[i]).filter(v => v > 0);
+  const wdMean = wdVals.length ? mean(wdVals) : 0;
+  const wdDays = 30.5 / 7 * 4;                               // 月〜木は月あたり約17.4日
+  const wdUp   = wdMean * 0.10 * wdDays;                     // 平日集客10%改善による増収
+
+  let dayTxt = '';
+  if (A.reg && m.hasCust) {
+    const iFri = A.terms.indexOf('金曜ダミー') + 1, iSat = A.terms.indexOf('土曜ダミー') + 1;
+    const friB = A.reg.b[iFri], satB = A.reg.b[iSat];
+    const friSig = A.reg.p[iFri] < 0.05, satSig = A.reg.p[iSat] < 0.05;
+    dayTxt = (friSig || satSig)
+      ? `客数を統制したうえでも金曜に${yen(friB)}、土曜に${yen(satB)}の押し上げ効果が残っており（${friSig&&satSig?'いずれも':''}p&lt;0.05）、週末は客数だけでなく<strong>1組あたりの単価も上がっている</strong>ことを示しています。`
+      : `客数を統制すると曜日そのものの効果は統計的に有意ではなく、週末の売上増は<strong>ほぼ客数の増加で説明できます</strong>。`;
+  }
+
+  // FL・コスト構造
+  let costTxt = `食材費率${m.fRatio.toFixed(1)}%・人件費率${m.lRatio.toFixed(1)}%（FL合計 ${m.fl.toFixed(1)}%）。`;
+  if (A.laborReg && A.flReg) {
+    const slope = A.flReg.b[1], sigFl = A.flReg.p[1] < 0.05;
+    costTxt += `<br>人件費を客数で回帰すると、<strong>1日あたりの固定人件費が約${yen(A.fixLabor)}、客1名あたりの変動人件費が約${yen(A.varLabor)}</strong>に分解できます。`;
+    costTxt += sigFl && slope < 0
+      ? `FL比率を客数で回帰した係数は${slope.toFixed(3)}pt/名（${pStr(A.flReg.p[1])}）で、<strong>客数が少ない日ほど固定人件費がFL比率を押し上げる</strong>構造がデータ上も確認できます。暇な日のシフトを1人減らせるかが論点です。`
+      : `ただし客数とFL比率の関係は今回のデータでは統計的に有意ではなく（${pStr(A.flReg.p[1])}）、シフト設計の影響を断定するにはデータが足りません。`;
+  }
+
+  // 改善余地の試算
+  const monthlyEst = m.avgDaily * 30.5;
+  const flSave = m.fl > 60 ? monthlyEst * (m.fl - 60) / 100 : 0;
+  const cm = A.contrib;                                       // 限界利益率
+  const wdProfit = cm !== null ? wdUp * cm : null;
+  const totalProfit = flSave + (wdProfit || 0);
+
+  const flRow = flSave > 0
+    ? `<tr><td>FL比率改善（${m.fl.toFixed(1)}%→60%）</td><td class="num">${yen(flSave)}</td><td>コスト削減。全額が利益に残る</td><td class="num">${yen(flSave)}</td></tr>`
+    : `<tr><td>FL比率（すでに目標範囲内）</td><td class="num">—</td><td>—</td><td class="num">—</td></tr>`;
+  const wdRow = cm !== null
+    ? `<tr><td>平日（月〜木）集客10%改善</td><td class="num">${yen(wdUp)}</td><td>増収。限界利益率${(cm*100).toFixed(1)}%を掛けた分が利益</td><td class="num">${yen(wdProfit)}</td></tr>`
+    : `<tr><td>平日（月〜木）集客10%改善</td><td class="num">${yen(wdUp)}</td><td>増収（客数データがないため利益換算は不可）</td><td class="num">—</td></tr>`;
 
   document.getElementById('reportBody').innerHTML = `
 <div class="report-sec">
   <div class="report-sec-title">■ 総評</div>
   <div class="report-text">
-    ${m.n}日間のデータを精査した結果、重回帰モデルの決定係数（R²）は0.93を超えており、
-    売上変動の大部分が客数・曜日・食材費の3要素で説明できる構造になっています。
-    後半${Math.floor(m.n/2)}日間は前半比で<strong>${trendTxt}</strong>が確認でき、
-    FL比率は${m.fl.toFixed(1)}%（${flStatus}）です。
+    ${m.n}日間のデータを精査しました。${regTxt}
+    後半${m.n - Math.floor(m.n/2)}日間は前半比で${trendTxt}が確認でき、FL比率は${m.fl.toFixed(1)}%（${flStatus}）です。
   </div>
 </div>
 <div class="report-sec">
   <div class="report-sec-title">■ 売上構造について</div>
   <div class="report-text">
-    曜日ダミー変数の回帰係数を見ると、金・土の押し上げ効果が週間売上の中で突出しており、
-    現状は週末需要への依存度が高い収益構造です。金・土の売上が全体の<span class="hl">${m.wkndRatio}%</span>を占めており、
-    平日（月〜木）の平均売上は¥${Math.round(wdMeanPerDay).toLocaleString()}にとどまっています。<br><br>
-    平日集客を10%改善できれば、月間<span class="hl">¥${wdImprovMonthly.toLocaleString()}の増収</span>が見込めます。
-    この偏りを放置すると連休・天候・近隣競合の影響を受けやすい体質が続くため、
-    施策の優先度は高いと判断しています。
+    金・土の売上が全体の<span class="hl">${m.wkndRatio}%</span>を占め、平日（月〜木）の平均売上は${yen(wdMean)}にとどまっています。
+    最も強い曜日は${m.best.n}曜（${yen(m.best.v)}）、最も弱い曜日は${m.worst.n}曜（${yen(m.worst.v)}）で、その差は${(m.best.v/m.worst.v).toFixed(1)}倍です。<br>
+    ${dayTxt}<br><br>
+    平日集客を10%改善できれば、月間<span class="hl">${yen(wdUp)}の増収</span>が見込めます。
+    週末に依存した収益構造を放置すると連休・天候・近隣競合の影響を受けやすい体質が続くため、施策の優先度は高いと判断しています。
   </div>
 </div>
 <div class="report-sec">
   <div class="report-sec-title">■ FL比率・コスト構造について</div>
-  <div class="report-text">
-    食材費率${m.fRatio.toFixed(1)}%・人件費率${m.lRatio.toFixed(1)}%（FL合計 ${m.fl.toFixed(1)}%）。<br>
-    Pearson相関でFL比率と客数の間に有意な負の相関が確認されており、客数が少ない日に固定人件費が比率を押し上げる構造です。
-    シフト設計の見直しで改善余地があると判断しています。
-  </div>
+  <div class="report-text">${costTxt}</div>
 </div>
 <div class="report-sec">
   <div class="report-sec-title">■ 改善余地の試算</div>
   <div class="report-text">
-    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:8px">
+    <table class="calc">
       <thead>
-        <tr style="border-bottom:2px solid #1a1a2e;text-align:left">
-          <th style="padding:8px 12px;font-weight:600">改善項目</th>
-          <th style="padding:8px 12px;font-weight:600">月間効果（試算）</th>
-          <th style="padding:8px 12px;font-weight:600">年間効果（試算）</th>
-        </tr>
+        <tr><th>改善項目</th><th class="num">月間の効果</th><th>性質</th><th class="num">うち利益</th></tr>
       </thead>
       <tbody>
         ${flRow}
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #eee">平日集客10%改善</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #eee">¥${wdImprovMonthly.toLocaleString()}</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #eee">¥${wdImprovAnnual.toLocaleString()}</td>
-        </tr>
-        <tr style="font-weight:700;background:#f8f8f5">
-          <td style="padding:10px 12px">合計</td>
-          <td style="padding:10px 12px"><span class="hl">¥${totalMonthly.toLocaleString()}</span></td>
-          <td style="padding:10px 12px"><span class="hl">¥${totalAnnual.toLocaleString()}</span></td>
-        </tr>
+        ${wdRow}
+        <tr class="total"><td>利益ベースの合計</td><td class="num">—</td><td>月間 → 年間</td><td class="num"><span class="hl">${yen(totalProfit)} → ${yen(totalProfit*12)}</span></td></tr>
       </tbody>
     </table>
-    <div style="font-size:11px;color:#999;margin-top:8px">※ 試算は当期データの月次換算をベースとした推計値です。</div>
+    <div class="foot-note">
+      ※ 増収額とコスト削減額は性質が違うため単純合計していません。増収分には限界利益率を掛け、<strong>利益ベースでそろえて合計</strong>しています。<br>
+      ※ 月間値は当期データの日平均を30.5日換算したものです。実際の効果は施策の内容に左右されます。
+    </div>
   </div>
 </div>
 <div class="report-sec">
   <div class="report-sec-title">■ 今後の対応方針</div>
   <div class="report-text">
-    ① <strong>平日集客施策の実施と検証</strong>：施策前後のデータを月次で比較し、曜日別係数の変化で効果を定量評価します。<br><br>
-    ② <strong>シフト最適化</strong>：ARIMA予測から導いた翌月の需要予測をもとに、曜日別の人員配置を事前調整することで人件費比率の改善を狙います。<br><br>
-    ③ <strong>異常値日の要因分析</strong>：Grubbs検定で抽出した外れ値日について、天候・近隣イベント・SNS流入などの外部要因と照合し、再現可能な成功パターンを抽出します。
+    ① <strong>平日集客施策の実施と検証</strong>：施策前後のデータを月次で比較し、曜日ダミーの係数の変化で効果を定量評価します。<br><br>
+    ② <strong>シフト最適化</strong>：曜日別平均モデルの翌月予測をもとに人員配置を事前調整し、固定人件費が薄い日に張り付くのを避けます。<br><br>
+    ③ <strong>特異日の要因分析</strong>：Grubbs検定で抽出した日について、天候・近隣イベント・SNS流入などの外部要因と照合し、再現できる成功パターンを抽出します。
   </div>
 </div>`;
 }
 
-// ---- Statistical output ----
-function generateStats(m) {
-  const { sales, food, labor, flDay, n, dates } = m;
-  const cust = sales.map((_,i) => m.avgSpend ? Math.round(sales[i]/m.avgSpend) : 0);
-
-  // Descriptive stats helper
-  function stats(arr) {
-    const mu = arr.reduce((a,b)=>a+b,0)/arr.length;
-    const variance = arr.reduce((a,b)=>a+(b-mu)**2,0)/arr.length;
-    const sigma = Math.sqrt(variance);
-    const cv = sigma/mu*100;
-    // skewness (Fisher's moment)
-    const skew = arr.reduce((a,b)=>a+((b-mu)/sigma)**3,0)/arr.length;
-    // excess kurtosis
-    const kurt = arr.reduce((a,b)=>a+((b-mu)/sigma)**4,0)/arr.length - 3;
-    return { mu, sigma, cv, skew, kurt };
-  }
-
-  // Pearson r with approximate p-value (t-distribution, df=n-2)
-  function pearson(x, y) {
-    const mx = x.reduce((a,b)=>a+b,0)/x.length;
-    const my = y.reduce((a,b)=>a+b,0)/y.length;
-    const num = x.reduce((a,b,i)=>a+(b-mx)*(y[i]-my),0);
-    const den = Math.sqrt(x.reduce((a,b)=>a+(b-mx)**2,0)*y.reduce((a,b)=>a+(b-my)**2,0));
-    const r = den===0 ? 0 : num/den;
-    const t = r*Math.sqrt(n-2)/Math.sqrt(1-r*r+1e-9);
-    // approximate p-value
-    const p = Math.abs(t) > 4 ? '<0.001' : Math.abs(t) > 3 ? '<0.01' : Math.abs(t) > 2 ? '<0.05' : '>0.05';
-    const sig = Math.abs(t) > 4 ? '**' : Math.abs(t) > 3 ? '**' : Math.abs(t) > 2 ? '*' : '';
-    return { r: r.toFixed(3), p, sig, t: t.toFixed(2) };
-  }
-
-  // OLS (y = a + b*x)
-  function ols(x, y) {
-    const mx = x.reduce((a,b)=>a+b,0)/x.length;
-    const my = y.reduce((a,b)=>a+b,0)/y.length;
-    const Sxy = x.reduce((a,b,i)=>a+(b-mx)*(y[i]-my),0);
-    const Sxx = x.reduce((a,b)=>a+(b-mx)**2,0);
-    const b = Sxy/Sxx;
-    const a = my - b*mx;
-    const yhat = x.map(xi => a + b*xi);
-    const SSres = y.reduce((s,yi,i)=>s+(yi-yhat[i])**2,0);
-    const SStot = y.reduce((s,yi)=>s+(yi-my)**2,0);
-    const r2 = 1 - SSres/SStot;
-    const se_b = Math.sqrt(SSres/(n-2)/Sxx);
-    const t = b/se_b;
-    const p = Math.abs(t) > 4 ? '<0.001' : Math.abs(t) > 3 ? '<0.01' : Math.abs(t) > 2 ? '<0.05' : '>0.05';
-    const sig = Math.abs(t) > 4 ? '**' : Math.abs(t) > 3 ? '**' : Math.abs(t) > 2 ? '*' : '';
-    return { b: Math.round(b), se: Math.round(se_b), t: t.toFixed(2), p, sig, r2: r2.toFixed(3), a: Math.round(a) };
-  }
-
-  // Day-of-week dummies — effect vs weekday baseline
-  const dayIdx = dates.map(d => new Date(d).getDay());
-  const wdSales = sales.filter((_,i)=>[1,2,3].includes(dayIdx[i]));
-  const wdMu = wdSales.reduce((a,b)=>a+b,0)/(wdSales.length||1);
-  const friSales = sales.filter((_,i)=>dayIdx[i]===5);
-  const satSales = sales.filter((_,i)=>dayIdx[i]===6);
-  const friEff = Math.round(friSales.reduce((a,b)=>a+b,0)/(friSales.length||1) - wdMu);
-  const satEff = Math.round(satSales.reduce((a,b)=>a+b,0)/(satSales.length||1) - wdMu);
-
-  // Outlier detection by z-score (Grubbs-like)
-  const sSt = stats(sales);
-  const outliers = sales
-    .map((v,i) => ({ v, i, z: Math.abs((v-sSt.mu)/sSt.sigma) }))
-    .filter(o => o.z > 2.0)
-    .sort((a,b) => b.z-a.z)
-    .slice(0,2);
-
-  // --- Compute values ---
-  const sS = stats(sales);
-  const sC = m.avgSpend ? stats(sales.map((s,i) => Math.round(s/m.avgSpend))) : null;
-  const rSC = m.avgSpend ? pearson(sales.map((s,i)=>Math.round(s/m.avgSpend)), sales) : null;
-  const rSF = pearson(food, sales);
-  const rFL_C = m.avgSpend ? pearson(flDay, sales.map((s,i)=>Math.round(s/m.avgSpend))) : null;
-  const regCust = m.avgSpend ? ols(sales.map((s,i)=>Math.round(s/m.avgSpend)), sales) : null;
-  const regFood = ols(food, sales);
-
-  // adjusted R² for multi (approx, k=7 predictors assumed: weekday dummies + food + cust)
-  const k = 7;
-  const r2_adj = regFood.r2 - (1 - parseFloat(regFood.r2)) * k / (n - k - 1);
-
-  // ARIMA-like params (plausible based on data structure)
-  const lag1r = pearson(sales.slice(0,-1), sales.slice(1));
-  const arPhi = parseFloat(lag1r.r);
-  const maPhi = (0.3 + Math.random()*0.2).toFixed(2);  // MA(1) plausible
-  const aic = (892 + Math.round((0.5 - arPhi)*40)).toFixed(1);
-  const bic = (parseFloat(aic) + 9.4).toFixed(1);
-
-  // Monthly forecast (3x weekly pattern extrapolation)
-  const monthly = Math.round(m.totSales / m.n * 30.5);
-  const ci_lo = Math.round(monthly * 0.91);
-  const ci_hi = Math.round(monthly * 1.09);
-
-  // --- Format output ---
-  let html = `<pre style="white-space:pre-wrap;word-break:break-all;margin:0;font-family:'Courier New',Courier,monospace;font-size:12px;line-height:1.9">`;
-
-  html += `【統計分析結果】\n`;
-  html += `対象期間：${dates[0]} 〜 ${dates[n-1]}（n=${n}）\n\n`;
-
-  html += `■ 記述統計\n`;
-  html += `売上         μ=${Math.round(sS.mu).toLocaleString()}円  σ=${Math.round(sS.sigma).toLocaleString()}円  CV=${sS.cv.toFixed(1)}%\n`;
-  html += `             歪度=${sS.skew.toFixed(2)}  尖度=${sS.kurt.toFixed(2)}\n`;
-  html += `食材費比率   μ=${(food.reduce((a,b)=>a+b,0)/sales.reduce((a,b)=>a+b,0)*100).toFixed(1)}%\n`;
-  html += `人件費比率   μ=${(labor.reduce((a,b)=>a+b,0)/sales.reduce((a,b)=>a+b,0)*100).toFixed(1)}%\n`;
-  html += `FL比率       μ=${m.fl.toFixed(1)}%（業界目安 56〜62%）\n`;
-  if (sC) html += `客数         μ=${Math.round(sC.mu)}名  σ=${Math.round(sC.sigma)}名  歪度=${sC.skew.toFixed(2)}  尖度=${sC.kurt.toFixed(2)}\n`;
-  html += `\n`;
-
-  html += `■ 相関分析（Pearson, df=${n-2}）\n`;
-  if (rSC) html += `売上 × 客数      r=${rSC.r}（t=${rSC.t}, p${rSC.p}）${rSC.sig}\n`;
-  html += `売上 × 食材費    r=${rSF.r}（t=${rSF.t}, p${rSF.p}）${rSF.sig}\n`;
-  if (rFL_C) html += `FL比率 × 客数   r=${rFL_C.r}（t=${rFL_C.t}, p${rFL_C.p}）${rFL_C.sig}\n`;
-  html += `** p<0.01  * p<0.05\n\n`;
-
-  html += `■ 重回帰分析\n`;
-  html += `目的変数：日次売上\n`;
-  html += `R²=${regFood.r2}  調整済みR²=${r2_adj.toFixed(3)}  F(${k},${n-k-1})=${(parseFloat(regFood.r2)*n/(1-parseFloat(regFood.r2))/k).toFixed(1)}（p<0.001）\n`;
-  if (regCust) html += `客数係数     β=${regCust.b.toLocaleString()}（SE=${regCust.se.toLocaleString()}, t=${regCust.t}, p${regCust.p}）${regCust.sig}\n`;
-  html += `食材費係数   β=${regFood.b.toLocaleString()}（SE=${regFood.se.toLocaleString()}, t=${regFood.t}, p${regFood.p}）${regFood.sig}\n`;
-  html += `金曜効果     β=+${friEff.toLocaleString()}（曜日ダミー、平日比）\n`;
-  html += `土曜効果     β=+${satEff.toLocaleString()}（曜日ダミー、平日比）\n\n`;
-
-  html += `■ 時系列分析（ARIMA(1,0,1)×S(7)）\n`;
-  html += `AR(1)=φ${arPhi.toFixed(2)}  MA(1)=θ${maPhi}  周期=7（週次季節性）\n`;
-  html += `AIC=${aic}  BIC=${bic}\n`;
-  html += `来月予測：${ci_lo.toLocaleString()}〜${ci_hi.toLocaleString()}円（95%予測区間）\n\n`;
-
-  if (outliers.length > 0) {
-    html += `■ 異常値検定（Grubbs検定, α=0.05）\n`;
-    outliers.forEach(o => {
-      const p_txt = o.z > 2.5 ? '0.03' : '0.06';
-      const sig = o.z > 2.5 ? '*' : '';
-      html += `${dates[o.i]}（¥${o.v.toLocaleString()}）  G=${o.z.toFixed(2)}（p=${p_txt}）${sig}\n`;
-    });
-    html += `* 当該日の外部要因（天候・イベント等）の照合を推奨\n`;
-  }
-
-  html += `</pre>`;
-  document.getElementById('statBody').innerHTML = html;
-}
-
 // ---- Helpers ----
-function num(v){ return v ? parseInt(String(v).replace(/[,，\s]/g,''))||0 : 0; }
-function arr(a){ return a.reduce((s,v)=>s+v,0); }
-function show(id){ document.getElementById(id).style.display='block'; }
-function hide(id){ document.getElementById(id).style.display='none'; }
-function activate(id){ document.getElementById(id).classList.add('active'); }
-function done(id){ const el=document.getElementById(id); el.classList.remove('active'); el.classList.add('done'); }
-function set(id,t){ document.getElementById(id).textContent=t; }
-function setH(id,h){ document.getElementById(id).innerHTML=h; }
+function num(v) { return v ? parseInt(String(v).replace(/[,，\s円]/g, '')) || 0 : 0; }
+function sum(a) { return a.reduce((s, v) => s + v, 0); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function activate(id) { document.getElementById(id).classList.add('active'); }
+function done(id) { const el = document.getElementById(id); el.classList.remove('active'); el.classList.add('done'); }
+function set(id, t) { document.getElementById(id).textContent = t; }
+function setH(id, h) { document.getElementById(id).innerHTML = h; }
 </script>
 </body>
 </html>
