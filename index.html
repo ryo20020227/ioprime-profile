@@ -1021,7 +1021,10 @@
     @media (max-width: 560px) {
       .services { grid-template-columns: 1fr; }
       .service:nth-child(3) { grid-template-columns: 1fr; gap: 0; }
+      .service:nth-child(3) .service-head { grid-row: auto; }
       .service:nth-child(3) .service-persona { grid-column: auto; margin-top: 4px; }
+      .service:nth-child(3) .service-desc,
+      .service:nth-child(3) .service-result { grid-column: auto; }
       .service:nth-child(3) .service-desc { margin-bottom: 14px; }
       .diagnosis { flex-direction: column; align-items: flex-start; gap: 20px; }
       .diagnosis-btn { margin-left: 0; }
