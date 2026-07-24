@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>税理士・社労士の先生へ｜i.o.prime</title>
+<meta name="description" content="顧問先の数字の見せ方と読み解きを引き受けます。契約は当方と顧問先の直接契約で、分析結果の責任は当方が負います。税務・労務の業務には立ち入りません。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ryo20020227.github.io/ioprime-profile/partners.html">
+<meta property="og:title" content="税理士・社労士の先生へ｜i.o.prime">
+<meta property="og:description" content="顧問先に渡した数字が、次の一手に変わらない。その手前の見せ方と読み解きを引き受けます。先生に責任が及ばない形で提携します。">
+<meta property="og:image" content="https://ryo20020227.github.io/ioprime-profile/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root {
+  --accent: #33415c;
+  --accent-hover: #435576;
+  /* アクセントと同一色相の明るいティント。ワードマークのピリオドのように
+     面積が小さく、--accent では本文色 #1a1a1a と区別がつかない箇所だけに使う */
+  --accent-tint: #5f77a6;
+  --mono: ui-monospace, 'SF Mono', Consolas, 'Menlo', monospace;
+  --serif: 'Hiragino Mincho ProN', 'Yu Mincho', 'YuMincho', 'Noto Serif JP', serif;
+  --measure: 34em;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  background: #f7f5f2;
+  color: #1a1a1a;
+  font-size: 15px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+.page { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* 冒頭 */
+.top { padding-top: 56px; }
+.brand { margin-bottom: 34px; }
+.brand-name {
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.005em; line-height: 1.2; margin-bottom: 9px;
+}
+.brand-name a { color: inherit; text-decoration: none; }
+/* ピリオド前後は物理的に空くので、光学的に詰める */
+.brand-name .dot { color: var(--accent-tint); margin-left: -0.035em; margin-right: -0.015em; }
+.brand-desc { border-top: 1px solid #c9c4ba; padding-top: 8px; width: min(272px, 100%); }
+.brand-desc-ja {
+  display: block; font-size: 12.5px; font-weight: 600;
+  color: #4a4a4a; letter-spacing: 0.02em; line-height: 1.5;
+}
+.brand-desc-ja .sep { margin: 0 0.5em; color: #b5afa4; font-weight: 400; }
+.brand-desc-en {
+  display: block; font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: 0.18em; color: #a8a29a; margin-top: 3px;
+}
+
+.audience {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+  color: var(--accent); margin-bottom: 14px;
+}
+.top-headline {
+  font-family: var(--serif);
+  font-size: clamp(26px, 6.4vw, 34px);
+  font-weight: 700; line-height: 1.45; letter-spacing: 0.01em;
+}
+.top-headline em { font-style: normal; box-shadow: inset 0 -0.32em 0 #e6e2da; }
+.top-body {
+  margin-top: 26px; font-size: 16px; color: #2e2e2e;
+  line-height: 1.85; max-width: 520px;
+}
+.top-body strong { font-weight: 700; color: #1a1a1a; }
+
+/* セクション */
+.section { margin-top: 56px; }
+.section-label {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
+  color: #888; margin-bottom: 6px;
+}
+.section-lead {
+  font-family: var(--serif); font-size: 19px; font-weight: 700;
+  line-height: 1.5; margin-bottom: 24px; max-width: var(--measure);
+}
+.body-text { font-size: 14.5px; line-height: 1.9; color: #333; max-width: var(--measure); }
+.body-text + .body-text { margin-top: 14px; }
+.body-text strong { font-weight: 700; color: #1a1a1a; }
+
+/* 引き受ける2つ */
+.offer { display: grid; gap: 1px; background: #d4d0c8; border: 1px solid #d4d0c8; }
+.offer-item { background: #fff; padding: 22px 24px; }
+.offer-num {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; color: #a8a29a; margin-bottom: 8px;
+}
+.offer-name { font-family: var(--serif); font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.offer-desc { font-size: 13.5px; line-height: 1.9; color: #444; }
+.offer-desc strong { font-weight: 700; color: #1a1a1a; }
+
+/* 進め方 */
+.flow { counter-reset: step; margin-left: 21px; padding-left: 20px; border-left: 1px solid #d4d0c8; }
+.flow-step { position: relative; padding: 20px 0; counter-increment: step; }
+.flow-step:first-child { padding-top: 2px; }
+.flow-step:last-child { padding-bottom: 2px; }
+.flow-dot {
+  position: absolute; left: -24px; top: 24px;
+  width: 7px; height: 7px; border-radius: 50%; background: #1a1a1a;
+}
+.flow-step:first-child .flow-dot { top: 6px; }
+.flow-num {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: #aaa; display: block; margin-bottom: 3px;
+}
+.flow-num::before { content: "STEP 0" counter(step); }
+.flow-body strong {
+  font-family: var(--serif); display: block;
+  font-size: 15px; font-weight: 700; margin-bottom: 3px;
+}
+.flow-body span { font-size: 13px; color: #666; display: block; max-width: var(--measure); }
+
+/* 責任の所在・データの扱い */
+.terms { border: 1px solid #d4d0c8; background: #fff; padding: 4px 26px; }
+.terms dl { display: grid; grid-template-columns: 132px 1fr; gap: 0 22px; }
+.terms dt {
+  font-size: 12.5px; font-weight: 700; color: var(--accent);
+  padding: 18px 0 18px; border-top: 1px solid #eceae5;
+}
+.terms dd {
+  font-size: 13.5px; line-height: 1.9; color: #444; margin: 0;
+  padding: 18px 0 18px; border-top: 1px solid #eceae5;
+}
+.terms dl > dt:first-of-type, .terms dl > dt:first-of-type + dd { border-top: 0; }
+.terms dd strong { font-weight: 700; color: #1a1a1a; }
+
+/* ルート別 */
+.route { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #d4d0c8; border: 1px solid #d4d0c8; }
+.route-col { background: #fff; padding: 22px 24px; }
+.route-head { font-family: var(--serif); font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.route-sub { font-size: 11.5px; color: #8a857c; margin-bottom: 14px; }
+.route-list { list-style: none; font-size: 13.5px; line-height: 1.85; color: #444; }
+.route-list li { padding-left: 15px; position: relative; margin-bottom: 7px; }
+.route-list li::before { content: "—"; position: absolute; left: 0; color: #b5afa4; }
+.route-link {
+  display: inline-block; margin-top: 12px; font-size: 12.5px;
+  color: var(--accent); text-decoration: none; border-bottom: 1px solid #c6cedd;
+}
+.route-link:hover { border-bottom-color: var(--accent); }
+
+/* 費用 */
+.cost { border: 1px solid var(--accent); background: #fff; padding: 24px 26px; }
+.cost-lead { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+.cost-body { font-size: 13.5px; line-height: 1.9; color: #444; }
+.cost-body strong { font-weight: 700; color: #1a1a1a; }
+
+/* CTA */
+.cta { margin-top: 72px; text-align: center; padding: 48px 0 40px; border-top: 1px solid #d4d0c8; }
+.cta-lead { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.6; }
+.cta-btn {
+  display: inline-block; margin: 20px 0 12px;
+  background: var(--accent); color: #f7f5f2;
+  padding: 15px 34px; font-size: 14px; font-weight: 700;
+  letter-spacing: 0.05em; text-decoration: none;
+  transition: background-color .2s ease;
+}
+.cta-btn:hover { background: var(--accent-hover); }
+.cta-note { font-size: 12px; color: #8a857c; }
+
+.foot { margin-top: 40px; padding-top: 20px; border-top: 1px solid #d4d0c8; font-size: 12px; color: #8a857c; }
+.foot a { color: var(--accent); text-decoration: none; border-bottom: 1px solid #c6cedd; }
+
+@media (max-width: 560px) {
+  .page { padding: 0 20px 64px; }
+  .route { grid-template-columns: 1fr; }
+  .terms { padding: 4px 18px; }
+  .terms dl { grid-template-columns: 1fr; gap: 0; }
+  .terms dt { padding: 16px 0 0; }
+  .terms dd { padding: 4px 0 16px; border-top: 0; }
+  .terms dl > dt:first-of-type + dd { border-top: 0; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top">
+    <div class="brand">
+      <div class="brand-name"><a href="./index.html">i<span class="dot">.</span>o<span class="dot">.</span>prime</a></div>
+      <div class="brand-desc">
+        <span class="brand-desc-ja">データ分析コンサルティング<span class="sep">/</span>京都</span>
+        <span class="brand-desc-en">DATA ANALYSIS / CONSULTING</span>
+      </div>
+    </div>
+
+    <div class="audience">FOR 税理士・社労士</div>
+    <h1 class="top-headline">
+      顧問先から「で、どうすれば<br>
+      いいの」と<em>聞かれたとき</em>。
+    </h1>
+    <p class="top-body">
+      月次で試算表や給与データをお渡ししても、経営者がそれを次の一手に落とせないことがあります。
+      <strong>その手前にある「見せ方」と「読み解き」を引き受けます。</strong>
+      税務・労務の業務には立ち入りません。先生の顧問業務の外側だけを担当します。
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-label">WHAT WE DO</div>
+    <h2 class="section-lead">引き受けるのは、2つです</h2>
+    <div class="offer">
+      <div class="offer-item">
+        <div class="offer-num">01</div>
+        <div class="offer-name">顧問先の分析代行</div>
+        <div class="offer-desc">
+          先生がお持ちの試算表・勘定科目明細・勤怠や給与のデータをもとに、顧問先の経営数値を分析します。
+          売上の構造、原価と人件費の内訳、季節や曜日による変動を統計的に整理し、
+          <strong>「何が起きていて、次に何をすべきか」まで言葉にしたレポート</strong>にしてお渡しします。
+          同じものを先生にもお渡しするので、月次巡回でそのままお使いいただけます。
+        </div>
+      </div>
+      <div class="offer-item">
+        <div class="offer-num">02</div>
+        <div class="offer-name">共同提案の同席</div>
+        <div class="offer-desc">
+          顧問先への説明の場に同席します。数字の読み方や、分析の根拠になっている考え方の説明は当方が引き受けます。
+          <strong>先生に統計の説明をしていただく必要はありません。</strong>
+          顧問先から「で、どうすればいいのか」と聞かれる場面を、そのまま提案の機会に変えられます。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">HOW IT WORKS</div>
+    <h2 class="section-lead">ご紹介から提案まで、4ステップ</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <span class="flow-dot"></span>
+        <div class="flow-body">
+          <div class="flow-num"></div>
+          <strong>顧問先をご紹介いただく</strong>
+          <span>数字の見せ方に困っていそうな先を、2〜3社お聞かせください。業種は問いません</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-dot"></span>
+        <div class="flow-body">
+          <div class="flow-num"></div>
+          <strong>30分の無料診断</strong>
+          <span>いまあるデータで何が見えるかを確認します。この段階では費用は発生しません</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-dot"></span>
+        <div class="flow-body">
+          <div class="flow-num"></div>
+          <strong>先生に同席いただいて提案</strong>
+          <span>何を可視化すると判断に効くのか、顧問先の要望をうかがったうえで決めます</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-dot"></span>
+        <div class="flow-body">
+          <div class="flow-num"></div>
+          <strong>顧問先と当方で直接契約</strong>
+          <span>先生を経由しない直接契約にします。理由は次の項目に書いています</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">RESPONSIBILITY</div>
+    <h2 class="section-lead">先生に責任が及ばない形にしています</h2>
+    <div class="terms">
+      <dl>
+        <dt>契約の相手</dt>
+        <dd>
+          契約は<strong>当方と顧問先の直接契約</strong>です。先生を経由した再委託の形は取りません。
+          先生は「取り次いだ」だけの立場になります。
+        </dd>
+
+        <dt>結果の責任</dt>
+        <dd>
+          分析の内容と結果について、<strong>責任は当方が負います。</strong>
+          ご紹介いただいたことを理由に、先生が責任を問われる形にはなりません。
+        </dd>
+
+        <dt>業務範囲</dt>
+        <dd>
+          当方は<strong>税務代理・税務書類の作成・税務相談、および労務手続きの代行は行いません。</strong>
+          データの集計と分析、その結果の説明までが範囲です。
+          税務・労務の判断が必要になった場合は、必ず先生にお戻しします。
+        </dd>
+
+        <dt>データの扱い</dt>
+        <dd>
+          分析に必要な範囲のデータのみお預かりします。目的外には使用せず、第三者への提供も行いません。
+          事例として公開する場合は、<strong>顧問先と先生の双方の許可をいただいてから</strong>、
+          社名が特定されない形に加工します。許可のないまま公開することはありません。
+        </dd>
+
+        <dt>顧問先との関係</dt>
+        <dd>
+          当方から顧問先に、税務顧問や労務顧問の変更を勧めることは一切ありません。
+          先生の顧問業務を代替する提案も行いません。
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">OUTPUT</div>
+    <h2 class="section-lead">お預かりするデータで、出せるものが変わります</h2>
+    <p class="body-text" style="margin-bottom:20px">
+      どちらか一方だけでも分析できます。両方そろうと、
+      「売上が落ちた月に人件費が下がっていない」といった、財務と労務をまたいだ指摘ができます。
+    </p>
+    <div class="route">
+      <div class="route-col">
+        <div class="route-head">税理士の先生から</div>
+        <div class="route-sub">試算表・勘定科目明細・売上データ</div>
+        <ul class="route-list">
+          <li>売上構造の分解（曜日・季節・商品別）</li>
+          <li>原価率と粗利の推移、品目別の採算</li>
+          <li>部門別・店舗別・案件別の採算</li>
+          <li>翌月の売上予測と、その予測区間</li>
+        </ul>
+        <a class="route-link" href="./analysis_demo.html" target="_blank" rel="noopener">分析レポートの実物を見る →</a>
+      </div>
+      <div class="route-col">
+        <div class="route-head">社労士の先生から</div>
+        <div class="route-sub">勤怠・給与・シフトのデータ</div>
+        <ul class="route-list">
+          <li>人件費の固定費・変動費への分解</li>
+          <li>そこから算出する限界利益率</li>
+          <li>曜日別・時間帯別の人員配置の過不足</li>
+          <li>残業の偏りと、発生している部署の特定</li>
+        </ul>
+        <a class="route-link" href="./analysis_demo.html" target="_blank" rel="noopener">人件費の分解を見る →</a>
+      </div>
+    </div>
+    <p class="body-text" style="margin-top:18px">
+      たとえば飲食店のデータでは、人件費を客数で回帰して
+      <strong>1日あたりの固定人件費と、客1名あたりの変動人件費に分解</strong>できます。
+      そこから限界利益率が出るので、「平日の集客を10%増やしたとき、実際に利益がいくら増えるか」に答えられます。
+      上のリンクから、実際に動くものをご確認いただけます。
+    </p>
+  </div>
+
+  <div class="section">
+    <div class="section-label">COST</div>
+    <h2 class="section-lead">ご紹介にあたって、金銭のやり取りはありません</h2>
+    <div class="cost">
+      <div class="cost-lead">紹介料はお支払いしません。お受け取りいただく必要もありません。</div>
+      <div class="cost-body">
+        顧問先の紹介に金銭が絡むことを避けたい先生が多いと考えています。
+        <strong>ご紹介いただいた顧問先には、30分の無料診断を無償でお引き受けします。</strong>
+        先生には、顧問先にお渡しできる付加価値と、月次巡回で使えるレポートが残ります。<br><br>
+        費用が発生するのは、無料診断のあとに顧問先が導入を決めた場合のみで、
+        その費用は顧問先から当方が直接いただきます。先生に費用のご負担は一切ありません。
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">ABOUT</div>
+    <h2 class="section-lead">担当について</h2>
+    <p class="body-text">
+      犬塚亮と申します。同志社大学商学部にて統計学・経営分析を専攻し、京都でデータ分析コンサルティングを個人で営んでいます。
+      分析はAIに任せきりにせず、<strong>使った統計手法とその定義式を示したうえで結論を説明します。</strong>
+      根拠を確認できない数字は、経営判断には使えないと考えているためです。
+    </p>
+    <p class="body-text">
+      公開しているサンプルは
+      <a class="route-link" style="margin-top:0" href="./index.html#output">こちらのページ</a>
+      からご覧いただけます。飲食・宿泊・不動産のダッシュボードと、CSVをその場で分析するデモを用意しています。
+    </p>
+  </div>
+
+  <div class="cta">
+    <div class="cta-lead">
+      顧問先の数字の見せ方について、<br>
+      30分お話しさせていただけませんか。
+    </div>
+    <a class="cta-btn" href="https://line.me/ti/p/RztAof3Bqm" target="_blank" rel="noopener">LINEで相談する</a>
+    <div class="cta-note">まずは提携の可否だけのご相談でも構いません。</div>
+  </div>
+
+  <div class="foot">
+    i.o.prime — <a href="./index.html">事業者の方向けのページはこちら</a>
+  </div>
+
+</div>
+</body>
+</html>
