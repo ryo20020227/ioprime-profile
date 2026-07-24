@@ -151,6 +151,24 @@ body {
 .cost-body { font-size: 13.5px; line-height: 1.9; color: #444; }
 .cost-body strong { font-weight: 700; color: #1a1a1a; }
 
+.offer-tag {
+  font-family: 'Hiragino Sans', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  color: #f7f5f2; background: var(--accent);
+  padding: 2px 7px; margin-left: 9px; vertical-align: 1px;
+}
+
+.benefit { list-style: none; margin-top: 14px; max-width: var(--measure); }
+.benefit li {
+  position: relative; padding-left: 17px; margin-bottom: 13px;
+  font-size: 14px; line-height: 1.9; color: #333;
+}
+.benefit li::before {
+  content: ""; position: absolute; left: 0; top: 11px;
+  width: 6px; height: 6px; background: var(--accent-tint);
+}
+.benefit strong { font-weight: 700; color: #1a1a1a; }
+
 /* CTA */
 .cta { margin-top: 72px; text-align: center; padding: 48px 0 40px; border-top: 1px solid #d4d0c8; }
 .cta-lead { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.6; }
@@ -204,7 +222,7 @@ body {
 
   <div class="section">
     <div class="section-label">WHAT WE DO</div>
-    <h2 class="section-lead">引き受けるのは、2つです</h2>
+    <h2 class="section-lead">引き受けるのは、3つです</h2>
     <div class="offer">
       <div class="offer-item">
         <div class="offer-num">01</div>
@@ -223,6 +241,18 @@ body {
           顧問先への説明の場に同席します。数字の読み方や、分析の根拠になっている考え方の説明は当方が引き受けます。
           <strong>先生に統計の説明をしていただく必要はありません。</strong>
           顧問先から「で、どうすればいいのか」と聞かれる場面を、そのまま提案の機会に変えられます。
+        </div>
+      </div>
+      <div class="offer-item">
+        <div class="offer-num">03<span class="offer-tag">先生ご自身に</span></div>
+        <div class="offer-name">先生の事務所の分析</div>
+        <div class="offer-desc">
+          上の2つは顧問先のためのものですが、これは<strong>先生の事務所そのもののため</strong>です。
+          ご提携いただいた先生には、事務所の経営数値を無償で分析します。
+          顧問先別の採算、契約の継続年数と解約の傾向、担当者ごとの負荷の偏り。
+          工数を記録していなくても、顧問料の請求データがあれば
+          「どの顧問先が採算に合っているか」の第一歩は出せます。
+          記録の仕組みから必要な場合は、その設計もあわせてご提案します。
         </div>
       </div>
     </div>
@@ -354,11 +384,41 @@ body {
       <div class="cost-body">
         顧問先の紹介に金銭が絡むことを避けたい先生が多いと考えています。
         <strong>ご紹介いただいた顧問先には、30分の無料診断を無償でお引き受けします。</strong>
-        先生には、顧問先にお渡しできる付加価値と、月次巡回で使えるレポートが残ります。<br><br>
-        費用が発生するのは、無料診断のあとに顧問先が導入を決めた場合のみで、
+        費用が発生するのは、そのあとに顧問先が導入を決めた場合のみで、
         その費用は顧問先から当方が直接いただきます。先生に費用のご負担は一切ありません。
       </div>
     </div>
+
+    <p class="body-text" style="margin-top:26px">
+      では、金銭が動かないなら先生に何が残るのか。正直に書きます。
+    </p>
+    <ul class="benefit">
+      <li>
+        <strong>顧問先の継続。</strong>
+        たとえば月3万円の顧問先が1件解約されれば、年間36万円の減収です。
+        顧問料は継続で積み上がる一方、紹介料は一度きりですから、
+        <strong>この1件を防ぐ価値のほうが、紹介料として受け取れる額を大きく上回ります。</strong>
+        「数字の見せ方まで面倒をみてくれる先生」という認識は、ここに効きます。
+      </li>
+      <li>
+        <strong>顧問料を見直す材料。</strong>
+        値上げは切り出しづらいものですが、顧問先に渡せるものが増えていれば、
+        その話をする根拠になります。
+      </li>
+      <li>
+        <strong>月次巡回で使えるレポート。</strong>
+        顧問先にお渡しするものと同じレポートを先生にもお渡しします。
+        次に何を話すかを考える手間が減ります。
+      </li>
+      <li>
+        <strong>先生の事務所自身の分析。</strong>
+        上の03です。顧問先別の採算が見えるようになります。
+      </li>
+    </ul>
+    <p class="body-text" style="margin-top:18px">
+      継続してご紹介いただける関係になった場合は、継続分の取り扱いを別途ご相談させてください。
+      いまの段階では条件を先に決めるより、<strong>一度お試しいただくことを優先しています。</strong>
+    </p>
   </div>
 
   <div class="section">
