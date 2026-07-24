@@ -5,12 +5,12 @@
   <script>document.documentElement.classList.add('js');</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>i.o.prime — データ分析コンサルティング</title>
-  <meta name="description" content="経営の判断を、数字で裏付ける。中小企業向けデータ分析コンサルティング i.o.prime。データの集め方の設計から、毎月のレポートまで対応。まずは30分の無料診断から。">
+  <meta name="description" content="なぜ先月だけ、利益が落ちたのか。中小企業向けデータ分析コンサルティング i.o.prime。ExcelやPOSにある数字だけで、経営判断の裏付けを作ります。まずは30分の無料診断から。">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ryo20020227.github.io/ioprime-profile/">
   <meta property="og:title" content="i.o.prime — データ分析コンサルティング">
-  <meta property="og:description" content="経営の判断を、数字で裏付ける。勘や経験に頼っていた経営判断を、データで見える形にします。まずは30分の無料診断から。">
+  <meta property="og:description" content="なぜ先月だけ、利益が落ちたのか。その答えは、手元のExcelやPOSの数字の中にあります。中小企業向けデータ分析コンサルティング。まずは30分の無料診断から。">
   <meta property="og:image" content="https://ryo20020227.github.io/ioprime-profile/ogp.png">
   <meta property="og:locale" content="ja_JP">
   <meta name="twitter:card" content="summary_large_image">
@@ -58,19 +58,55 @@
       border-bottom: 1px solid #d4d0c8;
     }
 
-    .top-brand {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      margin-bottom: 16px;
+    /* ワードマーク＋ディスクリプタのロックアップ。
+       小文字のワードマークなので、間隔を広げるのではなく、詰めて太らせて存在感を出す */
+    .brand {
+      margin-bottom: 34px;
     }
 
-    .top-label {
+    .brand-name {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.005em;
+      line-height: 1.2;
+      margin-bottom: 9px;
+    }
+
+    /* ピリオド前後は物理的に空くので、光学的に詰める */
+    .brand-name .dot {
+      color: var(--accent);
+      margin-left: -0.035em;
+      margin-right: -0.015em;
+    }
+
+    .brand-desc {
+      border-top: 1px solid #c9c4ba;
+      padding-top: 8px;
+      width: min(272px, 100%);
+    }
+
+    .brand-desc-ja {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #4a4a4a;
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+    }
+
+    .brand-desc-ja .sep {
+      margin: 0 0.5em;
+      color: #b5afa4;
+      font-weight: 400;
+    }
+
+    .brand-desc-en {
+      display: block;
       font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      color: #888;
-      margin-bottom: 20px;
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      color: #a8a29a;
+      margin-top: 3px;
     }
 
     .top-headline {
@@ -87,11 +123,19 @@
       padding-bottom: 1px;
     }
 
+    /* 問い先出しの見出しは単独で「何屋か」を伝えないため、
+       ここが答えを担う。小さくしない */
     .top-body {
-      margin-top: 24px;
-      font-size: 14px;
-      color: #444;
+      margin-top: 26px;
+      font-size: 16px;
+      color: #2e2e2e;
+      line-height: 1.85;
       max-width: 520px;
+    }
+
+    .top-body strong {
+      font-weight: 700;
+      color: #1a1a1a;
     }
 
     /* 診断バンド（全幅・強い面 その1） */
@@ -993,15 +1037,20 @@
 <div class="page">
 
   <div class="top">
-    <div class="top-brand">i.o.prime</div>
-    <div class="top-label">DATA ANALYSIS / CONSULTING</div>
+    <div class="brand">
+      <div class="brand-name">i<span class="dot">.</span>o<span class="dot">.</span>prime</div>
+      <div class="brand-desc">
+        <span class="brand-desc-ja">データ分析コンサルティング<span class="sep">/</span>京都</span>
+        <span class="brand-desc-en">DATA ANALYSIS / CONSULTING</span>
+      </div>
+    </div>
     <h1 class="top-headline">
-      経営の判断を、<br>
-      <em>数字で裏付ける</em>。
+      なぜ先月だけ、<br>
+      <em>利益が落ちたのか</em>。
     </h1>
     <p class="top-body">
-      勘や経験に頼っていた経営判断を、データで見える形にします。<br>
-      たとえば、なぜ先月だけ利益が落ちたのか。どこから手をつけるべきか。数字で答えを出します。
+      その答えは、手元のExcelやPOSの数字の中にあります。<br>
+      <strong>中小企業向けのデータ分析コンサルティングです。</strong>いまある数字だけで、経営判断の裏付けを作ります。まずは30分の無料診断から。
     </p>
   </div>
 
