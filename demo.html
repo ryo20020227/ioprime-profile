@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>飲食店経営ダッシュボード｜i.o.prime</title>
+<meta name="description" content="飲食店向け経営ダッシュボードのサンプル。曜日別売上、FL比率、メニュー別の粗利と利益率を可視化し、次に何をすべきかを所見として言葉にしてお渡しします。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ryo20020227.github.io/ioprime-profile/demo.html">
+<meta property="og:title" content="飲食店経営ダッシュボード（サンプル）｜i.o.prime">
+<meta property="og:description" content="曜日別売上・FL比率・メニュー別の粗利を可視化した実例。数字の読み方はこちらが解説します。統計の知識は必要ありません。">
+<meta property="og:image" content="https://ryo20020227.github.io/ioprime-profile/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 /* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
@@ -54,10 +62,18 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .chart-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .chart-sub{font-size:11px;color:#999;margin-bottom:18px}
 .chart-wrap{position:relative}
+/* グラフ描画ライブラリに接続できなかったときの表示 */
+.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#8a857c;line-height:1.9;text-align:center}
 
 .quad-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
 .quad-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#555}
 .quad-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* 提供の仕方 */
+.spec{background:#fff;border:1px solid var(--line);padding:24px 28px;margin-bottom:32px}
+.spec dl{display:grid;grid-template-columns:118px 1fr;gap:16px 24px;margin:0}
+.spec dt{font-size:12px;font-weight:700;color:var(--accent);padding-top:2px}
+.spec dd{font-size:13px;line-height:1.9;color:#333;margin:0;max-width:60em}
 
 .cta{border:1.5px solid var(--accent);background:#fff;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
 .cta-title{font-size:15px;font-weight:700;color:var(--accent)}
@@ -79,6 +95,11 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   .chart-row.col2,.chart-row.col3-1{grid-template-columns:1fr}
   .chart-panel{padding:16px}
   .note{padding:18px 16px}
+  .spec{padding:18px 16px}
+  .spec dl{grid-template-columns:1fr;gap:0}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #e8e4de}
+  .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
+  .spec dd{padding-top:4px}
   .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
 }
 </style>
@@ -89,44 +110,48 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   <div class="header">
     <div class="header-left">
       <h1>居酒屋A店 経営ダッシュボード</h1>
-      <div class="period">2026年7月 ／ 京都市内・カウンター8席＋テーブル4卓（24席） ／ サンプルデータ</div>
+      <div class="period" id="period"></div>
     </div>
     <div class="header-right">i.o.prime</div>
   </div>
+
+  <noscript>
+    <div class="chart-na" style="margin-bottom:32px">
+      このページは数値とグラフをJavaScriptで組み立てています。
+      ブラウザの設定でJavaScriptを有効にしてご覧ください。
+    </div>
+  </noscript>
 
   <div class="section-label">今月の概況</div>
   <div class="kpi-row">
     <div class="kpi">
       <div class="kpi-label">今月売上</div>
-      <div class="kpi-value">¥2,914,000</div>
-      <div class="kpi-sub">前月比 +4.2%</div>
+      <div class="kpi-value" id="k1"></div>
+      <div class="kpi-sub" id="k1s"></div>
     </div>
     <div class="kpi">
       <div class="kpi-label">平均客単価</div>
-      <div class="kpi-value">¥2,850</div>
-      <div class="kpi-sub">前月比 +120円／月間1,022客</div>
+      <div class="kpi-value" id="k2"></div>
+      <div class="kpi-sub" id="k2s"></div>
     </div>
     <div class="kpi">
       <div class="kpi-label">FL比率</div>
-      <div class="kpi-value green">58%</div>
-      <div class="kpi-sub">目標 60%以内 ✓</div>
+      <div class="kpi-value green" id="k3"></div>
+      <div class="kpi-sub" id="k3s"></div>
     </div>
     <div class="kpi">
       <div class="kpi-label">利益率</div>
-      <div class="kpi-value">14%</div>
-      <div class="kpi-sub">¥407,960</div>
+      <div class="kpi-value" id="k4"></div>
+      <div class="kpi-sub" id="k4s"></div>
     </div>
   </div>
 
   <div class="note">
     <div class="note-head">
       <div class="note-badge">所見</div>
-      <div class="note-by">2026年7月分 ／ i.o.prime</div>
+      <div class="note-by" id="noteBy"></div>
     </div>
-    <p>FL比率58%は目標の60%以内に収まっており、<strong>コスト構造は健全</strong>です。手を入れるべきは売上の曜日偏在とメニューの粗利設計の2点です。</p>
-    <p>金・土・日の3日間で<strong>週売上の62%</strong>を占める一方、月・火の2日は合わせて17%にとどまります。週末をさらに伸ばすより、月・火を底上げするほうが伸びしろが大きい状態です。24席という規模を考えると、週末はすでに席の回転が上限に近づいています。</p>
-    <p>メニューで見直し余地が最も大きいのは<strong>刺身盛り合わせ</strong>です。売上18万円は主要15品で5位の主力商品ですが、利益率60.0%は最も低い水準にあります。利益率を5pt改善するだけで月9,000円、10ptなら月18,000円の粗利増です。原価か価格のどちらかに手を入れる価値があります。</p>
-    <p>逆に生ビールとハイボールは売上・利益率とも上位（右上のスター象限）です。この2品を軸にしたセット設計が、平日の客単価を上げる最短経路になります。</p>
+    <div id="noteBody"></div>
   </div>
 
   <div class="section-label">週次比較</div>
@@ -161,7 +186,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     </div>
     <div class="chart-panel">
       <div class="chart-title">売上 × 利益率 マトリクス</div>
-      <div class="chart-sub">主要15品。点の色が属する象限を表します</div>
+      <div class="chart-sub" id="matrixSub"></div>
       <div class="chart-wrap"><canvas id="scatterChart" height="300"></canvas></div>
       <div class="quad-legend">
         <div class="quad-item"><div class="quad-dot" style="background:#38a169"></div>スター（推すべき）</div>
@@ -170,6 +195,23 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
         <div class="quad-item"><div class="quad-dot" style="background:#e53e3e"></div>要検討</div>
       </div>
     </div>
+  </div>
+
+  <div class="section-label">提供の仕方</div>
+  <div class="spec">
+    <dl>
+      <dt>元データ</dt>
+      <dd>POSレジまたはExcelの日次売上と、メニュー別の売上。1か月分から作成できます。形式が揃っていなくても、こちらで整えます。</dd>
+
+      <dt>何を見せるか</dt>
+      <dd>打ち合わせでご要望をうかがってから決めます。「どの数字を毎月見たいか」が固まっていない段階で構いません。何を可視化すると判断に効くのかを整理するところから、一緒に進めます。</dd>
+
+      <dt>数字の読み方</dt>
+      <dd>統計やデータ分析の知識は必要ありません。何が課題で次に何をすべきかは、上の「所見」の形で毎回こちらが言葉にしてお渡しします。</dd>
+
+      <dt>納品形式</dt>
+      <dd>このページと同じWeb版のほか、PDFでの納品にも対応します。金融機関や顧問税理士に見せる資料としてもお使いいただけます。</dd>
+    </dl>
   </div>
 
   <div class="cta">
@@ -184,22 +226,160 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 </div>
 
 <script>
-Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
-Chart.defaults.color = '#999';
-
 const ACCENT = '#33415c', TINT = '#5f77a6';
 const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#d1d5db', YEL = '#ecc94b', PUR = '#805ad5';
 
-// 曜日別売上。7日で¥658,000 → 31日換算で今月売上¥2,914,000（KPIと一致）
-// 客単価¥2,850 なので日あたり33客・月間1,022客（KPIと一致）
+/* =========================================================================
+   1. 元データ
+   画面に出る数値・文章はすべてここから算出する。
+   本文に数字をベタ書きすると、データを触ったときに静かに食い違うため。
+   ========================================================================= */
+const CFG = {
+  area: '京都市内',
+  seatDesc: 'カウンター8席＋テーブル4卓',
+  seats: 24,
+  month: '2026年7月',
+  daysInMonth: 31,
+  avgSpend: 2850,      // 平均客単価
+  momSalesPct: 4.2,    // 売上の前月比
+  momSpendYen: 120,    // 客単価の前月比
+  flTarget: 60,        // FL比率の目標
+};
+
+// 曜日別売上（月〜日）
+const DOW = ['月', '火', '水', '木', '金', '土', '日'];
 const thisWeek = [58000, 54000, 63000, 76000, 122000, 151000, 134000];
 const lastWeek = [55000, 61000, 60000, 71000, 118000, 163000, 128000];
+
+// 売上100%の内訳。合計が100になっていること
+const COST_MIX = [
+  { label: '食材費', pct: 32, color: BAD  },
+  { label: '人件費', pct: 26, color: TINT },
+  { label: '家賃',   pct: 12, color: PUR  },
+  { label: '光熱費', pct:  5, color: WARN },
+  { label: 'その他', pct: 11, color: YEL  },
+  { label: '利益',   pct: 14, color: GOOD },
+];
+
+// FL比率の推移。最終月は COST_MIX から埋めるので二重管理にならない
+const FL_HISTORY = {
+  labels: ['2月', '3月', '4月', '5月', '6月', '7月'],
+  f: [33, 32, 34, 31, 33, null],
+  l: [28, 27, 29, 28, 26, null],
+};
+
+// 売上 × 利益率 = 粗利。ランキングとマトリクスは同じ配列から描く
+const MENU = [
+  { name:'生ビール',        short:'生ビール',     sales:261000, margin:79.3 },
+  { name:'ハイボール',      short:'ハイボール',   sales:182400, margin:87.5 },
+  { name:'唐揚げ',          short:'唐揚げ',       sales:190400, margin:70.6 },
+  { name:'焼き鳥（5本）',    short:'焼き鳥',       sales:180000, margin:70.0 },
+  { name:'刺身盛り合わせ',   short:'刺身盛り',     sales:180000, margin:60.0 },
+  { name:'枝豆',            short:'枝豆',         sales:121600, margin:78.9 },
+  { name:'餃子',            short:'餃子',         sales:114400, margin:75.0 },
+  { name:'日本酒（1合）',    short:'日本酒',       sales:104000, margin:70.0 },
+  { name:'肉じゃが',        short:'肉じゃが',     sales: 81200, margin:80.0 },
+  { name:'鶏皮ポン酢',      short:'鶏皮ポン酢',   sales: 76000, margin:80.0 },
+  { name:'焼きそば',        short:'焼きそば',     sales: 81600, margin:70.6 },
+  { name:'サラダ',          short:'サラダ',       sales: 81000, margin:70.0 },
+  { name:'天ぷら盛り合わせ', short:'天ぷら盛り',   sales: 98000, margin:60.2 },
+  { name:'デザートセット',   short:'デザート',     sales: 46400, margin:60.0 },
+  { name:'締めラーメン',     short:'締めラーメン', sales: 43200, margin:70.0 },
+].map(m => ({ ...m, gp: Math.round(m.sales * m.margin / 100) }));
+
+// マトリクスの象限しきい値
+const X_TH = 100000, Y_TH = 70;
+
+/* =========================================================================
+   2. 派生値
+   ========================================================================= */
+const sum = a => a.reduce((s, v) => s + v, 0);
+const yen = v => '¥' + Math.round(v).toLocaleString();
+const man = v => (v / 10000).toFixed(0) + '万';
+
+const weekTotal  = sum(thisWeek);
+const monthSales = Math.round(weekTotal / 7 * CFG.daysInMonth);
+const monthCust  = Math.round(monthSales / CFG.avgSpend);
+const mixOf      = label => COST_MIX.find(c => c.label === label).pct;
+const flRate     = mixOf('食材費') + mixOf('人件費');
+const profitRate = mixOf('利益');
+const profitYen  = Math.round(monthSales * profitRate / 100);
+
+FL_HISTORY.f[FL_HISTORY.f.length - 1] = mixOf('食材費');
+FL_HISTORY.l[FL_HISTORY.l.length - 1] = mixOf('人件費');
+FL_HISTORY.fl = FL_HISTORY.f.map((v, i) => v + FL_HISTORY.l[i]);
+
+// 曜日の偏り
+const busyIdx = [4, 5, 6], slowIdx = [0, 1];
+const busyShare = sum(busyIdx.map(i => thisWeek[i])) / weekTotal * 100;
+const slowShare = sum(slowIdx.map(i => thisWeek[i])) / weekTotal * 100;
+const busyName  = busyIdx.map(i => DOW[i]).join('・');
+const slowName  = slowIdx.map(i => DOW[i]).join('・');
+
+// 粗利ランキングと、見直し余地が最も大きい品
+const byGp      = [...MENU].sort((a, b) => b.gp - a.gp);
+const minMgn    = Math.min(...MENU.map(m => m.margin));
+// 最低利益率が同率なら、売上の大きいほうが見直しのインパクトが大きい
+const worstItem = MENU.filter(m => m.margin === minMgn).sort((a, b) => b.sales - a.sales)[0];
+const worstRank = byGp.findIndex(m => m.name === worstItem.name) + 1;
+const stars     = byGp.filter(m => m.sales >= X_TH && m.margin >= Y_TH);
+
+/* =========================================================================
+   3. テキストの描画（グラフ描画ライブラリに依存しない）
+   ========================================================================= */
+function txt(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+txt('period', `${CFG.month} ／ ${CFG.area}・${CFG.seatDesc}（${CFG.seats}席） ／ サンプルデータ`);
+txt('k1',  yen(monthSales));
+txt('k1s', `前月比 +${CFG.momSalesPct}%`);
+txt('k2',  yen(CFG.avgSpend));
+txt('k2s', `前月比 +${CFG.momSpendYen}円／月間${monthCust.toLocaleString()}客`);
+txt('k3',  flRate + '%');
+txt('k3s', `目標 ${CFG.flTarget}%以内 ${flRate <= CFG.flTarget ? '✓' : '超過'}`);
+txt('k4',  profitRate + '%');
+txt('k4s', yen(profitYen));
+txt('noteBy', `${CFG.month}分 ／ i.o.prime`);
+txt('matrixSub', `主要${MENU.length}品。点の色が属する象限を表します`);
+
+document.getElementById('noteBody').innerHTML = `
+<p>FL比率${flRate}%は目標の${CFG.flTarget}%以内に収まっており、<strong>コスト構造は健全</strong>です。
+手を入れるべきは売上の曜日偏在とメニューの粗利設計の2点です。</p>
+
+<p>${busyName}の3日間で<strong>週売上の${busyShare.toFixed(0)}%</strong>を占める一方、${slowName}の2日は合わせて${slowShare.toFixed(0)}%にとどまります。
+週末をさらに伸ばすより、${slowName}を底上げするほうが伸びしろが大きい状態です。
+${CFG.seats}席という規模を考えると、週末はすでに席の回転が上限に近づいています。</p>
+
+<p>メニューで見直し余地が最も大きいのは<strong>${worstItem.name}</strong>です。
+売上${man(worstItem.sales)}円は主要${MENU.length}品で粗利${worstRank}位の主力商品ですが、利益率${worstItem.margin.toFixed(1)}%は最も低い水準にあります。
+利益率を5pt改善するだけで月${yen(worstItem.sales * 0.05)}、10ptなら月${yen(worstItem.sales * 0.10)}の粗利増です。
+原価か価格のどちらかに手を入れる価値があります。</p>
+
+<p>逆に${stars.slice(0, 2).map(m => m.name).join('と')}は売上・利益率とも上位（右上のスター象限）です。
+この2品を軸にしたセット設計が、平日の客単価を上げる最短経路になります。</p>`;
+
+/* =========================================================================
+   4. グラフ
+   CDNが遮断された環境ではライブラリが読めないので、白紙にせず理由を出す
+   ========================================================================= */
+if (typeof Chart === 'undefined') {
+  document.querySelectorAll('.chart-wrap').forEach(el => {
+    el.innerHTML = '<div class="chart-na">グラフを読み込めませんでした。'
+      + 'ネットワークの制限で描画ライブラリに接続できていない可能性があります。<br>'
+      + '主要な数値と分析結果は、上の指標と所見をご覧ください。</div>';
+  });
+} else {
+  drawCharts();
+}
+
+function drawCharts() {
+Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
+Chart.defaults.color = '#999';
 
 // --- 今週vs先週 ---
 new Chart(document.getElementById('weekChart'), {
   type: 'bar',
   data: {
-    labels: ['月', '火', '水', '木', '金', '土', '日'],
+    labels: DOW,
     datasets: [
       { label: '先週', data: lastWeek, backgroundColor: MUTE,   borderWidth: 0 },
       { label: '今週', data: thisWeek, backgroundColor: ACCENT, borderWidth: 0 }
@@ -209,31 +389,31 @@ new Chart(document.getElementById('weekChart'), {
     responsive: true,
     plugins: {
       legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16, font: { size: 11 } } },
-      tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + '：¥' + ctx.raw.toLocaleString() } }
+      tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + '：' + yen(ctx.raw) } }
     },
     scales: {
       x: { grid: { display: false }, ticks: { font: { size: 12 } } },
-      y: { grid: { color: '#f0eee9' }, ticks: { callback: v => '¥' + (v/10000).toFixed(0) + '万', font: { size: 11 } } }
+      y: { grid: { color: '#f0eee9' }, ticks: { callback: v => '¥' + man(v), font: { size: 11 } } }
     }
   }
 });
 
-// --- FL推移（7月の F32 + L26 = 58% は KPI およびドーナツと一致） ---
+// --- FL推移（最終月は COST_MIX と一致する） ---
 new Chart(document.getElementById('flChart'), {
   type: 'line',
   data: {
-    labels: ['2月', '3月', '4月', '5月', '6月', '7月'],
+    labels: FL_HISTORY.labels,
     datasets: [
-      { label: 'FL比率', data: [61, 59, 63, 59, 59, 58],
+      { label: 'FL比率', data: FL_HISTORY.fl,
         borderColor: '#1a1a1a', backgroundColor: 'transparent',
         borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#1a1a1a', tension: 0.3 },
-      { label: '食材費（F）', data: [33, 32, 34, 31, 33, 32],
+      { label: '食材費（F）', data: FL_HISTORY.f,
         borderColor: BAD, backgroundColor: 'transparent',
         borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: BAD, borderDash: [4,3], tension: 0.3 },
-      { label: '人件費（L）', data: [28, 27, 29, 28, 26, 26],
+      { label: '人件費（L）', data: FL_HISTORY.l,
         borderColor: TINT, backgroundColor: 'transparent',
         borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: TINT, borderDash: [4,3], tension: 0.3 },
-      { label: '目標ライン', data: [60,60,60,60,60,60],
+      { label: '目標ライン', data: FL_HISTORY.labels.map(() => CFG.flTarget),
         borderColor: '#d4d0c8', backgroundColor: 'transparent',
         borderWidth: 1, pointRadius: 0, borderDash: [6,4] }
     ]
@@ -251,17 +431,17 @@ new Chart(document.getElementById('flChart'), {
   }
 });
 
-// --- ドーナツ（合計100%。利益14%はKPIと一致） ---
+// --- ドーナツ ---
 new Chart(document.getElementById('donutChart'), {
   type: 'doughnut',
   data: {
-    labels: ['食材費', '人件費', '家賃', '光熱費', 'その他', '利益'],
+    labels: COST_MIX.map(c => c.label),
     datasets: [{
-      data: [32, 26, 12, 5, 11, 14],
-      backgroundColor: [BAD, TINT, PUR, WARN, YEL, GOOD],
-      borderColor: ['#f7f5f2','#f7f5f2','#f7f5f2','#f7f5f2','#f7f5f2','#d4af37'],
-      borderWidth: [2,2,2,2,2,4],
-      offset: [0,0,0,0,0,14]
+      data: COST_MIX.map(c => c.pct),
+      backgroundColor: COST_MIX.map(c => c.color),
+      borderColor: COST_MIX.map(c => c.label === '利益' ? '#d4af37' : '#f7f5f2'),
+      borderWidth: COST_MIX.map(c => c.label === '利益' ? 4 : 2),
+      offset: COST_MIX.map(c => c.label === '利益' ? 14 : 0)
     }]
   },
   options: {
@@ -270,35 +450,14 @@ new Chart(document.getElementById('donutChart'), {
     plugins: {
       legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: { size: 11 } } },
       tooltip: { callbacks: {
-        label: ctx => ' ' + ctx.label + '：' + ctx.raw + '%（¥' + Math.round(2914000 * ctx.raw / 100).toLocaleString() + '）'
+        label: ctx => ' ' + ctx.label + '：' + ctx.raw + '%（' + yen(monthSales * ctx.raw / 100) + '）'
       }}
     }
   }
 });
 
-// --- メニュー ---
-// 売上 × 利益率 = 粗利。ランキングとマトリクスは同じ配列から描いているので必ず一致する
-// 主要15品の売上合計 ¥1,841,200 は今月売上¥2,914,000 の63%
-const MENU = [
-  { name:'生ビール',         short:'生ビール',   sales:261000, margin:79.3 },
-  { name:'ハイボール',       short:'ハイボール', sales:182400, margin:87.5 },
-  { name:'唐揚げ',           short:'唐揚げ',     sales:190400, margin:70.6 },
-  { name:'焼き鳥（5本）',     short:'焼き鳥',     sales:180000, margin:70.0 },
-  { name:'刺身盛り合わせ',    short:'刺身盛り',   sales:180000, margin:60.0 },
-  { name:'枝豆',             short:'枝豆',       sales:121600, margin:78.9 },
-  { name:'餃子',             short:'餃子',       sales:114400, margin:75.0 },
-  { name:'日本酒（1合）',     short:'日本酒',     sales:104000, margin:70.0 },
-  { name:'肉じゃが',         short:'肉じゃが',   sales: 81200, margin:80.0 },
-  { name:'鶏皮ポン酢',       short:'鶏皮ポン酢', sales: 76000, margin:80.0 },
-  { name:'焼きそば',         short:'焼きそば',   sales: 81600, margin:70.6 },
-  { name:'サラダ',           short:'サラダ',     sales: 81000, margin:70.0 },
-  { name:'天ぷら盛り合わせ',  short:'天ぷら盛り', sales: 98000, margin:60.2 },
-  { name:'デザートセット',    short:'デザート',   sales: 46400, margin:60.0 },
-  { name:'締めラーメン',      short:'締めラーメン',sales: 43200, margin:70.0 },
-].map(m => ({ ...m, gp: Math.round(m.sales * m.margin / 100) }));
-
-const rankData = [...MENU].sort((a,b) => b.gp - a.gp).slice(0, 10);
-
+// --- 粗利ランキング ---
+const rankData = byGp.slice(0, 10);
 new Chart(document.getElementById('rankChart'), {
   type: 'bar',
   data: {
@@ -311,21 +470,19 @@ new Chart(document.getElementById('rankChart'), {
     plugins: {
       legend: { display: false },
       tooltip: { callbacks: {
-        label: ctx => ' 粗利 ¥' + ctx.raw.toLocaleString(),
-        afterLabel: ctx => ' 売上 ¥' + rankData[ctx.dataIndex].sales.toLocaleString()
+        label: ctx => ' 粗利 ' + yen(ctx.raw),
+        afterLabel: ctx => ' 売上 ' + yen(rankData[ctx.dataIndex].sales)
                          + ' ／ 利益率 ' + rankData[ctx.dataIndex].margin + '%'
       }}
     },
     scales: {
-      x: { grid: { color: '#f0eee9' }, ticks: { callback: v => '¥' + (v/10000).toFixed(0) + '万', font: { size: 11 } } },
+      x: { grid: { color: '#f0eee9' }, ticks: { callback: v => '¥' + man(v), font: { size: 11 } } },
       y: { grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
 });
 
-// --- 売上 × 利益率 マトリクス（閾値 売上¥100,000 / 利益率70%） ---
-const X_TH = 100000, Y_TH = 70;
-
+// --- 売上 × 利益率 マトリクス ---
 function quadColor(s, m) {
   if (s >= X_TH && m >= Y_TH) return GOOD;   // スター
   if (s <  X_TH && m >= Y_TH) return TINT;   // 育てるべき
@@ -427,7 +584,7 @@ new Chart(document.getElementById('scatterChart'), {
       tooltip: { callbacks: {
         label: ctx => {
           const d = ctx.raw;
-          return ' ' + d.full + '  売上¥' + d.x.toLocaleString() + '  利益率' + d.y + '%  粗利¥' + d.gp.toLocaleString();
+          return ' ' + d.full + '  売上' + yen(d.x) + '  利益率' + d.y + '%  粗利' + yen(d.gp);
         }
       }}
     },
@@ -436,7 +593,7 @@ new Chart(document.getElementById('scatterChart'), {
         min: 0, max: 300000,
         title: { display: true, text: '月間売上（円）', font: { size: 11 } },
         grid: { color: '#f0eee9' },
-        ticks: { callback: v => '¥' + (v/10000).toFixed(0) + '万', font: { size: 11 } }
+        ticks: { callback: v => '¥' + man(v), font: { size: 11 } }
       },
       y: {
         min: 55, max: 92,
@@ -447,6 +604,7 @@ new Chart(document.getElementById('scatterChart'), {
     }
   }
 });
+}
 </script>
 </body>
 </html>

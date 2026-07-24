@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>飲食店データ分析｜i.o.prime</title>
+<meta name="description" content="売上CSVをアップロードすると、FL比率・曜日別パターン・回帰分析による経営課題の洗い出しまでその場で実行します。データはブラウザ内で処理され、サーバーには送信されません。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ryo20020227.github.io/ioprime-profile/analysis_demo.html">
+<meta property="og:title" content="飲食店データ分析デモ（CSVをその場で分析）｜i.o.prime">
+<meta property="og:description" content="お手元の売上CSVを入れるとその場で分析します。サンプルCSVも用意しています。数字の読み方はこちらが解説します。">
+<meta property="og:image" content="https://ryo20020227.github.io/ioprime-profile/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
@@ -36,6 +44,8 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .format-cols{display:flex;gap:8px;flex-wrap:wrap}
 .format-col{border:1px solid var(--line);padding:4px 12px;font-size:11px}
 .format-col.req{background:var(--ink);color:#fff;border-color:var(--ink)}
+.format-hint{font-size:11.5px;color:#8a857c;line-height:1.9;margin-top:12px;padding-top:12px;border-top:1px solid #e8e4de}
+.format-hint .mono{font-family:ui-monospace,'SF Mono',Consolas,Menlo,monospace;color:var(--accent)}
 
 .drop-zone{border:2px dashed #c8c4bc;background:#fff;padding:52px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s}
 .drop-zone:hover,.drop-zone.over{border-color:var(--accent)}
@@ -81,6 +91,14 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .chart-panel{background:#fff;padding:20px}
 .chart-title{font-size:12px;font-weight:700;margin-bottom:3px}
 .chart-sub{font-size:11px;color:#999;margin-bottom:14px}
+/* グラフ描画ライブラリに接続できなかったときの表示 */
+.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#8a857c;line-height:1.9;text-align:center}
+
+/* 提供の仕方 */
+.spec{background:#fff;border:1px solid var(--line);padding:24px 28px;margin-bottom:32px}
+.spec dl{display:grid;grid-template-columns:118px 1fr;gap:16px 24px;margin:0}
+.spec dt{font-size:12px;font-weight:700;color:var(--accent);padding-top:2px}
+.spec dd{font-size:13px;line-height:1.9;color:#333;margin:0;max-width:60em}
 
 /* REPORT — ダッシュボード2枚の .note と同じ見た目にそろえてある */
 .report-box{background:#fff;border:1px solid var(--line);padding:28px 32px;margin-bottom:32px}
@@ -122,6 +140,11 @@ table.calc th.num{text-align:right}
   .chart-grid{grid-template-columns:1fr}
   .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
   .report-box{padding:20px 16px}
+  .spec{padding:18px 16px}
+  .spec dl{grid-template-columns:1fr;gap:0}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #e8e4de}
+  .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
+  .spec dd{padding-top:4px}
   table.calc{font-size:12px}
   table.calc th,table.calc td{padding:7px 8px}
 }
@@ -137,6 +160,13 @@ table.calc th.num{text-align:right}
   </div>
   <div class="header-right">i.o.prime</div>
 </div>
+
+<noscript>
+  <div class="chart-na" style="margin-bottom:28px">
+    このページはお使いのブラウザ上でCSVを解析します。
+    ブラウザの設定でJavaScriptを有効にしてご覧ください。
+  </div>
+</noscript>
 
 <!-- UPLOAD -->
 <div id="uploadSection">
@@ -154,6 +184,12 @@ table.calc th.num{text-align:right}
       <div class="format-col req">食材費（必須）</div>
       <div class="format-col req">人件費（必須）</div>
       <div class="format-col">客数（任意）</div>
+    </div>
+    <div class="format-hint">
+      日付は <span class="mono">2026-07-01</span> ／ <span class="mono">2026/7/1</span> ／
+      <span class="mono">2026年7月1日</span> ／ <span class="mono">令和8年7月1日</span>（<span class="mono">R8.7.1</span>）に対応します。
+      年の無い <span class="mono">7/1</span> のような書式は曜日を特定できないため受け付けません。<br>
+      アップロードしたデータはお使いのブラウザの中だけで処理され、サーバーには送信されません。
     </div>
   </div>
 
@@ -230,6 +266,23 @@ table.calc th.num{text-align:right}
     <div id="reportBody"></div>
   </div>
 
+  <div class="sec-label" style="margin-top:28px">提供の仕方</div>
+  <div class="spec">
+    <dl>
+      <dt>元データ</dt>
+      <dd>POSレジまたはExcelから書き出した日次のCSV。上のとおり日付・売上・食材費・人件費の4列があれば分析できます。形式が揃っていなくても、こちらで整えます。</dd>
+
+      <dt>何を見せるか</dt>
+      <dd>打ち合わせでご要望をうかがってから決めます。「どの数字を毎月見たいか」が固まっていない段階で構いません。何を可視化すると判断に効くのかを整理するところから、一緒に進めます。</dd>
+
+      <dt>数字の読み方</dt>
+      <dd>統計やデータ分析の知識は必要ありません。上の「統計分析レポート」は根拠として添えているもので、実際にお読みいただくのはその下の「所見」です。何が課題で次に何をすべきかは、毎回こちらが言葉にしてお渡しします。</dd>
+
+      <dt>納品形式</dt>
+      <dd>このページと同じWeb版のほか、PDFでの納品にも対応します。金融機関や顧問税理士に見せる資料としてもお使いいただけます。</dd>
+    </dl>
+  </div>
+
   <div class="cta">
     <div class="cta-body">
       <div class="cta-title">この分析をあなたの店舗で</div>
@@ -244,8 +297,14 @@ table.calc th.num{text-align:right}
 </div>
 
 <script>
-Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
-Chart.defaults.color = '#999';
+// ライブラリの到達確認は、Chart に触れるより前に済ませておく。
+// Chart.defaults への代入を先に書くと、CDNが遮断された環境では
+// ここで例外が出てスクリプト全体が止まり、無反応なページになる。
+const LIBS_OK = (typeof Chart !== 'undefined') && (typeof Papa !== 'undefined');
+if (LIBS_OK) {
+  Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
+  Chart.defaults.color = '#999';
+}
 
 const ACCENT = '#33415c', TINT = '#5f77a6';
 const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#d1d5db';
@@ -397,6 +456,41 @@ function mlr(X, y) {
   return { b, se, t, p: t.map(v => tP(v, df)), r2, adj, F, pF: fP(F, k, df), k, df, n };
 }
 
+/* 日付の解釈。new Date() 任せだと「7/1」が2001年として通ってしまい、
+   曜日が全部ずれたまま最後まで走る（エラーも出ない）。ここで明示的に弾く。 */
+const ERA = { '令和':2018, 'R':2018, '平成':1988, 'H':1988, '昭和':1925, 'S':1925 };
+
+function parseDate(raw) {
+  if (raw === undefined || raw === null) return { err: 'empty' };
+  let t = String(raw).trim()
+    // 全角英数を半角に
+    .replace(/[０-９Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/[年月]/g, '/').replace(/日/g, '')
+    .replace(/[.\-]/g, '/')
+    .replace(/\s+/g, '')
+    .replace(/\/+$/, '');
+  if (!t) return { err: 'empty' };
+
+  // 和暦（令和8/7/1、R8.7.1 など）
+  const wa = t.match(/^(令和|平成|昭和|R|H|S)(\d{1,2})\/(\d{1,2})\/(\d{1,2})$/i);
+  if (wa) {
+    const key = wa[1].length > 1 ? wa[1] : wa[1].toUpperCase();
+    const d = new Date(ERA[key] + +wa[2], +wa[3] - 1, +wa[4]);
+    return isNaN(d) ? { err: 'bad' } : { date: d };
+  }
+  // 西暦4桁
+  const m = t.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+  if (m) {
+    const d = new Date(+m[1], +m[2] - 1, +m[3]);
+    // 2026/2/31 のような存在しない日付を弾く
+    if (isNaN(d) || d.getMonth() !== +m[2] - 1) return { err: 'bad' };
+    return { date: d };
+  }
+  // 年が無いもの（7/1、07/01 など）は曜日を確定できない
+  if (/^\d{1,2}\/\d{1,2}$/.test(t)) return { err: 'noyear' };
+  return { err: 'bad' };
+}
+
 function mean(a) { return a.reduce((s, v) => s + v, 0) / a.length; }
 function sd(a) {  // 不偏標準偏差
   const m = mean(a);
@@ -420,6 +514,22 @@ function tStr(t) {
 }
 
 /* ========================================================================= */
+
+// ---- 読み込めなかった場合の案内 ----
+// 押しても何も起きない状態にはせず、理由を出して操作を止める
+if (!LIBS_OK) {
+  const box = document.createElement('div');
+  box.className = 'chart-na';
+  box.style.marginBottom = '20px';
+  box.textContent = 'この環境では分析ライブラリを読み込めませんでした。'
+    + 'ネットワークの制限で外部スクリプトに接続できていない可能性があります。'
+    + '別の回線でお試しいただくか、LINEからお問い合わせください。';
+  const up = document.getElementById('uploadSection');
+  up.insertBefore(box, up.firstChild);
+  document.getElementById('dropZone').style.opacity = '0.45';
+  document.getElementById('dropZone').style.pointerEvents = 'none';
+  document.getElementById('sampleDl').style.display = 'none';
+}
 
 // ---- Drag & Drop ----
 const dz = document.getElementById('dropZone');
@@ -456,8 +566,8 @@ function go(file) {
   hide('uploadSection'); show('loadingSection');
   activate('s1');
 
-  if (typeof Papa === 'undefined') {
-    showError('ライブラリの読み込みに失敗しました。ページを再読み込みしてください。');
+  if (!LIBS_OK) {
+    showError('分析ライブラリを読み込めていないため実行できません。ページを再読み込みするか、別の回線でお試しください。');
     return;
   }
 
@@ -501,6 +611,21 @@ function crunch(rows) {
 
   const dates   = rows.map(r => r[kDate]);
   const sales   = rows.map(r => num(r[kSales]));
+
+  // 日付を先に検証する。1件でも解釈できなければ、黙って進まずここで止める
+  const parsed = dates.map(parseDate);
+  const bad = parsed.findIndex(p => p.err);
+  if (bad >= 0) {
+    const shown = String(dates[bad] === undefined ? '(空欄)' : dates[bad]).slice(0, 20);
+    if (parsed[bad].err === 'noyear') {
+      throw new Error(`${bad + 2}行目の日付「${shown}」に年が含まれていません。`
+        + '曜日を特定できないため、2026/7/1 のように年から書いた形式でご用意ください。');
+    }
+    throw new Error(`${bad + 2}行目の日付「${shown}」を解釈できませんでした。`
+      + '2026-07-01 ／ 2026/7/1 ／ 2026年7月1日 ／ 令和8年7月1日 のいずれかの形式でご用意ください。'
+      + '（合計行などデータ以外の行が混ざっている場合は削除してください）');
+  }
+  const dateObj = parsed.map(p => p.date);
   const food    = rows.map(r => num(r[kFood]));
   const labor   = rows.map(r => num(r[kLabor]));
   const custRaw = rows.map(r => num(r[kCust]));
@@ -517,13 +642,12 @@ function crunch(rows) {
 
   // 曜日別
   const DAY = ['日','月','火','水','木','金','土'];
-  const dow = dates.map(d => new Date(d).getDay());
+  const dow = dateObj.map(d => d.getDay());
   const dTot = Array(7).fill(0), dCnt = Array(7).fill(0);
-  dow.forEach((w, i) => { if (!isNaN(w)) { dTot[w] += sales[i]; dCnt[w]++; } });
+  dow.forEach((w, i) => { dTot[w] += sales[i]; dCnt[w]++; });
   const dAvg = dTot.map((t, i) => dCnt[i] ? Math.round(t / dCnt[i]) : 0);
 
   const valid = dAvg.map((v, i) => ({ n: DAY[i], v })).filter(d => d.v > 0);
-  if (!valid.length) throw new Error('日付列を認識できませんでした。YYYY-MM-DD 形式でご用意ください。');
   const best  = valid.reduce((a, b) => a.v > b.v ? a : b);
   const worst = valid.reduce((a, b) => a.v < b.v ? a : b);
 
@@ -537,7 +661,7 @@ function crunch(rows) {
 
   const avgSpend = hasCust ? Math.round(totSales / sum(cust)) : null;
 
-  return { dates, sales, food, labor, cust, hasCust, flDay, n, dow, DAY,
+  return { dates, dateObj, lastDate: dateObj[n-1], sales, food, labor, cust, hasCust, flDay, n, dow, DAY,
            totSales, totFood, totLabor, fl,
            fRatio: totFood / totSales * 100, lRatio: totLabor / totSales * 100,
            avgDaily, maxS, minS, dAvg, dCnt, best, worst, wkndRatio, trend, avgSpend };
@@ -634,7 +758,7 @@ function analyse(m) {
   const resid = sales.map((s, i) => s - dMean[dow[i]]);
   const dfR = Math.max(1, n - dCnt.filter(c => c > 0).length);
   const sResid = Math.sqrt(resid.reduce((s, v) => s + v * v, 0) / dfR);
-  const nm = nextMonth(m.dates[m.n - 1]);
+  const nm = nextMonth(m.lastDate);
   const fc = nm ? nm.cnt.reduce((s, c, w) => s + c * dMean[w], 0) : null;
   const fcSE = nm ? sResid * Math.sqrt(nm.days) : null;
 
@@ -651,9 +775,8 @@ function analyse(m) {
            sResid, nm, fc, fcSE, grubbs, mu, sdSales: s1 };
 }
 
-function nextMonth(lastDate) {
-  const d = new Date(lastDate);
-  if (isNaN(d)) return null;
+function nextMonth(d) {
+  if (!d || isNaN(d)) return null;
   const y = d.getFullYear(), mo = d.getMonth() + 1;          // 0始まりなので +1 が翌月
   const days = new Date(y, mo + 1, 0).getDate();
   const cnt = Array(7).fill(0);

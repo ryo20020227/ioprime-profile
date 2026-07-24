@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>不動産管理ダッシュボード｜i.o.prime</title>
+<meta name="description" content="賃貸オーナー向け不動産管理ダッシュボードのサンプル。物件別の稼働率・CF・修繕費率を可視化し、どの物件から手を打つべきかを所見として言葉にしてお渡しします。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ryo20020227.github.io/ioprime-profile/demo_realestate.html">
+<meta property="og:title" content="不動産管理ダッシュボード（サンプル）｜i.o.prime">
+<meta property="og:description" content="物件別の稼働率・キャッシュフロー・修繕費率を可視化した実例。数字の読み方はこちらが解説します。">
+<meta property="og:image" content="https://ryo20020227.github.io/ioprime-profile/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 /* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
@@ -56,6 +64,14 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .chart-sub{font-size:11px;color:#999;margin-bottom:18px}
 .chart-wrap{position:relative}
 .chart-wrap-occupancy{position:relative;height:200px}
+/* グラフ描画ライブラリに接続できなかったときの表示 */
+.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#8a857c;line-height:1.9;text-align:center}
+
+/* 提供の仕方 */
+.spec{background:#fff;border:1px solid var(--line);padding:24px 28px;margin-bottom:32px}
+.spec dl{display:grid;grid-template-columns:118px 1fr;gap:16px 24px;margin:0}
+.spec dt{font-size:12px;font-weight:700;color:var(--accent);padding-top:2px}
+.spec dd{font-size:13px;line-height:1.9;color:#333;margin:0;max-width:60em}
 
 .quad-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
 .quad-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#555}
@@ -81,6 +97,11 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   .chart-row.col2,.chart-row.col3-1{grid-template-columns:1fr}
   .chart-panel{padding:16px}
   .note{padding:18px 16px}
+  .spec{padding:18px 16px}
+  .spec dl{grid-template-columns:1fr;gap:0}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #e8e4de}
+  .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
+  .spec dd{padding-top:4px}
   .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
 }
 </style>
@@ -91,43 +112,48 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   <div class="header">
     <div class="header-left">
       <h1>不動産管理ダッシュボード（賃貸オーナー向け）</h1>
-      <div class="period">2026年7月 ／ 京都市内・6棟38戸 ／ サンプルデータ</div>
+      <div class="period" id="period"></div>
     </div>
     <div class="header-right">i.o.prime</div>
   </div>
+
+  <noscript>
+    <div class="chart-na" style="margin-bottom:32px">
+      このページは数値とグラフをJavaScriptで組み立てています。
+      ブラウザの設定でJavaScriptを有効にしてご覧ください。
+    </div>
+  </noscript>
 
   <div class="section-label">全体の概況</div>
   <div class="kpi-row">
     <div class="kpi">
       <div class="kpi-label">管理物件</div>
-      <div class="kpi-value">6棟</div>
-      <div class="kpi-sub">全38戸／入居32戸</div>
+      <div class="kpi-value" id="k1"></div>
+      <div class="kpi-sub" id="k1s"></div>
     </div>
     <div class="kpi">
       <div class="kpi-label">総稼働率</div>
-      <div class="kpi-value orange">84%</div>
-      <div class="kpi-sub">目標 90%以上</div>
+      <div class="kpi-value orange" id="k2"></div>
+      <div class="kpi-sub" id="k2s"></div>
     </div>
     <div class="kpi">
       <div class="kpi-label">今月賃料収入</div>
-      <div class="kpi-value">¥3,240,000</div>
-      <div class="kpi-sub">前月比 −¥96,000</div>
+      <div class="kpi-value" id="k3"></div>
+      <div class="kpi-sub" id="k3s"></div>
     </div>
     <div class="kpi">
       <div class="kpi-label">今月CF（手残り）</div>
-      <div class="kpi-value green">¥738,100</div>
-      <div class="kpi-sub">CF率 22.8%</div>
+      <div class="kpi-value green" id="k4"></div>
+      <div class="kpi-sub" id="k4s"></div>
     </div>
   </div>
 
   <div class="note">
     <div class="note-head">
       <div class="note-badge">所見</div>
-      <div class="note-by">2026年7月分 ／ i.o.prime</div>
+      <div class="note-by" id="noteBy"></div>
     </div>
-    <p>6棟38戸で総稼働率84%、全体のCF率22.8%。<strong>ポートフォリオ全体としては健全</strong>ですが、平均値の裏で状態が二極化しています。</p>
-    <p>対応の優先度が最も高いのは<strong>Fアパート</strong>です。稼働率50%（4戸中2戸）に対してローン返済が賃料収入の80%を占めており、<strong>今月のCFはゼロ、損益分岐点ちょうど</strong>の状態です。あと1戸空くと持ち出しに転じます。家賃を下げてでも埋めるべき局面で、稼働率75%のDアパートより先に手を打つ物件です。</p>
-    <p>一方、<strong>Eマンションの修繕費率29.5%は7月の配管工事による一時的なもの</strong>で、恒常的な悪化ではありません。下の物件ポジション分析では要注意側に位置していますが、来月以降は優良物件側に戻る見込みです。単月の修繕費率だけで物件の良し悪しを判断しないでください。この図は12か月の移動平均で見るのが本来の使い方です。</p>
+    <div id="noteBody"></div>
   </div>
 
   <div class="section-label">稼働状況</div>
@@ -157,7 +183,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   <div class="chart-row col2">
     <div class="chart-panel">
       <div class="chart-title">修繕費の月別推移</div>
-      <div class="chart-sub">5月：Cマンション外壁補修 ／ 7月：Eマンション配管工事</div>
+      <div class="chart-sub" id="repairSub"></div>
       <div class="chart-wrap"><canvas id="repairChart" height="220"></canvas></div>
     </div>
     <div class="chart-panel">
@@ -173,6 +199,23 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
     </div>
   </div>
 
+  <div class="section-label">提供の仕方</div>
+  <div class="spec">
+    <dl>
+      <dt>元データ</dt>
+      <dd>管理会社の月次報告書、またはExcelの収支表。物件ごとの賃料・ローン返済・修繕費が分かれば作成できます。形式が揃っていなくても、こちらで整えます。</dd>
+
+      <dt>何を見せるか</dt>
+      <dd>打ち合わせでご要望をうかがってから決めます。「どの数字を毎月見たいか」が固まっていない段階で構いません。何を可視化すると判断に効くのかを整理するところから、一緒に進めます。</dd>
+
+      <dt>数字の読み方</dt>
+      <dd>統計やデータ分析の知識は必要ありません。どの物件から手を打つべきかは、上の「所見」の形で毎回こちらが言葉にしてお渡しします。</dd>
+
+      <dt>納品形式</dt>
+      <dd>このページと同じWeb版のほか、PDFでの納品にも対応します。金融機関や顧問税理士に見せる資料としてもお使いいただけます。</dd>
+    </dl>
+  </div>
+
   <div class="cta">
     <div class="cta-body">
       <div class="cta-title">この分析をあなたの物件で</div>
@@ -185,32 +228,138 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 </div>
 
 <script>
-Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
-Chart.defaults.color = '#999';
-
 const ACCENT = '#33415c', TINT = '#5f77a6';
 const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#d1d5db', YEL = '#ecc94b';
 
-const props = ['Aマンション','Bアパート','Cマンション','Dアパート','Eマンション','Fアパート'];
+/* =========================================================================
+   1. 元データ
+   画面に出る数値・文章はすべてここから算出する。
+   本文に数字をベタ書きすると、データを触ったときに静かに食い違うため。
+   ========================================================================= */
+const CFG = {
+  area: '京都市内',
+  month: '2026年7月',
+  occTarget: 90,        // 稼働率の目標
+  mgmtRate: 0.05,       // 管理委託費（実収の5%。日本賃貸住宅管理協会調査に基づく相場）
+  otherRate: 0.03,      // 保険料・固定資産税の月割等
+  momRentYen: -96000,   // 賃料収入の前月比
+};
 
-// 物件別データ（戸数・稼働率・収支がすべて整合するように組んである）
-// 戸数   ：A6 B4 C10 D4 E10 F4 ＝ 38戸
-// 入居戸 ：A6 B4 C 9 D3 E 8 F2 ＝ 32戸 → 総稼働率 84%
-// 管理委託費：実収の5%（日本賃貸住宅管理協会調査に基づく相場）
-// その他 ：保険料・固定資産税の月割等、実収の3%
-// CF     ：賃料 − ローン − 修繕 − 管理委託 − その他
-const units    = [ 6, 4, 10, 4, 10, 4];
-const occUnits = [ 6, 4,  9, 3,  8, 2];
-const rent     = [750000, 420000, 705000, 255000, 950000, 160000];
-const loan     = [375000, 168000, 380000, 130000, 573000, 128000];
-const repair   = [ 60000,  31000,  70500,  28000, 280000,  19200];  // 7月はEマンション配管工事で大幅増
-const mgmt     = [ 37500,  21000,  35250,  12750,  47500,   8000];
-const other    = [ 22500,  12600,  21150,   7650,  28500,   4800];
-const cf       = [255000, 187400, 198100,  76600,  21000,       0];  // Fアパートは損益分岐点（CF=0）
+// 物件データ。戸数・入居戸数・賃料・ローン・修繕が相互に整合するよう組んである
+const PROPS = [
+  { name:'Aマンション', units: 6, occ: 6, rent:750000, loan:375000, repair: 60000 },
+  { name:'Bアパート',   units: 4, occ: 4, rent:420000, loan:168000, repair: 31000 },
+  { name:'Cマンション', units:10, occ: 9, rent:705000, loan:380000, repair: 70500 },
+  { name:'Dアパート',   units: 4, occ: 3, rent:255000, loan:130000, repair: 28000 },
+  { name:'Eマンション', units:10, occ: 8, rent:950000, loan:573000, repair:280000 },
+  { name:'Fアパート',   units: 4, occ: 2, rent:160000, loan:128000, repair: 19200 },
+];
 
-const occData    = occUnits.map((o,i) => Math.round(o/units[i]*100));
-const repairRate = repair.map((r,i) => +(r/rent[i]*100).toFixed(1));
-const sum = a => a.reduce((x,y) => x+y, 0);
+// 修繕費の月別推移。当月は PROPS の合計で埋めるので二重管理にならない
+const REPAIR_HISTORY = {
+  labels: ['2月', '3月', '4月', '5月', '6月', '7月'],
+  data:   [185000, 142000, 267000, 823000, 198000, null],
+};
+// 大きな修繕が出た月の内訳。チャートの説明文と所見の両方でこれを使う
+const REPAIR_EVENTS = [
+  { month: '5月', prop: 'Cマンション', work: '外壁補修' },
+  { month: '7月', prop: 'Eマンション', work: '配管工事' },
+];
+
+// ポジション分析の象限しきい値
+const X_TH = 85, Y_TH = 15;
+
+/* =========================================================================
+   2. 派生値
+   ========================================================================= */
+const sum = a => a.reduce((x, y) => x + y, 0);
+const yen = v => (v < 0 ? '\u2212¥' : '¥') + Math.abs(Math.round(v)).toLocaleString();
+const man = v => (v / 10000).toFixed(0) + '万';
+
+PROPS.forEach(p => {
+  p.mgmt      = Math.round(p.rent * CFG.mgmtRate);
+  p.other     = Math.round(p.rent * CFG.otherRate);
+  p.cf        = p.rent - p.loan - p.repair - p.mgmt - p.other;
+  p.occRate   = Math.round(p.occ / p.units * 100);
+  p.repairPct = +(p.repair / p.rent * 100).toFixed(1);
+  p.loanPct   = Math.round(p.loan / p.rent * 100);
+});
+
+const props      = PROPS.map(p => p.name);
+const units      = PROPS.map(p => p.units);
+const occUnits   = PROPS.map(p => p.occ);
+const rent       = PROPS.map(p => p.rent);
+const loan       = PROPS.map(p => p.loan);
+const repair     = PROPS.map(p => p.repair);
+const mgmt       = PROPS.map(p => p.mgmt);
+const other      = PROPS.map(p => p.other);
+const cf         = PROPS.map(p => p.cf);
+const occData    = PROPS.map(p => p.occRate);
+const repairRate = PROPS.map(p => p.repairPct);
+
+const totalUnits = sum(units);
+const totalOcc   = sum(occUnits);
+const occOverall = totalOcc / totalUnits * 100;
+const totalRent  = sum(rent);
+const totalCf    = sum(cf);
+const cfRate     = totalCf / totalRent * 100;
+
+REPAIR_HISTORY.data[REPAIR_HISTORY.data.length - 1] = sum(repair);
+
+// 手を打つ優先度：CFが最も薄い物件。同額なら稼働率が低いほう
+const worst      = [...PROPS].sort((a, b) => a.cf - b.cf || a.occRate - b.occRate)[0];
+const secondOcc  = [...PROPS].sort((a, b) => a.occRate - b.occRate).find(p => p.name !== worst.name);
+// 修繕費率が最も高い物件と、その原因になった工事
+const heavyRepair = [...PROPS].sort((a, b) => b.repairPct - a.repairPct)[0];
+const repairCause = REPAIR_EVENTS.find(e => e.prop === heavyRepair.name);
+
+/* =========================================================================
+   3. テキストの描画（グラフ描画ライブラリに依存しない）
+   ========================================================================= */
+function txt(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+txt('period', `${CFG.month} ／ ${CFG.area}・${PROPS.length}棟${totalUnits}戸 ／ サンプルデータ`);
+txt('k1',  PROPS.length + '棟');
+txt('k1s', `全${totalUnits}戸／入居${totalOcc}戸`);
+txt('k2',  occOverall.toFixed(0) + '%');
+txt('k2s', `目標 ${CFG.occTarget}%以上`);
+txt('k3',  yen(totalRent));
+txt('k3s', `前月比 ${yen(CFG.momRentYen)}`);
+txt('k4',  yen(totalCf));
+txt('k4s', `CF率 ${cfRate.toFixed(1)}%`);
+txt('noteBy', `${CFG.month}分 ／ i.o.prime`);
+txt('repairSub', REPAIR_EVENTS.map(e => `${e.month}：${e.prop}${e.work}`).join(' ／ '));
+
+document.getElementById('noteBody').innerHTML = `
+<p>${PROPS.length}棟${totalUnits}戸で総稼働率${occOverall.toFixed(0)}%、全体のCF率${cfRate.toFixed(1)}%。
+<strong>ポートフォリオ全体としては健全</strong>ですが、平均値の裏で状態が二極化しています。</p>
+
+<p>対応の優先度が最も高いのは<strong>${worst.name}</strong>です。
+稼働率${worst.occRate}%（${worst.units}戸中${worst.occ}戸）に対してローン返済が賃料収入の${worst.loanPct}%を占めており、
+<strong>今月のCFは${worst.cf === 0 ? 'ゼロ、損益分岐点ちょうど' : yen(worst.cf)}</strong>の状態です。あと1戸空くと持ち出しに転じます。
+家賃を下げてでも埋めるべき局面で、稼働率${secondOcc.occRate}%の${secondOcc.name}より先に手を打つ物件です。</p>
+
+<p>一方、<strong>${heavyRepair.name}の修繕費率${heavyRepair.repairPct}%は${repairCause ? repairCause.month + 'の' + repairCause.work : '当月の大規模修繕'}による一時的なもの</strong>で、
+恒常的な悪化ではありません。下の物件ポジション分析では要注意側に位置していますが、来月以降は優良物件側に戻る見込みです。
+単月の修繕費率だけで物件の良し悪しを判断しないでください。この図は12か月の移動平均で見るのが本来の使い方です。</p>`;
+
+/* =========================================================================
+   4. グラフ
+   CDNが遮断された環境ではライブラリが読めないので、白紙にせず理由を出す
+   ========================================================================= */
+if (typeof Chart === 'undefined') {
+  document.querySelectorAll('.chart-wrap, .chart-wrap-occupancy').forEach(el => {
+    el.innerHTML = '<div class="chart-na">グラフを読み込めませんでした。'
+      + 'ネットワークの制限で描画ライブラリに接続できていない可能性があります。<br>'
+      + '主要な数値と分析結果は、上の指標と所見をご覧ください。</div>';
+  });
+} else {
+  drawCharts();
+}
+
+function drawCharts() {
+Chart.defaults.font.family = "Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif";
+Chart.defaults.color = '#999';
 
 // --- 稼働率 (horizontal bar) ---
 new Chart(document.getElementById('occupancyChart'), {
@@ -257,11 +406,11 @@ new Chart(document.getElementById('revenueChart'), {
     responsive: true,
     plugins: {
       legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
-      tooltip: { callbacks: { label: ctx => ctx.dataset.label + '：¥' + ctx.parsed.y.toLocaleString() } }
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + '：' + yen(ctx.parsed.y) } }
     },
     scales: {
       x: { stacked: true, grid: { display: false } },
-      y: { stacked: true, grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + (v/10000) + '万' } }
+      y: { stacked: true, grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + man(v) } }
     }
   }
 });
@@ -284,8 +433,8 @@ new Chart(document.getElementById('donutChart'), {
     plugins: {
       legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
       tooltip: { callbacks: {
-        label: ctx => ctx.label + '：¥' + ctx.parsed.toLocaleString()
-                      + '（' + (ctx.parsed / sum(rent) * 100).toFixed(1) + '%）'
+        label: ctx => ctx.label + '：' + yen(ctx.parsed)
+                      + '（' + (ctx.parsed / totalRent * 100).toFixed(1) + '%）'
       }}
     }
   }
@@ -295,10 +444,10 @@ new Chart(document.getElementById('donutChart'), {
 new Chart(document.getElementById('repairChart'), {
   type: 'line',
   data: {
-    labels: ['2月', '3月', '4月', '5月', '6月', '7月'],
+    labels: REPAIR_HISTORY.labels,
     datasets: [{
       label: '修繕費合計',
-      data: [185000, 142000, 267000, 823000, 198000, sum(repair)],
+      data: REPAIR_HISTORY.data,
       borderColor: BAD,
       backgroundColor: 'rgba(229,62,62,0.07)',
       fill: true,
@@ -312,16 +461,16 @@ new Chart(document.getElementById('repairChart'), {
     responsive: true,
     plugins: {
       legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ' ¥' + ctx.raw.toLocaleString() } }
+      tooltip: { callbacks: { label: ctx => ' ' + yen(ctx.raw) } }
     },
     scales: {
       x: { grid: { display: false } },
-      y: { grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + (v/10000) + '万' } }
+      y: { grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + man(v) } }
     }
   }
 });
 
-// --- scatter: 稼働率 × 修繕費率（閾値 稼働率85% / 修繕費率15%） ---
+// --- scatter: 稼働率 × 修繕費率（閾値は上の X_TH / Y_TH） ---
 const X_TH = 85, Y_TH = 15;
 
 const quadPlugin = {
@@ -448,6 +597,7 @@ new Chart(document.getElementById('scatterChart'), {
     }
   }
 });
+}
 </script>
 </body>
 </html>
