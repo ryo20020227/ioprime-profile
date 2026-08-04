@@ -1270,6 +1270,7 @@
       <label class="check-item"><input type="checkbox"><span class="check-box"></span><span>売上や利益に問題があると感じているが、どこが原因かはっきりしない</span></label>
       <label class="check-item"><input type="checkbox"><span class="check-box"></span><span>感覚や経験で経営判断をしているが、数字で裏付けを取りたい</span></label>
       <label class="check-item"><input type="checkbox"><span class="check-box"></span><span>施策を打っても、効果があったかどうか測れていない</span></label>
+      <label class="check-item"><input type="checkbox"><span class="check-box"></span><span>集客や広告には毎月お金をかけているが、その先で何が起きているかは追えていない</span></label>
       <label class="check-item"><input type="checkbox"><span class="check-box"></span><span>毎月レポートを自分で作る時間が取れない、または作り方がわからない</span></label>
     </div>
     <div class="check-result" id="checkResult" hidden>
@@ -1468,7 +1469,8 @@
     '単発の分析で足りる可能性が高いです。まずは01（データ収集設計）か02（分析基盤の構築）から。診断で、どちらが必要かを切り分けます。',
     '継続して数字を見る価値があります。03（データ運用サポート）が向いていますが、まずは現状の棚卸しからです。',
     '継続して数字を見る価値があります。03（データ運用サポート）が向いていますが、まずは現状の棚卸しからです。',
-    '5つとも当てはまるなら、放置しているコストがそれなりの額になっている可能性があります。30分で、どこから手をつけるかだけでも整理しましょう。'
+    'ほとんど当てはまっています。放置しているコストがそれなりの額になっている可能性があります。30分で、どこから手をつけるかだけでも整理しましょう。',
+    '6つとも当てはまるなら、放置しているコストがそれなりの額になっている可能性があります。30分で、どこから手をつけるかだけでも整理しましょう。'
   ];
   var checkList = document.getElementById('checkList');
   if (checkList) {
@@ -1478,7 +1480,7 @@
     var elMsg = document.getElementById('checkMsg');
     checkList.addEventListener('change', function () {
       var n = boxes.filter(function (b) { return b.checked; }).length;
-      elCount.textContent = n + ' / 5 該当';
+      elCount.textContent = n + ' / ' + boxes.length + ' 該当';
       elMsg.textContent = MSG[n];
       result.hidden = false;
     });
