@@ -40,7 +40,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-  background: #e8f2f8;
+  background: #e2f1fe;
   color: #1a1a1a;
   font-size: 15px;
   line-height: 1.75;
@@ -78,7 +78,7 @@ body {
   font-size: clamp(26px, 6.4vw, 34px);
   font-weight: 700; line-height: 1.45; letter-spacing: 0.01em;
 }
-.top-headline em { font-style: normal; box-shadow: inset 0 -0.32em 0 #c8dee8; }
+.top-headline em { font-style: normal; box-shadow: inset 0 -0.32em 0 #bbdaf5; }
 .top-body {
   margin-top: 26px; font-size: 16px; color: #2e2e2e;
   line-height: 1.85; max-width: 520px;
@@ -100,7 +100,7 @@ body {
 .body-text strong { font-weight: 700; color: #1a1a1a; }
 
 /* 引き受ける2つ */
-.offer { display: grid; gap: 1px; background: #b6cbd6; border: 1px solid #b6cbd6; }
+.offer { display: grid; gap: 1px; background: #a9c8e3; border: 1px solid #a9c8e3; }
 .offer-item { background: #fff; padding: 22px 24px; }
 .offer-num {
   font-family: var(--mono); font-size: 10px; font-weight: 700;
@@ -111,7 +111,7 @@ body {
 .offer-desc strong { font-weight: 700; color: #1a1a1a; }
 
 /* 進め方 */
-.flow { counter-reset: step; margin-left: 21px; padding-left: 20px; border-left: 1px solid #b6cbd6; }
+.flow { counter-reset: step; margin-left: 21px; padding-left: 20px; border-left: 1px solid #a9c8e3; }
 .flow-step { position: relative; padding: 20px 0; counter-increment: step; }
 .flow-step:first-child { padding-top: 2px; }
 .flow-step:last-child { padding-bottom: 2px; }
@@ -132,21 +132,21 @@ body {
 .flow-body span { font-size: 13px; color: #666; display: block; max-width: var(--measure); }
 
 /* 責任の所在・データの扱い */
-.terms { border: 1px solid #b6cbd6; background: #fff; padding: 4px 26px; }
+.terms { border: 1px solid #a9c8e3; background: #fff; padding: 4px 26px; }
 .terms dl { display: grid; grid-template-columns: 132px 1fr; gap: 0 22px; }
 .terms dt {
   font-size: 12.5px; font-weight: 700; color: var(--accent);
-  padding: 18px 0 18px; border-top: 1px solid #dbe8ee;
+  padding: 18px 0 18px; border-top: 1px solid #d3e6f6;
 }
 .terms dd {
   font-size: 13.5px; line-height: 1.9; color: #444; margin: 0;
-  padding: 18px 0 18px; border-top: 1px solid #dbe8ee;
+  padding: 18px 0 18px; border-top: 1px solid #d3e6f6;
 }
 .terms dl > dt:first-of-type, .terms dl > dt:first-of-type + dd { border-top: 0; }
 .terms dd strong { font-weight: 700; color: #1a1a1a; }
 
 /* ルート別 */
-.route { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #b6cbd6; border: 1px solid #b6cbd6; }
+.route { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #a9c8e3; border: 1px solid #a9c8e3; }
 .route-col { background: #fff; padding: 22px 24px; }
 .route-head { font-family: var(--serif); font-size: 16px; font-weight: 700; margin-bottom: 4px; }
 .route-sub { font-size: 11.5px; color: #7c858a; margin-bottom: 14px; }
@@ -155,7 +155,7 @@ body {
 .route-list li::before { content: "—"; position: absolute; left: 0; color: #a4afb5; }
 .route-link {
   display: inline-block; margin-top: 12px; font-size: 12.5px;
-  color: var(--accent); text-decoration: none; border-bottom: 1px solid #c2cde1;
+  color: var(--accent); text-decoration: none; border-bottom: 1px solid #b6d3ed;
 }
 .route-link:hover { border-bottom-color: var(--accent); }
 
@@ -168,7 +168,7 @@ body {
 .offer-tag {
   font-family: 'Hiragino Sans', sans-serif;
   font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
-  color: #e8f2f8; background: var(--accent);
+  color: #e2f1fe; background: var(--accent);
   padding: 2px 7px; margin-left: 9px; vertical-align: 1px;
 }
 
@@ -184,11 +184,11 @@ body {
 .benefit strong { font-weight: 700; color: #1a1a1a; }
 
 /* CTA */
-.cta { margin-top: 72px; text-align: center; padding: 48px 0 40px; border-top: 1px solid #b6cbd6; }
+.cta { margin-top: 72px; text-align: center; padding: 48px 0 40px; border-top: 1px solid #a9c8e3; }
 .cta-lead { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.6; }
 .cta-btn {
   display: inline-block; margin: 20px 0 12px;
-  background: var(--accent); color: #e8f2f8;
+  background: var(--accent); color: #e2f1fe;
   padding: 15px 34px; font-size: 14px; font-weight: 700;
   letter-spacing: 0.05em; text-decoration: none;
   transition: background-color .2s ease;
@@ -196,8 +196,8 @@ body {
 .cta-btn:hover { background: var(--accent-hover); }
 .cta-note { font-size: 12px; color: #7c858a; }
 
-.foot { margin-top: 40px; padding-top: 20px; border-top: 1px solid #b6cbd6; font-size: 12px; color: #7c858a; }
-.foot a { color: var(--accent); text-decoration: none; border-bottom: 1px solid #c2cde1; }
+.foot { margin-top: 40px; padding-top: 20px; border-top: 1px solid #a9c8e3; font-size: 12px; color: #7c858a; }
+.foot a { color: var(--accent); text-decoration: none; border-bottom: 1px solid #b6d3ed; }
 
 @media (max-width: 560px) {
   .page { padding: 0 20px 64px; }

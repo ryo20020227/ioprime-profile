@@ -17,15 +17,15 @@
 /* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
 :root{
   --ink:#1a1a1a;
-  --bg:#e8f2f8;
-  --line:#b6cbd6;
+  --bg:#e2f1fe;
+  --line:#a9c8e3;
   --accent:#33415c;
   --accent-tint:#5f77a6;
   --good:#38a169;
   --warn:#ed8936;
   --bad:#e53e3e;
-  --mute:#c6cfde;
-  --grid:#e1ecf2;
+  --mute:#bcd3e8;
+  --grid:#daebf9;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
@@ -49,7 +49,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 /* 所見 — 2ページのダッシュボードと analysis_demo でこの形を共通にしている */
 .note{background:#fff;border:1px solid var(--line);padding:22px 26px;margin-bottom:32px}
-.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #d3e3eb;margin-bottom:14px}
+.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #c9e0f5;margin-bottom:14px}
 .note-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
 .note-by{font-size:11px;color:#aaa}
 .note p{font-size:13.5px;line-height:1.95;color:#333;max-width:62em}
@@ -99,7 +99,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   .note{padding:18px 16px}
   .spec{padding:18px 16px}
   .spec dl{grid-template-columns:1fr;gap:0}
-  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #d3e3eb}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #c9e0f5}
   .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
   .spec dd{padding-top:4px}
   .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
@@ -229,7 +229,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 <script>
 const ACCENT = '#33415c', TINT = '#5f77a6';
-const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#c6cfde', YEL = '#ecc94b';
+const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#bcd3e8', YEL = '#ecc94b';
 
 /* =========================================================================
    1. 元データ
@@ -383,7 +383,7 @@ new Chart(document.getElementById('occupancyChart'), {
       }}
     },
     scales: {
-      x: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#e1ecf2' } },
+      x: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#daebf9' } },
       y: { grid: { display: false }, ticks: { autoSkip: false } }
     }
   }
@@ -410,7 +410,7 @@ new Chart(document.getElementById('revenueChart'), {
     },
     scales: {
       x: { stacked: true, grid: { display: false } },
-      y: { stacked: true, grid: { color: '#e1ecf2' }, ticks: { callback: v => '¥' + man(v) } }
+      y: { stacked: true, grid: { color: '#daebf9' }, ticks: { callback: v => '¥' + man(v) } }
     }
   }
 });
@@ -465,7 +465,7 @@ new Chart(document.getElementById('repairChart'), {
     },
     scales: {
       x: { grid: { display: false } },
-      y: { grid: { color: '#e1ecf2' }, ticks: { callback: v => '¥' + man(v) } }
+      y: { grid: { color: '#daebf9' }, ticks: { callback: v => '¥' + man(v) } }
     }
   }
 });
@@ -585,13 +585,13 @@ new Chart(document.getElementById('scatterChart'), {
       x: {
         min: 40, max: 110,
         title: { display:true, text:'稼働率（%）', font:{size:10} },
-        grid: { color:'#e1ecf2' },
+        grid: { color:'#daebf9' },
         ticks: { callback: v => v + '%' }
       },
       y: {
         min: 0, max: 40,
         title: { display:true, text:'修繕費率（%）', font:{size:10} },
-        grid: { color:'#e1ecf2' },
+        grid: { color:'#daebf9' },
         ticks: { callback: v => v + '%' }
       }
     }
