@@ -25,34 +25,22 @@
 }
 
 /* ─── 和紙の質感 ───
-   繊維(縦に伸ばしたノイズ)・粒子(細かいノイズ)・斑(大きなムラ)の3層を
-   重ねて乗算する。SVGのfeTurbulenceで生成しているので画像ファイルは不要。
-   .washi は画面に固定した1枚のオーバーレイで、クリックは透過する。 */
+   繊維(縦)・繊維(横)・粒子・斑の4層。SVGのfeTurbulenceで生成しているので
+   画像ファイルは不要。文字の上には重ねず、地の面そのものの模様として敷く
+   （上から被せると本文にもノイズが乗って読みにくくなる）。 */
 :root {
-  --washi-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.015' numOctaves='4' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
-  --washi-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
-  --washi-fiber-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.014 0.75' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23h)'/%3E%3C/svg%3E");
-  --washi-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009' numOctaves='3' seed='17' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23m)'/%3E%3C/svg%3E");
+  --washi-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.015' numOctaves='4' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
+  --washi-fiber-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.014 0.75' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23h)'/%3E%3C/svg%3E");
+  --washi-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.039'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  --washi-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009' numOctaves='3' seed='17' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.072'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23m)'/%3E%3C/svg%3E");
+  --washi: var(--washi-fiber), var(--washi-fiber-h), var(--washi-grain), var(--washi-mottle);
+  --washi-size: 300px 300px, 300px 300px, 180px 180px, 700px 700px;
 }
-
-.washi {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: multiply;
-  background-image: var(--washi-fiber), var(--washi-fiber-h), var(--washi-grain), var(--washi-mottle);
-  background-size: 300px 300px, 300px 300px, 180px 180px, 700px 700px;
-  opacity: .10;
-}
-
-/* 印刷時とアニメーションを切っている環境では外す */
-@media print { .washi { display: none; } }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-  background: #e6edf2;
+  background: #e8f2f8;
   color: #1a1a1a;
   font-size: 15px;
   line-height: 1.75;
@@ -70,7 +58,7 @@ body {
 .brand-name a { color: inherit; text-decoration: none; }
 /* ピリオド前後は物理的に空くので、光学的に詰める */
 .brand-name .dot { color: var(--accent-tint); margin-left: -0.035em; margin-right: -0.015em; }
-.brand-desc { border-top: 1px solid #aebdc5; padding-top: 8px; width: min(272px, 100%); }
+.brand-desc { border-top: 1px solid #a7bfcc; padding-top: 8px; width: min(272px, 100%); }
 .brand-desc-ja {
   display: block; font-size: 12.5px; font-weight: 600;
   color: #4a4a4a; letter-spacing: 0.02em; line-height: 1.5;
@@ -90,7 +78,7 @@ body {
   font-size: clamp(26px, 6.4vw, 34px);
   font-weight: 700; line-height: 1.45; letter-spacing: 0.01em;
 }
-.top-headline em { font-style: normal; box-shadow: inset 0 -0.32em 0 #cedce2; }
+.top-headline em { font-style: normal; box-shadow: inset 0 -0.32em 0 #c8dee8; }
 .top-body {
   margin-top: 26px; font-size: 16px; color: #2e2e2e;
   line-height: 1.85; max-width: 520px;
@@ -112,7 +100,7 @@ body {
 .body-text strong { font-weight: 700; color: #1a1a1a; }
 
 /* 引き受ける2つ */
-.offer { display: grid; gap: 1px; background: #bcc9d0; border: 1px solid #bcc9d0; }
+.offer { display: grid; gap: 1px; background: #b6cbd6; border: 1px solid #b6cbd6; }
 .offer-item { background: #fff; padding: 22px 24px; }
 .offer-num {
   font-family: var(--mono); font-size: 10px; font-weight: 700;
@@ -123,7 +111,7 @@ body {
 .offer-desc strong { font-weight: 700; color: #1a1a1a; }
 
 /* 進め方 */
-.flow { counter-reset: step; margin-left: 21px; padding-left: 20px; border-left: 1px solid #bcc9d0; }
+.flow { counter-reset: step; margin-left: 21px; padding-left: 20px; border-left: 1px solid #b6cbd6; }
 .flow-step { position: relative; padding: 20px 0; counter-increment: step; }
 .flow-step:first-child { padding-top: 2px; }
 .flow-step:last-child { padding-bottom: 2px; }
@@ -144,21 +132,21 @@ body {
 .flow-body span { font-size: 13px; color: #666; display: block; max-width: var(--measure); }
 
 /* 責任の所在・データの扱い */
-.terms { border: 1px solid #bcc9d0; background: #fff; padding: 4px 26px; }
+.terms { border: 1px solid #b6cbd6; background: #fff; padding: 4px 26px; }
 .terms dl { display: grid; grid-template-columns: 132px 1fr; gap: 0 22px; }
 .terms dt {
   font-size: 12.5px; font-weight: 700; color: var(--accent);
-  padding: 18px 0 18px; border-top: 1px solid #dae3e7;
+  padding: 18px 0 18px; border-top: 1px solid #dbe8ee;
 }
 .terms dd {
   font-size: 13.5px; line-height: 1.9; color: #444; margin: 0;
-  padding: 18px 0 18px; border-top: 1px solid #dae3e7;
+  padding: 18px 0 18px; border-top: 1px solid #dbe8ee;
 }
 .terms dl > dt:first-of-type, .terms dl > dt:first-of-type + dd { border-top: 0; }
 .terms dd strong { font-weight: 700; color: #1a1a1a; }
 
 /* ルート別 */
-.route { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #bcc9d0; border: 1px solid #bcc9d0; }
+.route { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #b6cbd6; border: 1px solid #b6cbd6; }
 .route-col { background: #fff; padding: 22px 24px; }
 .route-head { font-family: var(--serif); font-size: 16px; font-weight: 700; margin-bottom: 4px; }
 .route-sub { font-size: 11.5px; color: #7c858a; margin-bottom: 14px; }
@@ -180,7 +168,7 @@ body {
 .offer-tag {
   font-family: 'Hiragino Sans', sans-serif;
   font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
-  color: #e6edf2; background: var(--accent);
+  color: #e8f2f8; background: var(--accent);
   padding: 2px 7px; margin-left: 9px; vertical-align: 1px;
 }
 
@@ -196,11 +184,11 @@ body {
 .benefit strong { font-weight: 700; color: #1a1a1a; }
 
 /* CTA */
-.cta { margin-top: 72px; text-align: center; padding: 48px 0 40px; border-top: 1px solid #bcc9d0; }
+.cta { margin-top: 72px; text-align: center; padding: 48px 0 40px; border-top: 1px solid #b6cbd6; }
 .cta-lead { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.6; }
 .cta-btn {
   display: inline-block; margin: 20px 0 12px;
-  background: var(--accent); color: #e6edf2;
+  background: var(--accent); color: #e8f2f8;
   padding: 15px 34px; font-size: 14px; font-weight: 700;
   letter-spacing: 0.05em; text-decoration: none;
   transition: background-color .2s ease;
@@ -208,7 +196,7 @@ body {
 .cta-btn:hover { background: var(--accent-hover); }
 .cta-note { font-size: 12px; color: #7c858a; }
 
-.foot { margin-top: 40px; padding-top: 20px; border-top: 1px solid #bcc9d0; font-size: 12px; color: #7c858a; }
+.foot { margin-top: 40px; padding-top: 20px; border-top: 1px solid #b6cbd6; font-size: 12px; color: #7c858a; }
 .foot a { color: var(--accent); text-decoration: none; border-bottom: 1px solid #c2cde1; }
 
 @media (max-width: 560px) {
@@ -219,6 +207,16 @@ body {
   .terms dt { padding: 16px 0 0; }
   .terms dd { padding: 4px 0 16px; border-top: 0; }
   .terms dl > dt:first-of-type + dd { border-top: 0; }
+}
+
+/* 紙の面にだけ質感を敷く。白いカードと黒い帯は紙の上に刷ったものとして残す */
+body,
+.section-output,
+.section-philosophy,
+.note-box,
+.check-result {
+  background-image: var(--washi);
+  background-size: var(--washi-size);
 }
 </style>
 </head>
@@ -476,6 +474,5 @@ body {
   </div>
 
 </div>
-<div class="washi" aria-hidden="true"></div>
 </body>
 </html>

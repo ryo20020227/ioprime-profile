@@ -32,35 +32,23 @@
 
 
     /* ─── 和紙の質感 ───
-       繊維(縦に伸ばしたノイズ)・粒子(細かいノイズ)・斑(大きなムラ)の3層を
-       重ねて乗算する。SVGのfeTurbulenceで生成しているので画像ファイルは不要。
-       .washi は画面に固定した1枚のオーバーレイで、クリックは透過する。 */
+       繊維(縦)・繊維(横)・粒子・斑の4層。SVGのfeTurbulenceで生成しているので
+       画像ファイルは不要。文字の上には重ねず、地の面そのものの模様として敷く
+       （上から被せると本文にもノイズが乗って読みにくくなる）。 */
     :root {
-      --washi-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.015' numOctaves='4' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
-      --washi-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
-      --washi-fiber-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.014 0.75' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23h)'/%3E%3C/svg%3E");
-      --washi-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009' numOctaves='3' seed='17' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23m)'/%3E%3C/svg%3E");
+      --washi-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.015' numOctaves='4' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
+      --washi-fiber-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.014 0.75' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23h)'/%3E%3C/svg%3E");
+      --washi-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.039'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+      --washi-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009' numOctaves='3' seed='17' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.072'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23m)'/%3E%3C/svg%3E");
+      --washi: var(--washi-fiber), var(--washi-fiber-h), var(--washi-grain), var(--washi-mottle);
+      --washi-size: 300px 300px, 300px 300px, 180px 180px, 700px 700px;
     }
-
-    .washi {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      mix-blend-mode: multiply;
-      background-image: var(--washi-fiber), var(--washi-fiber-h), var(--washi-grain), var(--washi-mottle);
-      background-size: 300px 300px, 300px 300px, 180px 180px, 700px 700px;
-      opacity: .10;
-    }
-
-    /* 印刷時とアニメーションを切っている環境では外す */
-    @media print { .washi { display: none; } }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-      background: #e6edf2;
+      background: #e8f2f8;
       color: #1a1a1a;
       font-size: 15px;
       line-height: 1.75;
@@ -84,7 +72,7 @@
     /* TOP */
     .top {
       padding: 56px 0 48px;
-      border-bottom: 1px solid #bcc9d0;
+      border-bottom: 1px solid #b6cbd6;
     }
 
     /* ワードマーク＋ディスクリプタのロックアップ。
@@ -109,7 +97,7 @@
     }
 
     .brand-desc {
-      border-top: 1px solid #aebdc5;
+      border-top: 1px solid #a7bfcc;
       padding-top: 8px;
       width: min(272px, 100%);
     }
@@ -171,7 +159,7 @@
       margin-top: 72px;
       margin-bottom: 72px;
       background: #1a1a1a;
-      color: #e6edf2;
+      color: #e8f2f8;
       padding-top: 34px;
       padding-bottom: 34px;
       display: flex;
@@ -196,8 +184,8 @@
     .diagnosis-btn {
       flex-shrink: 0;
       display: inline-block;
-      border: 1.5px solid #e6edf2;
-      color: #e6edf2;
+      border: 1.5px solid #e8f2f8;
+      color: #e8f2f8;
       padding: 12px 22px;
       font-size: 13px;
       font-weight: 600;
@@ -209,7 +197,7 @@
     }
 
     .diagnosis-btn:hover {
-      background: #e6edf2;
+      background: #e8f2f8;
       color: #1a1a1a;
     }
 
@@ -217,7 +205,7 @@
       flex-shrink: 0;
       width: 72px;
       height: 72px;
-      border: 2px solid #e6edf2;
+      border: 2px solid #e8f2f8;
       border-radius: 50%;
       display: flex;
       flex-direction: column;
@@ -269,12 +257,12 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1px;
-      background: #bcc9d0;
-      border: 1px solid #bcc9d0;
+      background: #b6cbd6;
+      border: 1px solid #b6cbd6;
     }
 
     .service {
-      background: #e6edf2;
+      background: #e8f2f8;
       padding: 24px 22px;
       display: flex;
       flex-direction: column;
@@ -293,7 +281,7 @@
     .service:nth-child(3) {
       grid-column: 1 / -1;
       background: #1a1a1a;
-      color: #e6edf2;
+      color: #e8f2f8;
       display: grid;
       grid-template-columns: 180px 1fr 1fr;
       gap: 0 26px;
@@ -307,7 +295,7 @@
       border-color: #3a3a3a;
     }
     .service:nth-child(3) .service-persona-label { color: #888; }
-    .service:nth-child(3) .service-result { color: #e6edf2; }
+    .service:nth-child(3) .service-result { color: #e8f2f8; }
     .service:nth-child(3) .service-head { grid-row: span 2; }
     .service:nth-child(3) .service-persona {
       grid-column: 2 / -1;
@@ -332,7 +320,7 @@
       line-height: 1.7;
       margin-bottom: 14px;
       padding-bottom: 14px;
-      border-bottom: 1px dashed #bcc9d0;
+      border-bottom: 1px dashed #b6cbd6;
     }
 
     .service-persona-label {
@@ -371,7 +359,7 @@
       font-weight: 600;
       color: #666;
       background: #fff;
-      border: 1px solid #bcc9d0;
+      border: 1px solid #b6cbd6;
       padding: 8px 14px;
       cursor: pointer;
       transition: background-color .2s ease, color .2s ease, border-color .2s ease;
@@ -381,7 +369,7 @@
 
     .ind-tab.is-active {
       background: #1a1a1a;
-      color: #e6edf2;
+      color: #e8f2f8;
       border-color: #1a1a1a;
     }
 
@@ -393,7 +381,7 @@
     .ind-panel {
       margin-top: 16px;
       padding: 20px 22px;
-      border: 1px solid #bcc9d0;
+      border: 1px solid #b6cbd6;
       background: #fff;
       min-height: 62px;
     }
@@ -414,20 +402,20 @@
       gap: 8px;
       margin-top: 14px;
       padding-top: 14px;
-      border-top: 1px dashed #bcc9d0;
+      border-top: 1px dashed #b6cbd6;
     }
 
     .ind-flow-step {
       font-family: var(--mono);
       font-size: 10.5px;
       color: #555;
-      background: #e1e9ed;
+      background: #e3eef3;
       padding: 5px 9px;
       white-space: nowrap;
     }
 
     .ind-flow-step.is-goal {
-      color: #e6edf2;
+      color: #e8f2f8;
       background: var(--accent);
     }
 
@@ -445,7 +433,7 @@
     }
 
     /* OUTPUT（全幅・面の切り替え その2） */
-    .section-output { background: #dde4e5; }
+    .section-output { background: #e0e9ea; }
 
     .output-intro {
       font-size: 14px;
@@ -464,7 +452,7 @@
 
     /* ミニダッシュボード（静止画の代わりに実際に動くサンプル） */
     .mini-dash {
-      border: 1px solid #bcc9d0;
+      border: 1px solid #b6cbd6;
       background: #fff;
       padding: 22px 24px 18px;
     }
@@ -496,7 +484,7 @@
       align-items: flex-end;
       gap: 10px;
       height: 108px;
-      border-bottom: 1px solid #bcc9d0;
+      border-bottom: 1px solid #b6cbd6;
     }
 
     .mini-bar {
@@ -559,8 +547,8 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1px;
-      background: #bcc9d0;
-      border: 1px solid #bcc9d0;
+      background: #b6cbd6;
+      border: 1px solid #b6cbd6;
     }
 
     .demo-card {
@@ -573,7 +561,7 @@
       transition: background-color .2s ease;
     }
 
-    .demo-card:hover { background: #e6edf2; }
+    .demo-card:hover { background: #e8f2f8; }
 
     .demo-card-label {
       font-family: var(--mono);
@@ -611,7 +599,7 @@
       counter-reset: step;
       margin-left: 21px;
       padding-left: 20px;
-      border-left: 1px solid #bcc9d0;
+      border-left: 1px solid #b6cbd6;
     }
 
     .flow-step {
@@ -664,8 +652,8 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
-      background: #bcc9d0;
-      border: 1px solid #bcc9d0;
+      background: #b6cbd6;
+      border: 1px solid #b6cbd6;
     }
 
     .check-item {
@@ -682,7 +670,7 @@
       transition: background-color .15s ease;
     }
 
-    .check-item:hover { background: #edf3f7; }
+    .check-item:hover { background: #f1f7fc; }
 
     .check-item input {
       position: absolute;
@@ -695,7 +683,7 @@
       flex-shrink: 0;
       width: 20px;
       height: 20px;
-      border: 1.5px solid #b3bbbf;
+      border: 1.5px solid #b4c0c6;
       background: #fff;
       margin-top: 2px;
       position: relative;
@@ -710,7 +698,7 @@
       align-items: center;
       justify-content: center;
       font-size: 12px;
-      color: #e6edf2;
+      color: #e8f2f8;
       opacity: 0;
       transition: opacity .15s ease;
     }
@@ -730,7 +718,7 @@
     .check-result {
       margin-top: 16px;
       border-left: 3px solid var(--accent);
-      background: #e0e4e7;
+      background: #e3e8ec;
       padding: 16px 20px;
       max-width: var(--measure);
     }
@@ -755,16 +743,16 @@
     /* Philosophy（全幅・強い面 その3。読ませ場として質感を変える） */
     .section-philosophy {
       background: #1a1a1a;
-      color: #d7e2e8;
+      color: #d8e7ef;
     }
 
     .section-philosophy .section-label { color: #7c7c7c; }
-    .section-philosophy .section-lead { color: #e6edf2; }
+    .section-philosophy .section-lead { color: #e8f2f8; }
 
     .philosophy-body p {
       font-family: var(--serif);
       font-size: 15.5px;
-      color: #becbd2;
+      color: #b8cdd8;
       line-height: 2.0;
       margin-bottom: 22px;
       max-width: var(--measure);
@@ -790,7 +778,7 @@
     .note-box {
       border-left: 3px solid #1a1a1a;
       padding: 16px 20px;
-      background: #e0e4e7;
+      background: #e3e8ec;
       font-size: 13px;
       color: #444;
       line-height: 1.8;
@@ -807,11 +795,11 @@
     }
 
     .faq-item {
-      border-top: 1px solid #bcc9d0;
+      border-top: 1px solid #b6cbd6;
     }
 
     .faq-item:last-child {
-      border-bottom: 1px solid #bcc9d0;
+      border-bottom: 1px solid #b6cbd6;
     }
 
     .faq-q {
@@ -865,7 +853,7 @@
       margin-top: 72px;
       text-align: center;
       padding: 48px 0 40px;
-      border-top: 1px solid #bcc9d0;
+      border-top: 1px solid #b6cbd6;
     }
 
     .cta-text {
@@ -880,7 +868,7 @@
       display: inline-block;
       margin: 20px 0 40px;
       background: var(--accent);
-      color: #e6edf2;
+      color: #e8f2f8;
       padding: 15px 34px;
       font-size: 14px;
       font-weight: 700;
@@ -899,7 +887,7 @@
       bottom: 0;
       z-index: 50;
       background: #1a1a1a;
-      color: #e6edf2;
+      color: #e8f2f8;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -913,14 +901,14 @@
 
     .sticky-cta-text {
       font-size: 12.5px;
-      color: #b9c4c9;
+      color: #b9cad1;
       line-height: 1.5;
     }
 
     .sticky-cta-btn {
       flex-shrink: 0;
       background: var(--accent);
-      color: #e6edf2;
+      color: #e8f2f8;
       text-decoration: none;
       font-size: 12.5px;
       font-weight: 700;
@@ -1082,7 +1070,17 @@
       .sticky-cta { justify-content: stretch; }
       .sticky-cta-btn { flex: 1; text-align: center; }
     }
-  </style>
+  
+    /* 紙の面にだけ質感を敷く。白いカードと黒い帯は紙の上に刷ったものとして残す */
+    body,
+    .section-output,
+    .section-philosophy,
+    .note-box,
+    .check-result {
+      background-image: var(--washi);
+      background-size: var(--washi-size);
+    }
+</style>
 </head>
 <body>
 <div class="page">
@@ -1538,6 +1536,5 @@
   }
 })();
 </script>
-<div class="washi" aria-hidden="true"></div>
 </body>
 </html>

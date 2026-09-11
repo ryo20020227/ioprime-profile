@@ -18,14 +18,14 @@
 /* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
 :root{
   --ink:#1a1a1a;
-  --bg:#e6edf2;
-  --line:#bcc9d0;
+  --bg:#e8f2f8;
+  --line:#b6cbd6;
   --accent:#33415c;
   --accent-tint:#5f77a6;
   --good:#38a169;
   --warn:#ed8936;
   --bad:#e53e3e;
-  --mute:#c6ccd6;
+  --mute:#c6cfde;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
@@ -44,10 +44,10 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .format-cols{display:flex;gap:8px;flex-wrap:wrap}
 .format-col{border:1px solid var(--line);padding:4px 12px;font-size:11px}
 .format-col.req{background:var(--ink);color:#fff;border-color:var(--ink)}
-.format-hint{font-size:11.5px;color:#7c858a;line-height:1.9;margin-top:12px;padding-top:12px;border-top:1px solid #d2dde3}
+.format-hint{font-size:11.5px;color:#7c858a;line-height:1.9;margin-top:12px;padding-top:12px;border-top:1px solid #d3e3eb}
 .format-hint .mono{font-family:ui-monospace,'SF Mono',Consolas,Menlo,monospace;color:var(--accent)}
 
-.drop-zone{border:2px dashed #b0bdc3;background:#fff;padding:52px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s}
+.drop-zone{border:2px dashed #aabfc9;background:#fff;padding:52px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s}
 .drop-zone:hover,.drop-zone.over{border-color:var(--accent)}
 .drop-zone input{display:none}
 .drop-main{font-size:16px;font-weight:700;margin-bottom:6px}
@@ -63,7 +63,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .step{display:flex;align-items:center;gap:12px;font-size:13px;color:#bbb;transition:color 0.3s}
 .step.active{color:var(--ink)}
 .step.done{color:var(--good)}
-.dot{width:9px;height:9px;border-radius:50%;background:#cdd6da;flex-shrink:0;transition:background 0.3s}
+.dot{width:9px;height:9px;border-radius:50%;background:#cedce1;flex-shrink:0;transition:background 0.3s}
 .step.active .dot{background:var(--ink);animation:pulse 0.9s infinite}
 .step.done .dot{background:var(--good)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
@@ -102,7 +102,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 /* REPORT — ダッシュボード2枚の .note と同じ見た目にそろえてある */
 .report-box{background:#fff;border:1px solid var(--line);padding:28px 32px;margin-bottom:32px}
-.report-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #d2dde3;margin-bottom:20px}
+.report-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #d3e3eb;margin-bottom:20px}
 .report-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
 .report-period{font-size:11px;color:#aaa}
 .report-sec{margin-bottom:18px}
@@ -117,7 +117,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 table.calc{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
 table.calc th{padding:8px 12px;font-weight:600;text-align:left;border-bottom:2px solid var(--ink)}
 table.calc td{padding:8px 12px;border-bottom:1px solid #eee}
-table.calc tr.total{font-weight:700;background:#ebf2f2}
+table.calc tr.total{font-weight:700;background:#eef7f7}
 table.calc tr.total td{border-bottom:none;padding:10px 12px}
 table.calc td.num{text-align:right;font-variant-numeric:tabular-nums}
 table.calc th.num{text-align:right}
@@ -142,7 +142,7 @@ table.calc th.num{text-align:right}
   .report-box{padding:20px 16px}
   .spec{padding:18px 16px}
   .spec dl{grid-template-columns:1fr;gap:0}
-  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #d2dde3}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #d3e3eb}
   .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
   .spec dd{padding-top:4px}
   table.calc{font-size:12px}
@@ -307,7 +307,7 @@ if (LIBS_OK) {
 }
 
 const ACCENT = '#33415c', TINT = '#5f77a6';
-const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#c6ccd6';
+const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#c6cfde';
 
 // ---- Sample CSV ----
 // 実在の店舗データではないが、以下の構造を持たせてある（レポートの主張はすべてこの構造から導かれる）
@@ -690,7 +690,7 @@ function render(m) {
     plugins: { legend: { display: false },
       tooltip: { callbacks: { label: ctx => ' ¥' + ctx.raw.toLocaleString() } } },
     scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
-              y: { grid: { color: '#dfe7eb' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
+              y: { grid: { color: '#e1ecf2' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
 
   new Chart('cFl', { type: 'line', data: {
     labels: m.dates,
@@ -704,7 +704,7 @@ function render(m) {
     plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
       tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + '：' + ctx.raw + '%' } } },
     scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 8, font: { size: 10 } } },
-              y: { grid: { color: '#dfe7eb' }, ticks: { callback: v => v + '%' } } } }});
+              y: { grid: { color: '#e1ecf2' }, ticks: { callback: v => v + '%' } } } }});
 
   const maxV = Math.max(...m.dAvg);
   new Chart('cDay', { type: 'bar', data: {
@@ -714,7 +714,7 @@ function render(m) {
     plugins: { legend: { display: false },
       tooltip: { callbacks: { label: ctx => ' 平均 ¥' + ctx.raw.toLocaleString() } } },
     scales: { x: { grid: { display: false } },
-              y: { grid: { color: '#dfe7eb' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
+              y: { grid: { color: '#e1ecf2' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
 
   const A = analyse(m);
   renderStats(m, A);
