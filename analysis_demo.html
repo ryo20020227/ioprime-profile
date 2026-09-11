@@ -18,8 +18,8 @@
 /* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
 :root{
   --ink:#1a1a1a;
-  --bg:#f7f5f2;
-  --line:#d4d0c8;
+  --bg:#f2f5f7;
+  --line:#c8d0d4;
   --accent:#33415c;
   --accent-tint:#5f77a6;
   --good:#38a169;
@@ -33,21 +33,21 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 .header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid var(--ink);margin-bottom:40px}
 .header h1{font-size:18px;font-weight:700}
-.header .sub{font-size:11.5px;color:#8a857c;margin-top:5px}
-.header-right{font-size:11px;color:#a8a29a;font-weight:700;letter-spacing:0.12em}
+.header .sub{font-size:11.5px;color:#7c858a;margin-top:5px}
+.header-right{font-size:11px;color:#9aa2a8;font-weight:700;letter-spacing:0.12em}
 
 /* UPLOAD */
 .upload-lead{font-size:24px;font-weight:700;margin-bottom:8px}
 .upload-desc{font-size:13px;color:#555;line-height:1.9;margin-bottom:28px}
 .format-box{border:1px solid var(--line);background:#fff;padding:16px 20px;margin-bottom:24px}
-.format-title{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a857c;margin-bottom:10px}
+.format-title{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#7c858a;margin-bottom:10px}
 .format-cols{display:flex;gap:8px;flex-wrap:wrap}
 .format-col{border:1px solid var(--line);padding:4px 12px;font-size:11px}
 .format-col.req{background:var(--ink);color:#fff;border-color:var(--ink)}
-.format-hint{font-size:11.5px;color:#8a857c;line-height:1.9;margin-top:12px;padding-top:12px;border-top:1px solid #e8e4de}
+.format-hint{font-size:11.5px;color:#7c858a;line-height:1.9;margin-top:12px;padding-top:12px;border-top:1px solid #dee4e8}
 .format-hint .mono{font-family:ui-monospace,'SF Mono',Consolas,Menlo,monospace;color:var(--accent)}
 
-.drop-zone{border:2px dashed #c8c4bc;background:#fff;padding:52px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s}
+.drop-zone{border:2px dashed #bcc4c8;background:#fff;padding:52px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color 0.2s}
 .drop-zone:hover,.drop-zone.over{border-color:var(--accent)}
 .drop-zone input{display:none}
 .drop-main{font-size:16px;font-weight:700;margin-bottom:6px}
@@ -63,7 +63,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .step{display:flex;align-items:center;gap:12px;font-size:13px;color:#bbb;transition:color 0.3s}
 .step.active{color:var(--ink)}
 .step.done{color:var(--good)}
-.dot{width:9px;height:9px;border-radius:50%;background:#e0ddd8;flex-shrink:0;transition:background 0.3s}
+.dot{width:9px;height:9px;border-radius:50%;background:#d8dde0;flex-shrink:0;transition:background 0.3s}
 .step.active .dot{background:var(--ink);animation:pulse 0.9s infinite}
 .step.done .dot{background:var(--good)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
@@ -77,14 +77,14 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
 .kpi{background:#fff;padding:18px 20px}
-.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a857c;margin-bottom:8px}
+.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#7c858a;margin-bottom:8px}
 .kpi-value{font-size:24px;font-weight:600;letter-spacing:-0.02em}
 .kpi-value.green{color:var(--good)}
 .kpi-value.orange{color:var(--warn)}
 .kpi-value.red{color:var(--bad)}
 .kpi-sub{font-size:11px;color:#999;margin-top:4px}
 
-.sec-label{font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:#8a857c;margin-bottom:16px}
+.sec-label{font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:#7c858a;margin-bottom:16px}
 
 .chart-full{background:var(--line);border:1px solid var(--line);margin-bottom:32px}
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
@@ -92,7 +92,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .chart-title{font-size:12px;font-weight:700;margin-bottom:3px}
 .chart-sub{font-size:11px;color:#999;margin-bottom:14px}
 /* グラフ描画ライブラリに接続できなかったときの表示 */
-.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#8a857c;line-height:1.9;text-align:center}
+.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#7c858a;line-height:1.9;text-align:center}
 
 /* 提供の仕方 */
 .spec{background:#fff;border:1px solid var(--line);padding:24px 28px;margin-bottom:32px}
@@ -102,7 +102,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 /* REPORT — ダッシュボード2枚の .note と同じ見た目にそろえてある */
 .report-box{background:#fff;border:1px solid var(--line);padding:28px 32px;margin-bottom:32px}
-.report-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #e8e4de;margin-bottom:20px}
+.report-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #dee4e8;margin-bottom:20px}
 .report-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
 .report-period{font-size:11px;color:#aaa}
 .report-sec{margin-bottom:18px}
@@ -117,7 +117,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 table.calc{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
 table.calc th{padding:8px 12px;font-weight:600;text-align:left;border-bottom:2px solid var(--ink)}
 table.calc td{padding:8px 12px;border-bottom:1px solid #eee}
-table.calc tr.total{font-weight:700;background:#f8f8f5}
+table.calc tr.total{font-weight:700;background:#f5f8f8}
 table.calc tr.total td{border-bottom:none;padding:10px 12px}
 table.calc td.num{text-align:right;font-variant-numeric:tabular-nums}
 table.calc th.num{text-align:right}
@@ -130,7 +130,7 @@ table.calc th.num{text-align:right}
 .cta-btn:hover{background:var(--accent);color:var(--bg)}
 
 .footer{text-align:right;font-size:10px;letter-spacing:0.12em;margin-top:20px}
-.footer a{color:#b5afa4;text-decoration:none}
+.footer a{color:#a4afb5;text-decoration:none}
 .footer a:hover{color:var(--accent)}
 
 @media(max-width:640px){
@@ -142,7 +142,7 @@ table.calc th.num{text-align:right}
   .report-box{padding:20px 16px}
   .spec{padding:18px 16px}
   .spec dl{grid-template-columns:1fr;gap:0}
-  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #e8e4de}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #dee4e8}
   .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
   .spec dd{padding-top:4px}
   table.calc{font-size:12px}
@@ -690,7 +690,7 @@ function render(m) {
     plugins: { legend: { display: false },
       tooltip: { callbacks: { label: ctx => ' ¥' + ctx.raw.toLocaleString() } } },
     scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
-              y: { grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
+              y: { grid: { color: '#eaeef0' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
 
   new Chart('cFl', { type: 'line', data: {
     labels: m.dates,
@@ -704,7 +704,7 @@ function render(m) {
     plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
       tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + '：' + ctx.raw + '%' } } },
     scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 8, font: { size: 10 } } },
-              y: { grid: { color: '#f0eeea' }, ticks: { callback: v => v + '%' } } } }});
+              y: { grid: { color: '#eaeef0' }, ticks: { callback: v => v + '%' } } } }});
 
   const maxV = Math.max(...m.dAvg);
   new Chart('cDay', { type: 'bar', data: {
@@ -714,7 +714,7 @@ function render(m) {
     plugins: { legend: { display: false },
       tooltip: { callbacks: { label: ctx => ' 平均 ¥' + ctx.raw.toLocaleString() } } },
     scales: { x: { grid: { display: false } },
-              y: { grid: { color: '#f0eeea' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
+              y: { grid: { color: '#eaeef0' }, ticks: { callback: v => '¥' + (v/10000) + '万' } } } }});
 
   const A = analyse(m);
   renderStats(m, A);

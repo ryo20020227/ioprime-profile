@@ -17,15 +17,15 @@
 /* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
 :root{
   --ink:#1a1a1a;
-  --bg:#f7f5f2;
-  --line:#d4d0c8;
+  --bg:#f2f5f7;
+  --line:#c8d0d4;
   --accent:#33415c;
   --accent-tint:#5f77a6;
   --good:#38a169;
   --warn:#ed8936;
   --bad:#e53e3e;
   --mute:#d1d5db;
-  --grid:#f0eeea;
+  --grid:#eaeef0;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
@@ -33,22 +33,22 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 .header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;border-bottom:2px solid var(--ink);margin-bottom:32px}
 .header-left h1{font-size:20px;font-weight:700;letter-spacing:0.02em}
-.header-left .period{font-size:11.5px;color:#8a857c;margin-top:5px}
-.header-right{font-size:11px;color:#a8a29a;letter-spacing:0.12em;font-weight:700}
+.header-left .period{font-size:11.5px;color:#7c858a;margin-top:5px}
+.header-right{font-size:11px;color:#9aa2a8;letter-spacing:0.12em;font-weight:700}
 
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
 .kpi{background:#fff;padding:20px 22px}
-.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a857c;margin-bottom:10px}
+.kpi-label{font-size:11px;font-weight:700;letter-spacing:0.06em;color:#7c858a;margin-bottom:10px}
 .kpi-value{font-size:28px;font-weight:600;letter-spacing:-0.02em}
 .kpi-value.green{color:var(--good)}
 .kpi-value.red{color:var(--bad)}
 .kpi-sub{font-size:11px;color:#999;margin-top:4px}
 
-.section-label{font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:#8a857c;margin-bottom:16px}
+.section-label{font-size:11.5px;font-weight:700;letter-spacing:0.12em;color:#7c858a;margin-bottom:16px}
 
 /* 所見 — 2ページのダッシュボードと analysis_demo でこの形を共通にしている */
 .note{background:#fff;border:1px solid var(--line);padding:22px 26px;margin-bottom:32px}
-.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #e8e4de;margin-bottom:14px}
+.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #dee4e8;margin-bottom:14px}
 .note-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
 .note-by{font-size:11px;color:#aaa}
 .note p{font-size:13.5px;line-height:1.95;color:#333;max-width:62em}
@@ -63,7 +63,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .chart-sub{font-size:11px;color:#999;margin-bottom:18px}
 .chart-wrap{position:relative}
 /* グラフ描画ライブラリに接続できなかったときの表示 */
-.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#8a857c;line-height:1.9;text-align:center}
+.chart-na{border:1px dashed var(--line);padding:28px 20px;font-size:12.5px;color:#7c858a;line-height:1.9;text-align:center}
 
 .quad-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
 .quad-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#555}
@@ -82,7 +82,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .cta-btn:hover{background:var(--accent);color:var(--bg)}
 
 .footer{text-align:right;font-size:10px;letter-spacing:0.12em;margin-top:20px}
-.footer a{color:#b5afa4;text-decoration:none}
+.footer a{color:#a4afb5;text-decoration:none}
 .footer a:hover{color:var(--accent)}
 
 @media(max-width:700px){
@@ -97,7 +97,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   .note{padding:18px 16px}
   .spec{padding:18px 16px}
   .spec dl{grid-template-columns:1fr;gap:0}
-  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #e8e4de}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #dee4e8}
   .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
   .spec dd{padding-top:4px}
   .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
@@ -393,7 +393,7 @@ new Chart(document.getElementById('weekChart'), {
     },
     scales: {
       x: { grid: { display: false }, ticks: { font: { size: 12 } } },
-      y: { grid: { color: '#f0eee9' }, ticks: { callback: v => '¥' + man(v), font: { size: 11 } } }
+      y: { grid: { color: '#e9eef0' }, ticks: { callback: v => '¥' + man(v), font: { size: 11 } } }
     }
   }
 });
@@ -414,7 +414,7 @@ new Chart(document.getElementById('flChart'), {
         borderColor: TINT, backgroundColor: 'transparent',
         borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: TINT, borderDash: [4,3], tension: 0.3 },
       { label: '目標ライン', data: FL_HISTORY.labels.map(() => CFG.flTarget),
-        borderColor: '#d4d0c8', backgroundColor: 'transparent',
+        borderColor: '#c8d0d4', backgroundColor: 'transparent',
         borderWidth: 1, pointRadius: 0, borderDash: [6,4] }
     ]
   },
@@ -425,7 +425,7 @@ new Chart(document.getElementById('flChart'), {
       tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + '：' + ctx.raw + '%' } }
     },
     scales: {
-      y: { min: 20, max: 75, grid: { color: '#f0eee9' }, ticks: { callback: v => v + '%', font: { size: 11 } } },
+      y: { min: 20, max: 75, grid: { color: '#e9eef0' }, ticks: { callback: v => v + '%', font: { size: 11 } } },
       x: { grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
@@ -439,7 +439,7 @@ new Chart(document.getElementById('donutChart'), {
     datasets: [{
       data: COST_MIX.map(c => c.pct),
       backgroundColor: COST_MIX.map(c => c.color),
-      borderColor: COST_MIX.map(c => c.label === '利益' ? '#d4af37' : '#f7f5f2'),
+      borderColor: COST_MIX.map(c => c.label === '利益' ? '#d4af37' : '#f2f5f7'),
       borderWidth: COST_MIX.map(c => c.label === '利益' ? 4 : 2),
       offset: COST_MIX.map(c => c.label === '利益' ? 14 : 0)
     }]
@@ -476,7 +476,7 @@ new Chart(document.getElementById('rankChart'), {
       }}
     },
     scales: {
-      x: { grid: { color: '#f0eee9' }, ticks: { callback: v => '¥' + man(v), font: { size: 11 } } },
+      x: { grid: { color: '#e9eef0' }, ticks: { callback: v => '¥' + man(v), font: { size: 11 } } },
       y: { grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
@@ -592,13 +592,13 @@ new Chart(document.getElementById('scatterChart'), {
       x: {
         min: 0, max: 300000,
         title: { display: true, text: '月間売上（円）', font: { size: 11 } },
-        grid: { color: '#f0eee9' },
+        grid: { color: '#e9eef0' },
         ticks: { callback: v => '¥' + man(v), font: { size: 11 } }
       },
       y: {
         min: 55, max: 92,
         title: { display: true, text: '利益率（%）', font: { size: 11 } },
-        grid: { color: '#f0eee9' },
+        grid: { color: '#e9eef0' },
         ticks: { callback: v => v + '%', font: { size: 11 } }
       }
     }
