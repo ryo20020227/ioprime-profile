@@ -30,11 +30,37 @@
       --measure: 34em;
     }
 
+
+    /* ─── 和紙の質感 ───
+       繊維(縦に伸ばしたノイズ)・粒子(細かいノイズ)・斑(大きなムラ)の3層を
+       重ねて乗算する。SVGのfeTurbulenceで生成しているので画像ファイルは不要。
+       .washi は画面に固定した1枚のオーバーレイで、クリックは透過する。 */
+    :root {
+      --washi-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8 0.015' numOctaves='4' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
+      --washi-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+      --washi-fiber-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.014 0.75' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23h)'/%3E%3C/svg%3E");
+      --washi-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009' numOctaves='3' seed='17' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23m)'/%3E%3C/svg%3E");
+    }
+
+    .washi {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: multiply;
+      background-image: var(--washi-fiber), var(--washi-fiber-h), var(--washi-grain), var(--washi-mottle);
+      background-size: 300px 300px, 300px 300px, 180px 180px, 700px 700px;
+      opacity: .10;
+    }
+
+    /* 印刷時とアニメーションを切っている環境では外す */
+    @media print { .washi { display: none; } }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-      background: #f2f5f7;
+      background: #dde6ed;
       color: #1a1a1a;
       font-size: 15px;
       line-height: 1.75;
@@ -58,7 +84,7 @@
     /* TOP */
     .top {
       padding: 56px 0 48px;
-      border-bottom: 1px solid #c8d0d4;
+      border-bottom: 1px solid #b4c2ca;
     }
 
     /* ワードマーク＋ディスクリプタのロックアップ。
@@ -83,7 +109,7 @@
     }
 
     .brand-desc {
-      border-top: 1px solid #bac4c9;
+      border-top: 1px solid #a6b6bf;
       padding-top: 8px;
       width: min(272px, 100%);
     }
@@ -145,7 +171,7 @@
       margin-top: 72px;
       margin-bottom: 72px;
       background: #1a1a1a;
-      color: #f2f5f7;
+      color: #dde6ed;
       padding-top: 34px;
       padding-bottom: 34px;
       display: flex;
@@ -170,8 +196,8 @@
     .diagnosis-btn {
       flex-shrink: 0;
       display: inline-block;
-      border: 1.5px solid #f2f5f7;
-      color: #f2f5f7;
+      border: 1.5px solid #dde6ed;
+      color: #dde6ed;
       padding: 12px 22px;
       font-size: 13px;
       font-weight: 600;
@@ -183,7 +209,7 @@
     }
 
     .diagnosis-btn:hover {
-      background: #f2f5f7;
+      background: #dde6ed;
       color: #1a1a1a;
     }
 
@@ -191,7 +217,7 @@
       flex-shrink: 0;
       width: 72px;
       height: 72px;
-      border: 2px solid #f2f5f7;
+      border: 2px solid #dde6ed;
       border-radius: 50%;
       display: flex;
       flex-direction: column;
@@ -243,12 +269,12 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1px;
-      background: #c8d0d4;
-      border: 1px solid #c8d0d4;
+      background: #b4c2ca;
+      border: 1px solid #b4c2ca;
     }
 
     .service {
-      background: #f2f5f7;
+      background: #dde6ed;
       padding: 24px 22px;
       display: flex;
       flex-direction: column;
@@ -267,7 +293,7 @@
     .service:nth-child(3) {
       grid-column: 1 / -1;
       background: #1a1a1a;
-      color: #f2f5f7;
+      color: #dde6ed;
       display: grid;
       grid-template-columns: 180px 1fr 1fr;
       gap: 0 26px;
@@ -281,7 +307,7 @@
       border-color: #3a3a3a;
     }
     .service:nth-child(3) .service-persona-label { color: #888; }
-    .service:nth-child(3) .service-result { color: #f2f5f7; }
+    .service:nth-child(3) .service-result { color: #dde6ed; }
     .service:nth-child(3) .service-head { grid-row: span 2; }
     .service:nth-child(3) .service-persona {
       grid-column: 2 / -1;
@@ -306,7 +332,7 @@
       line-height: 1.7;
       margin-bottom: 14px;
       padding-bottom: 14px;
-      border-bottom: 1px dashed #c8d0d4;
+      border-bottom: 1px dashed #b4c2ca;
     }
 
     .service-persona-label {
@@ -345,7 +371,7 @@
       font-weight: 600;
       color: #666;
       background: #fff;
-      border: 1px solid #c8d0d4;
+      border: 1px solid #b4c2ca;
       padding: 8px 14px;
       cursor: pointer;
       transition: background-color .2s ease, color .2s ease, border-color .2s ease;
@@ -355,7 +381,7 @@
 
     .ind-tab.is-active {
       background: #1a1a1a;
-      color: #f2f5f7;
+      color: #dde6ed;
       border-color: #1a1a1a;
     }
 
@@ -367,7 +393,7 @@
     .ind-panel {
       margin-top: 16px;
       padding: 20px 22px;
-      border: 1px solid #c8d0d4;
+      border: 1px solid #b4c2ca;
       background: #fff;
       min-height: 62px;
     }
@@ -388,20 +414,20 @@
       gap: 8px;
       margin-top: 14px;
       padding-top: 14px;
-      border-top: 1px dashed #c8d0d4;
+      border-top: 1px dashed #b4c2ca;
     }
 
     .ind-flow-step {
       font-family: var(--mono);
       font-size: 10.5px;
       color: #555;
-      background: #ecf0f2;
+      background: #d8e3e8;
       padding: 5px 9px;
       white-space: nowrap;
     }
 
     .ind-flow-step.is-goal {
-      color: #f2f5f7;
+      color: #dde6ed;
       background: var(--accent);
     }
 
@@ -419,7 +445,7 @@
     }
 
     /* OUTPUT（全幅・面の切り替え その2） */
-    .section-output { background: #e7ebec; }
+    .section-output { background: #d5dedf; }
 
     .output-intro {
       font-size: 14px;
@@ -438,7 +464,7 @@
 
     /* ミニダッシュボード（静止画の代わりに実際に動くサンプル） */
     .mini-dash {
-      border: 1px solid #c8d0d4;
+      border: 1px solid #b4c2ca;
       background: #fff;
       padding: 22px 24px 18px;
     }
@@ -470,7 +496,7 @@
       align-items: flex-end;
       gap: 10px;
       height: 108px;
-      border-bottom: 1px solid #c8d0d4;
+      border-bottom: 1px solid #b4c2ca;
     }
 
     .mini-bar {
@@ -533,8 +559,8 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1px;
-      background: #c8d0d4;
-      border: 1px solid #c8d0d4;
+      background: #b4c2ca;
+      border: 1px solid #b4c2ca;
     }
 
     .demo-card {
@@ -547,7 +573,7 @@
       transition: background-color .2s ease;
     }
 
-    .demo-card:hover { background: #f2f5f7; }
+    .demo-card:hover { background: #dde6ed; }
 
     .demo-card-label {
       font-family: var(--mono);
@@ -585,7 +611,7 @@
       counter-reset: step;
       margin-left: 21px;
       padding-left: 20px;
-      border-left: 1px solid #c8d0d4;
+      border-left: 1px solid #b4c2ca;
     }
 
     .flow-step {
@@ -638,8 +664,8 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
-      background: #c8d0d4;
-      border: 1px solid #c8d0d4;
+      background: #b4c2ca;
+      border: 1px solid #b4c2ca;
     }
 
     .check-item {
@@ -656,7 +682,7 @@
       transition: background-color .15s ease;
     }
 
-    .check-item:hover { background: #f8fafb; }
+    .check-item:hover { background: #e3edf2; }
 
     .check-item input {
       position: absolute;
@@ -684,7 +710,7 @@
       align-items: center;
       justify-content: center;
       font-size: 12px;
-      color: #f2f5f7;
+      color: #dde6ed;
       opacity: 0;
       transition: opacity .15s ease;
     }
@@ -704,7 +730,7 @@
     .check-result {
       margin-top: 16px;
       border-left: 3px solid var(--accent);
-      background: #eaecee;
+      background: #d8dde1;
       padding: 16px 20px;
       max-width: var(--measure);
     }
@@ -729,16 +755,16 @@
     /* Philosophy（全幅・強い面 その3。読ませ場として質感を変える） */
     .section-philosophy {
       background: #1a1a1a;
-      color: #e3e9ec;
+      color: #cedce3;
     }
 
     .section-philosophy .section-label { color: #7c7c7c; }
-    .section-philosophy .section-lead { color: #f2f5f7; }
+    .section-philosophy .section-lead { color: #dde6ed; }
 
     .philosophy-body p {
       font-family: var(--serif);
       font-size: 15.5px;
-      color: #cad2d6;
+      color: #b6c4cc;
       line-height: 2.0;
       margin-bottom: 22px;
       max-width: var(--measure);
@@ -764,7 +790,7 @@
     .note-box {
       border-left: 3px solid #1a1a1a;
       padding: 16px 20px;
-      background: #eaecee;
+      background: #d8dde1;
       font-size: 13px;
       color: #444;
       line-height: 1.8;
@@ -781,11 +807,11 @@
     }
 
     .faq-item {
-      border-top: 1px solid #c8d0d4;
+      border-top: 1px solid #b4c2ca;
     }
 
     .faq-item:last-child {
-      border-bottom: 1px solid #c8d0d4;
+      border-bottom: 1px solid #b4c2ca;
     }
 
     .faq-q {
@@ -839,7 +865,7 @@
       margin-top: 72px;
       text-align: center;
       padding: 48px 0 40px;
-      border-top: 1px solid #c8d0d4;
+      border-top: 1px solid #b4c2ca;
     }
 
     .cta-text {
@@ -854,7 +880,7 @@
       display: inline-block;
       margin: 20px 0 40px;
       background: var(--accent);
-      color: #f2f5f7;
+      color: #dde6ed;
       padding: 15px 34px;
       font-size: 14px;
       font-weight: 700;
@@ -873,7 +899,7 @@
       bottom: 0;
       z-index: 50;
       background: #1a1a1a;
-      color: #f2f5f7;
+      color: #dde6ed;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -887,14 +913,14 @@
 
     .sticky-cta-text {
       font-size: 12.5px;
-      color: #c4cbcf;
+      color: #b1bdc3;
       line-height: 1.5;
     }
 
     .sticky-cta-btn {
       flex-shrink: 0;
       background: var(--accent);
-      color: #f2f5f7;
+      color: #dde6ed;
       text-decoration: none;
       font-size: 12.5px;
       font-weight: 700;
@@ -1000,7 +1026,7 @@
     .partner-note a {
       color: var(--accent);
       text-decoration: none;
-      border-bottom: 1px solid #c6cedd;
+      border-bottom: 1px solid #c2cde1;
     }
 
     .partner-note a:hover { border-bottom-color: var(--accent); }
@@ -1512,5 +1538,6 @@
   }
 })();
 </script>
+<div class="washi" aria-hidden="true"></div>
 </body>
 </html>

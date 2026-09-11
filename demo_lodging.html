@@ -17,15 +17,15 @@
 /* i.o.prime デモ共通トークン（index.html と同一のアクセント） */
 :root{
   --ink:#1a1a1a;
-  --bg:#f2f5f7;
-  --line:#c8d0d4;
+  --bg:#dde6ed;
+  --line:#b4c2ca;
   --accent:#33415c;
   --accent-tint:#5f77a6;
   --good:#38a169;
   --warn:#ed8936;
   --bad:#e53e3e;
-  --mute:#d1d5db;
-  --grid:#eaeef0;
+  --mute:#bec4d0;
+  --grid:#d6e1e5;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
@@ -49,7 +49,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 /* 所見 — 他のデモと同じ形にそろえてある */
 .note{background:#fff;border:1px solid var(--line);padding:22px 26px;margin-bottom:32px}
-.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #dee4e8;margin-bottom:14px}
+.note-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #c9d6de;margin-bottom:14px}
 .note-badge{font-size:10px;font-weight:700;letter-spacing:0.15em;background:var(--ink);color:#fff;padding:3px 10px}
 .note-by{font-size:11px;color:#aaa}
 .note p{font-size:13.5px;line-height:1.95;color:#333;max-width:62em}
@@ -99,7 +99,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
   .note{padding:18px 16px}
   .spec{padding:18px 16px}
   .spec dl{grid-template-columns:1fr;gap:0}
-  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #dee4e8}
+  .spec dt{padding-top:14px;margin-top:14px;border-top:1px solid #c9d6de}
   .spec dl>dt:first-child{padding-top:0;margin-top:0;border-top:0}
   .spec dd{padding-top:4px}
   .cta{flex-direction:column;align-items:flex-start;padding:20px 18px}
@@ -232,7 +232,7 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 
 <script>
 const ACCENT = '#33415c', TINT = '#5f77a6';
-const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#d1d5db', YEL = '#ecc94b', PUR = '#805ad5';
+const GOOD = '#38a169', WARN = '#ed8936', BAD = '#e53e3e', MUTE = '#bec4d0', YEL = '#ecc94b', PUR = '#805ad5';
 
 /* =========================================================================
    1. 元データ
@@ -443,7 +443,7 @@ new Chart(document.getElementById('occChart'), {
       }}
     },
     scales: {
-      x: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#eaeef0' } },
+      x: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#d6e1e5' } },
       y: { grid: { display: false }, ticks: { autoSkip: false, font: { size: 11 } } }
     }
   }
@@ -456,7 +456,7 @@ new Chart(document.getElementById('capChart'), {
     labels: capped.map(p => p.name),
     datasets: [
       { label: '消化済み', data: capped.map(p => p.used180), backgroundColor: TINT, stack: 'a' },
-      { label: '残り',     data: capped.map(p => CFG.capDays - p.used180), backgroundColor: '#dfe5e8', stack: 'a' },
+      { label: '残り',     data: capped.map(p => CFG.capDays - p.used180), backgroundColor: '#cbd8dd', stack: 'a' },
     ]
   },
   options: {
@@ -471,7 +471,7 @@ new Chart(document.getElementById('capChart'), {
       }}
     },
     scales: {
-      x: { stacked: true, max: CFG.capDays, ticks: { callback: v => v + '日' }, grid: { color: '#eaeef0' } },
+      x: { stacked: true, max: CFG.capDays, ticks: { callback: v => v + '日' }, grid: { color: '#d6e1e5' } },
       y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
@@ -499,7 +499,7 @@ new Chart(document.getElementById('plChart'), {
     },
     scales: {
       x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
-      y: { stacked: true, grid: { color: '#eaeef0' }, ticks: { callback: v => '¥' + man(v) } }
+      y: { stacked: true, grid: { color: '#d6e1e5' }, ticks: { callback: v => '¥' + man(v) } }
     }
   }
 });
@@ -530,7 +530,7 @@ new Chart(document.getElementById('chChart'), {
       }}
     },
     scales: {
-      x: { stacked: true, grid: { color: '#eaeef0' }, ticks: { callback: v => '¥' + man(v), font: { size: 10 } } },
+      x: { stacked: true, grid: { color: '#d6e1e5' }, ticks: { callback: v => '¥' + man(v), font: { size: 10 } } },
       y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
@@ -542,7 +542,7 @@ new Chart(document.getElementById('dailyChart'), {
     labels: DAILY_N.map((_, i) => (i + 1) + '日'),
     datasets: [
       { type: 'bar',  label: '稼働棟数', data: DAILY_N, yAxisID: 'y1',
-        backgroundColor: '#dfe5e8', borderWidth: 0, order: 3 },
+        backgroundColor: '#cbd8dd', borderWidth: 0, order: 3 },
       { type: 'line', label: 'ADR',    data: dailyAdr, yAxisID: 'y',
         borderColor: TINT, backgroundColor: 'transparent', borderWidth: 1.5,
         pointRadius: 2, pointBackgroundColor: TINT, borderDash: [4,3], tension: 0.25, order: 1 },
@@ -564,7 +564,7 @@ new Chart(document.getElementById('dailyChart'), {
     },
     scales: {
       x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
-      y:  { position: 'left',  grid: { color: '#eaeef0' },
+      y:  { position: 'left',  grid: { color: '#d6e1e5' },
             ticks: { callback: v => '¥' + man1(v), font: { size: 10 } } },
       y1: { position: 'right', min: 0, max: PROPS.length, grid: { display: false },
             ticks: { stepSize: 1, callback: v => v + '棟', font: { size: 10 } } }
@@ -578,7 +578,7 @@ new Chart(document.getElementById('stayChart'), {
     labels: STAY.map(s => s.label),
     datasets: [
       { type: 'bar',  label: '予約件数', data: STAY.map(s => s.bookings), yAxisID: 'y1',
-        backgroundColor: '#dfe5e8', borderWidth: 0, order: 2 },
+        backgroundColor: '#cbd8dd', borderWidth: 0, order: 2 },
       { type: 'line', label: '1泊あたり手残り', data: STAY.map(s => s.netPerN), yAxisID: 'y',
         borderColor: GOOD, backgroundColor: 'transparent', borderWidth: 2,
         pointRadius: 4, pointBackgroundColor: GOOD, tension: 0.2, order: 0 },
@@ -597,7 +597,7 @@ new Chart(document.getElementById('stayChart'), {
     },
     scales: {
       x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-      y:  { position: 'left', beginAtZero: true, grid: { color: '#eaeef0' },
+      y:  { position: 'left', beginAtZero: true, grid: { color: '#d6e1e5' },
             ticks: { callback: v => '¥' + (v / 1000).toFixed(0) + 'k', font: { size: 10 } } },
       y1: { position: 'right', beginAtZero: true, grid: { display: false },
             ticks: { callback: v => v + '件', font: { size: 10 } } }
